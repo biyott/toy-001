@@ -1,0 +1,261 @@
+{
+  "startedAt": "2026-09-19T13:01:48.716Z",
+  "url": "http://127.0.0.1:4175",
+  "browser": "151.0.7922.169",
+  "host": {
+    "platform": "linux",
+    "release": "6.6.87.2-microsoft-standard-WSL2",
+    "cpu": "Intel(R) Core(TM) i7-14700KF",
+    "logicalCpus": 8,
+    "memoryGiB": 23.47
+  },
+  "method": "Sequential 60-second synthetic upper-bound load at each viewport, after other browser play runs. Real renderer, engine and HUD; fixture state mutation explicitly separate from normal play. Headless Chrome environment.",
+  "runs": [
+    {
+      "status": "complete",
+      "fixture": {
+        "synthetic": true,
+        "normalPlayEvidence": false,
+        "description": "엔진 상태를 명시적으로 채우고 hit 등록을 주기적으로 초기화해 충돌 부하를 유지하는 합성 fixture. 투사체 300개 중 플레이어 220개와 spore/bone 적 투사체 80개를 유지하며, 적 투사체는 TTL·화면 이탈 대신 플레이어 주변 저속 궤도로 매 프레임 되돌려 실제 flight/충돌 경로를 반복한다. 정상 600초 플레이·승패 증거가 아님.",
+        "targetCounts": {
+          "enemies": 180,
+          "projectiles": 300,
+          "playerProjectiles": 220,
+          "enemyProjectiles": 80,
+          "pickups": 260,
+          "zones": 10
+        },
+        "hudIncluded": true,
+        "contentTier": 1,
+        "enemyKinds": [
+          "slime",
+          "mushroom",
+          "goblin",
+          "skeleton",
+          "bat",
+          "beetle"
+        ],
+        "weaponIds": [
+          "sword",
+          "arrow",
+          "spirit",
+          "lightning",
+          "frost",
+          "fireball"
+        ]
+      },
+      "environment": {
+        "viewport": {
+          "width": 1280,
+          "height": 720,
+          "dpr": 1
+        },
+        "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/151.0.0.0 Safari/537.36",
+        "durationSeconds": 60
+      },
+      "timing": {
+        "frameCount": 1686,
+        "meanFps": 28.117,
+        "meanFrameMs": 35.566,
+        "p95FrameMs": 50,
+        "maxFrameMs": 50.1,
+        "longFramesOver33Ms": 1541,
+        "simulationSteps": 3601,
+        "engineElapsedSeconds": 60.017
+      },
+      "entities": {
+        "enemies": {
+          "min": 180,
+          "max": 180
+        },
+        "projectiles": {
+          "min": 300,
+          "max": 300
+        },
+        "pickups": {
+          "min": 260,
+          "max": 260
+        },
+        "zones": {
+          "min": 20,
+          "max": 91
+        }
+      },
+      "segments": {
+        "engineJs": {
+          "samples": 1687,
+          "meanMs": 1.157,
+          "p95Ms": 1.9,
+          "maxMs": 3.5
+        },
+        "fixtureMaintenanceJs": {
+          "samples": 1687,
+          "meanMs": 0.034,
+          "p95Ms": 0.1,
+          "maxMs": 0.4
+        },
+        "rendererJs": {
+          "samples": 1687,
+          "meanMs": 3.004,
+          "p95Ms": 3.5,
+          "maxMs": 6.6
+        },
+        "uiUpdateJs": {
+          "samples": 645,
+          "meanMs": 0.167,
+          "p95Ms": 0.3,
+          "maxMs": 1.8
+        },
+        "totalMeasuredJs": {
+          "samples": 1687,
+          "meanMs": 4.26,
+          "p95Ms": 5.3,
+          "maxMs": 9.2
+        },
+        "gpuReadbackProbe": {
+          "samples": 11,
+          "meanMs": 31.636,
+          "p95Ms": 39.1,
+          "maxMs": 39.1
+        }
+      },
+      "instrumentation": {
+        "collisionEstimateIntervalMs": 5000,
+        "gpuReadbackIntervalMs": 5000,
+        "explanation": "engine/render/UI는 performance.now 구간의 JS 실행시간이며 각 프레임의 시계 호출 오버헤드를 조금 포함한다. renderer는 Canvas2D 명령 생성·제출 시간이며 순수 GPU 시간은 아니다. GPU 값은 5초마다 1픽셀 getImageData로 강제 동기화한 근사치라 드라이버·합성 대기를 포함하고 해당 소수 프레임의 max/long-frame을 늘릴 수 있다. 충돌 후보 O(투사체×적) 추정도 5초마다만 실행해 p95 오염을 제한한다."
+      },
+      "collisionCandidateEstimate": {
+        "min": 2574,
+        "max": 7751,
+        "mean": 5380.846,
+        "samples": 13
+      },
+      "runtimeErrors": [],
+      "pageErrors": []
+    },
+    {
+      "status": "complete",
+      "fixture": {
+        "synthetic": true,
+        "normalPlayEvidence": false,
+        "description": "엔진 상태를 명시적으로 채우고 hit 등록을 주기적으로 초기화해 충돌 부하를 유지하는 합성 fixture. 투사체 300개 중 플레이어 220개와 spore/bone 적 투사체 80개를 유지하며, 적 투사체는 TTL·화면 이탈 대신 플레이어 주변 저속 궤도로 매 프레임 되돌려 실제 flight/충돌 경로를 반복한다. 정상 600초 플레이·승패 증거가 아님.",
+        "targetCounts": {
+          "enemies": 180,
+          "projectiles": 300,
+          "playerProjectiles": 220,
+          "enemyProjectiles": 80,
+          "pickups": 260,
+          "zones": 10
+        },
+        "hudIncluded": true,
+        "contentTier": 1,
+        "enemyKinds": [
+          "slime",
+          "mushroom",
+          "goblin",
+          "skeleton",
+          "bat",
+          "beetle"
+        ],
+        "weaponIds": [
+          "sword",
+          "arrow",
+          "spirit",
+          "lightning",
+          "frost",
+          "fireball"
+        ]
+      },
+      "environment": {
+        "viewport": {
+          "width": 1920,
+          "height": 1080,
+          "dpr": 1
+        },
+        "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/151.0.0.0 Safari/537.36",
+        "durationSeconds": 60
+      },
+      "timing": {
+        "frameCount": 926,
+        "meanFps": 15.438,
+        "meanFrameMs": 64.774,
+        "p95FrameMs": 83.4,
+        "maxFrameMs": 100.1,
+        "longFramesOver33Ms": 926,
+        "simulationSteps": 3598,
+        "engineElapsedSeconds": 59.967
+      },
+      "entities": {
+        "enemies": {
+          "min": 180,
+          "max": 180
+        },
+        "projectiles": {
+          "min": 300,
+          "max": 300
+        },
+        "pickups": {
+          "min": 260,
+          "max": 260
+        },
+        "zones": {
+          "min": 21,
+          "max": 84
+        }
+      },
+      "segments": {
+        "engineJs": {
+          "samples": 927,
+          "meanMs": 2.075,
+          "p95Ms": 3,
+          "maxMs": 5.4
+        },
+        "fixtureMaintenanceJs": {
+          "samples": 927,
+          "meanMs": 0.036,
+          "p95Ms": 0.1,
+          "maxMs": 0.3
+        },
+        "rendererJs": {
+          "samples": 927,
+          "meanMs": 40.85,
+          "p95Ms": 56.7,
+          "maxMs": 64.5
+        },
+        "uiUpdateJs": {
+          "samples": 531,
+          "meanMs": 0.178,
+          "p95Ms": 0.3,
+          "maxMs": 1.5
+        },
+        "totalMeasuredJs": {
+          "samples": 927,
+          "meanMs": 43.065,
+          "p95Ms": 59.6,
+          "maxMs": 68.2
+        },
+        "gpuReadbackProbe": {
+          "samples": 11,
+          "meanMs": 23.509,
+          "p95Ms": 43.4,
+          "maxMs": 43.4
+        }
+      },
+      "instrumentation": {
+        "collisionEstimateIntervalMs": 5000,
+        "gpuReadbackIntervalMs": 5000,
+        "explanation": "engine/render/UI는 performance.now 구간의 JS 실행시간이며 각 프레임의 시계 호출 오버헤드를 조금 포함한다. renderer는 Canvas2D 명령 생성·제출 시간이며 순수 GPU 시간은 아니다. GPU 값은 5초마다 1픽셀 getImageData로 강제 동기화한 근사치라 드라이버·합성 대기를 포함하고 해당 소수 프레임의 max/long-frame을 늘릴 수 있다. 충돌 후보 O(투사체×적) 추정도 5초마다만 실행해 p95 오염을 제한한다."
+      },
+      "collisionCandidateEstimate": {
+        "min": 2785,
+        "max": 7825,
+        "mean": 5138.615,
+        "samples": 13
+      },
+      "runtimeErrors": [],
+      "pageErrors": []
+    }
+  ],
+  "completed": true,
+  "finishedAt": "2026-09-19T13:03:55.974Z"
+}

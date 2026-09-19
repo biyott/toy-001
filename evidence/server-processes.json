@@ -1,0 +1,69 @@
+{
+  "observedAt": "2026-09-19T13:21:40.082285+00:00",
+  "warning": "PIDs are historical; verify command line and working directory before stopping. Only these task-owned processes are listed.",
+  "servers": [
+    {
+      "pid": 32128,
+      "cwd": "/90_biyott@github/toy-001",
+      "args": [
+        "node",
+        "/90_biyott@github/toy-001/node_modules/.bin/vite",
+        "--host",
+        "127.0.0.1",
+        "--port",
+        "4173"
+      ]
+    },
+    {
+      "pid": 75511,
+      "cwd": "/90_biyott@github/toy-001",
+      "args": [
+        "node",
+        "/90_biyott@github/toy-001/node_modules/.bin/vite",
+        "preview",
+        "--host",
+        "127.0.0.1",
+        "--port",
+        "4174",
+        "--strictPort"
+      ]
+    },
+    {
+      "pid": 75543,
+      "cwd": "/90_biyott@github/toy-001",
+      "args": [
+        "python3",
+        "-m",
+        "http.server",
+        "4175",
+        "--bind",
+        "127.0.0.1",
+        "--directory",
+        "artifacts/verification-build"
+      ]
+    },
+    {
+      "pid": 97621,
+      "cwd": "/90_biyott@github/toy-001",
+      "args": [
+        "python3",
+        "-m",
+        "http.server",
+        "4181",
+        "--bind",
+        "127.0.0.1",
+        "--directory",
+        "/tmp/lrg-perf-baseline-uqeyr5/artifacts/verification-build"
+      ]
+    },
+    {
+      "pid": 104762,
+      "cwd": "/90_biyott@github/toy-001",
+      "args": [
+        "python3",
+        ".agent-monitor/collector.py",
+        "--view-final"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,20 @@
+{
+  "at": "2026-09-19T11:51:34.561Z",
+  "filters": {
+    "role": "implementer",
+    "count": "3/6",
+    "scroll": 240
+  },
+  "checks": {
+    "stale": true,
+    "safeText": true,
+    "noInjectedImage": true,
+    "scriptNotExecuted": true,
+    "connectionLost": true,
+    "lastStatusPreserved": true,
+    "liveRestored": true,
+    "fixtureRemoved": true
+  },
+  "pageErrors": [],
+  "fixtures": "browser route only; never stored in operational state"
+}

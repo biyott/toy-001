@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Little Rune Guardians — 캐릭터 포즈 미리보기</title>
+    <style>:root{color:#354b43;font-synthesis:none;background:#e8edda;font-family:Noto Sans KR,sans-serif}*{box-sizing:border-box}body{background:radial-gradient(circle at 12% 2%,#fff4c294,#0000 25rem),linear-gradient(#d7e2c7 0,#edf0df 28rem,#e6ead8 100%);min-width:320px;margin:0}main{width:min(1240px,100% - 32px);margin:0 auto;padding:28px 0 48px}header{grid-template-columns:1fr auto;align-items:end;gap:20px;margin-bottom:18px;display:grid}h1{color:#30473f;margin:0 0 6px;font-size:clamp(25px,3vw,38px);line-height:1.18}h2{color:#3a5148;margin:0 0 5px;font-size:19px}p{color:#65766d;margin:0;font-size:13px;line-height:1.65}.meta{flex-wrap:wrap;justify-content:flex-end;gap:7px;display:flex}.chip{color:#536b5f;white-space:nowrap;background:#fffff2ad;border:1px solid #9eb29f;border-radius:999px;padding:6px 9px;font-size:11px;font-weight:700}.notice{color:#76533f;text-align:center;background:#fff0d3bd;border:1px solid #c9986f;border-radius:10px;margin:0 0 22px;padding:11px 14px;font-size:12px;font-weight:700}section{background:#fafaebc4;border:1px solid #516b593d;border-radius:15px;margin-top:16px;padding:16px;box-shadow:0 10px 32px #34483d17}.section-heading{justify-content:space-between;align-items:baseline;gap:18px;margin-bottom:12px;display:flex}.section-heading p{text-align:right}.matrix-wrap{padding-bottom:3px;overflow-x:auto}.matrix{grid-template-columns:116px repeat(7,minmax(136px,1fr));gap:6px;min-width:1120px;display:grid}.matrix-head,.character-label,.preview-cell{background:#fffff5a3;border:1px solid #4b64542b;border-radius:9px}.matrix-head{color:#607368;place-items:center;min-height:36px;font-size:11px;font-weight:700;display:grid}.matrix-corner{background:0 0;border-color:#0000}.character-label{flex-direction:column;justify-content:center;min-height:144px;padding:12px;display:flex}.character-label strong{color:#354d44;font-size:15px}.character-label span{color:#849187;margin-top:4px;font-size:10px}.preview-cell{place-items:center;min-height:144px;display:grid;overflow:hidden}canvas{display:block}.detail-grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;display:grid}.detail-card{background:#fffff6b5;border:1px solid #4d655530;border-radius:11px;min-width:0;padding:10px 10px 8px}.detail-card header{justify-content:space-between;align-items:baseline;margin:0 3px 4px;display:flex}.detail-card strong{color:#40594f;font-size:13px}.detail-card span{color:#87928a;font-size:10px;font-weight:700}.detail-card canvas{max-width:100%;margin:0 auto}footer{text-align:center;padding:18px 4px 0}@media (width<=780px){main{width:min(100% - 20px,1240px);padding-top:18px}header{grid-template-columns:1fr}.meta{justify-content:flex-start}.detail-grid{grid-template-columns:1fr}.section-heading{display:block}.section-heading p{text-align:left;margin-top:4px}}</style>
+    <script type="module" crossorigin src="/assets/character-preview-zqc-7cQ-.js"></script>
+    <link rel="modulepreload" crossorigin href="/assets/sprites-CuJdHU_Z.js">
+    <link rel="stylesheet" crossorigin href="/assets/sprites-DQp1HXjK.css">
+  </head>
+  <body>
+    <main>
+      <header>
+        <div>
+          <h1>캐릭터 포즈 미리보기</h1>
+          <p>실제 <strong>actorSprite</strong> 출력으로 로완, 루미, 페른의 일곱 포즈를 한눈에 비교합니다.</p>
+        </div>
+        <div class="meta" aria-label="미리보기 조건">
+          <span class="chip">frame 1 고정</span>
+          <span class="chip">플레이 배율 0.76×</span>
+          <span class="chip">확대 배율 1.52×</span>
+          <span class="chip">기준 화면 1280×720</span>
+        </div>
+      </header>
+
+      <div class="notice">디자인과 포즈 검토를 위한 정적 미리보기입니다. 실제 플레이 및 브라우저 플레이스루 증거를 대체하지 않습니다.</div>
+
+      <section aria-labelledby="overview-title">
+        <div class="section-heading">
+          <div>
+            <h2 id="overview-title">실제 플레이 크기</h2>
+            <p>렌더러의 플레이어 배율 0.76을 그대로 적용했습니다.</p>
+          </div>
+          <p>같은 행에서 정체성 유지, 같은 열에서 포즈 구분을 확인하세요.</p>
+        </div>
+        <div class="matrix-wrap">
+          <div id="pose-matrix" class="matrix" aria-label="캐릭터별 포즈 비교표"></div>
+        </div>
+      </section>
+
+      <section aria-labelledby="detail-title">
+        <div class="section-heading">
+          <div>
+            <h2 id="detail-title">2배 확대 비교</h2>
+            <p>형태, 표정, 손과 무기의 위치를 확인하기 위한 1.52배 출력입니다.</p>
+          </div>
+          <p>각 행은 같은 포즈의 세 캐릭터입니다.</p>
+        </div>
+        <div id="detail-grid" class="detail-grid"></div>
+      </section>
+
+      <footer><p>정적 조건: frame 1 · 좌우 반전 없음 · bob/회전 없음 · 로컬 Noto Sans KR</p></footer>
+    </main>
+  </body>
+</html>

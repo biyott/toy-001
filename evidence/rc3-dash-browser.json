@@ -1,0 +1,183 @@
+{
+  "url": "http://127.0.0.1:4180",
+  "startedAt": "2026-09-19T12:42:20.387Z",
+  "checks": [
+    {
+      "name": "knight full charges",
+      "data": {
+        "id": 1,
+        "x": 0,
+        "y": 30,
+        "radius": 15,
+        "facing": 0,
+        "character": "knight",
+        "hp": 120,
+        "maxHp": 120,
+        "xp": 0,
+        "xpToNext": 6,
+        "level": 1,
+        "speed": 170,
+        "invulnerable": 0,
+        "dashCharges": 2,
+        "dashMaxCharges": 2,
+        "dashRechargeRemaining": 0,
+        "dashRechargeDuration": 5,
+        "dashReuseDelay": 0,
+        "dashCooldown": 0,
+        "dashTime": 0,
+        "hitFlash": 0,
+        "moving": false,
+        "upgrades": {
+          "sword": 1
+        }
+      },
+      "passed": true
+    },
+    {
+      "name": "knight consumes charge",
+      "data": {
+        "charges": 1,
+        "remaining": 4.883333333333334
+      },
+      "passed": true
+    },
+    {
+      "name": "knight repeat blocked",
+      "passed": true
+    },
+    {
+      "name": "knight next use retains refill progress",
+      "passed": true
+    },
+    {
+      "name": "knight pause freezes refill",
+      "passed": true
+    },
+    {
+      "name": "knight one slot recharges",
+      "data": {
+        "charges": 1,
+        "remaining": 4.81666666666668
+      },
+      "passed": true
+    },
+    {
+      "name": "mage full charges",
+      "data": {
+        "id": 1,
+        "x": 0,
+        "y": 30,
+        "radius": 15,
+        "facing": 0,
+        "character": "mage",
+        "hp": 100,
+        "maxHp": 100,
+        "xp": 0,
+        "xpToNext": 6,
+        "level": 1,
+        "speed": 170,
+        "invulnerable": 0,
+        "dashCharges": 1,
+        "dashMaxCharges": 1,
+        "dashRechargeRemaining": 0,
+        "dashRechargeDuration": 4,
+        "dashReuseDelay": 0,
+        "dashCooldown": 0,
+        "dashTime": 0,
+        "hitFlash": 0,
+        "moving": false,
+        "upgrades": {
+          "spirit": 1
+        }
+      },
+      "passed": true
+    },
+    {
+      "name": "mage consumes charge",
+      "data": {
+        "charges": 0,
+        "remaining": 3.9000000000000004
+      },
+      "passed": true
+    },
+    {
+      "name": "mage repeat blocked",
+      "passed": true
+    },
+    {
+      "name": "mage pause freezes refill",
+      "passed": true
+    },
+    {
+      "name": "mage one slot recharges",
+      "data": {
+        "charges": 1,
+        "remaining": 0
+      },
+      "passed": true
+    },
+    {
+      "name": "ranger full charges",
+      "data": {
+        "id": 1,
+        "x": 0,
+        "y": 30,
+        "radius": 15,
+        "facing": 0,
+        "character": "ranger",
+        "hp": 100,
+        "maxHp": 100,
+        "xp": 0,
+        "xpToNext": 6,
+        "level": 1,
+        "speed": 190,
+        "invulnerable": 0,
+        "dashCharges": 3,
+        "dashMaxCharges": 3,
+        "dashRechargeRemaining": 0,
+        "dashRechargeDuration": 6,
+        "dashReuseDelay": 0,
+        "dashCooldown": 0,
+        "dashTime": 0,
+        "hitFlash": 0,
+        "moving": false,
+        "upgrades": {
+          "arrow": 1
+        }
+      },
+      "passed": true
+    },
+    {
+      "name": "ranger consumes charge",
+      "data": {
+        "charges": 2,
+        "remaining": 5.9
+      },
+      "passed": true
+    },
+    {
+      "name": "ranger repeat blocked",
+      "passed": true
+    },
+    {
+      "name": "ranger next use retains refill progress",
+      "passed": true
+    },
+    {
+      "name": "ranger pause freezes refill",
+      "passed": true
+    },
+    {
+      "name": "ranger one slot recharges",
+      "data": {
+        "charges": 2,
+        "remaining": 5.816666666666683
+      },
+      "passed": true
+    }
+  ],
+  "errors": [],
+  "method": "Real keyboard/UI only, no game state mutation.",
+  "passed": true,
+  "finishedAt": "2026-09-19T12:42:38.462Z"
+}

@@ -1,0 +1,2853 @@
+{
+  "project": "리틀 룬 가디언즈",
+  "phase": "기능·시각 결과물 제출 완료 · 최대 부하60FPS 목표 미달 · 최종 저장본",
+  "run": {
+    "id": "lrg-20260919T114237Z",
+    "sessionId": "01a0b979-8004-75f2-819c-1b900b920b26",
+    "startedAt": "2026-09-19T11:42:37Z",
+    "deadlineAt": "2026-09-19T14:42:37Z"
+  },
+  "scope": {
+    "description": "현재 메인 세션과 메인이 생성한 하위 에이전트만 관찰",
+    "sources": [
+      "collaboration.list_agents",
+      "collaboration messages",
+      "coordinator assignments"
+    ],
+    "observationCadence": "최종 저장 시점의 직접 관측을 보존. 이후 실시간 에이전트 추적 아님.",
+    "unobserved": [
+      "PC 전체 세션",
+      "실제 모델·추론 메타",
+      "완료된 스레드의 열린/닫힌 여부",
+      "최대 런타임 한도까지의 실측",
+      "프로젝트 비용·토큰"
+    ]
+  },
+  "limits": {
+    "configuredSubagents": 1000,
+    "configuredSource": ".codex/config.toml",
+    "runtimeAdvertisedTotal": 1001,
+    "runtimeAdvertisedSubagents": 1000,
+    "runtimeSource": "active collaboration tool metadata",
+    "runtimeLimitStatus": "도구고지 한도; 최대치 생성 실측 미확인",
+    "environmentTotal": 1001,
+    "environmentSubagents": 1000,
+    "appliedSubagents": null,
+    "policy": "사용자 상한 1000개 내에서 준비된 독립 작업 즉시 배정",
+    "userSubagentLimit": 1000,
+    "effectiveSubagentLimit": 1000,
+    "expansionBlockers": [
+      "미배정 독립 ready 작업 없음. 승인된 범위의 구현·검증·개선 결과 통합 및 제출 완료.",
+      "추가 미달 항목: 이 환경의 최대 부하60FPS. 실제GPU환경·물리기기 검증은 미수행으로 공개. 인원을 채우기 위한 중복 작업은 생성하지 않음."
+    ]
+  },
+  "agents": [
+    {
+      "id": "/root",
+      "parentId": null,
+      "kind": "main",
+      "role": "coordinator",
+      "specialty": "총괄·통합·브라우저",
+      "taskId": "D01",
+      "requestedModel": "gpt-6-astra (권장)",
+      "requestedReasoning": "xhigh (권장)",
+      "actualModel": null,
+      "actualReasoning": null,
+      "status": "running",
+      "startedAt": "2026-09-19T11:42:37Z",
+      "observedAt": "2026-09-19T13:21:16.882796+00:00",
+      "lastActivityAt": "2026-09-19T13:21:16.882796+00:00",
+      "activity": "제출·최종 저장본 보존. 이 시각 메인은 실행 중으로 직접 관측됨.",
+      "source": "collaboration.list_agents",
+      "reportBased": false,
+      "statusSource": "collaboration.list_agents"
+    },
+    {
+      "id": "/root/monitor",
+      "parentId": "/root",
+      "kind": "subagent",
+      "role": "implementer",
+      "specialty": "대시보드 최신 병렬정책",
+      "taskId": "M05",
+      "requestedModel": "gpt-5.6-sol",
+      "requestedReasoning": "high",
+      "actualModel": null,
+      "actualReasoning": null,
+      "status": "completed",
+      "startedAt": null,
+      "observedAt": "2026-09-19T13:21:16.882796+00:00",
+      "lastActivityAt": "2026-09-19T12:52:59.953998+00:00",
+      "activity": "오래된 개별 보고가 최신 통합 판정을 덮는 오류 수정",
+      "source": "collaboration.list_agents",
+      "reportBased": false,
+      "statusSource": "collaboration.list_agents",
+      "verification": [
+        "collector 단위검사6/6(보고 기반)",
+        "main Chrome 브라우저 검증 통과"
+      ],
+      "changedFiles": [
+        ".agent-monitor/collector.py",
+        ".agent-monitor/assets/app.js"
+      ]
+    },
+    {
+      "id": "/root/architecture",
+      "parentId": "/root",
+      "kind": "subagent",
+      "role": "implementer",
+      "specialty": "공용 아트 경계·확장 효과",
+      "taskId": "PERF-RENDER",
+      "requestedModel": "gpt-6-astra",
+      "requestedReasoning": "xhigh",
+      "actualModel": null,
+      "actualReasoning": null,
+      "status": "completed",
+      "startedAt": null,
+      "observedAt": "2026-09-19T13:21:16.882796+00:00",
+      "lastActivityAt": "2026-09-19T13:14:19.130279+00:00",
+      "activity": "후보 B 구현 및 좁은 타입 확인 완료; 측정은 메인",
+      "source": "collaboration.list_agents",
+      "reportBased": false,
+      "statusSource": "collaboration.list_agents",
+      "changedFiles": [
+        "src/render/renderer.ts",
+        "src/render/effects.ts"
+      ]
+    },
+    {
+      "id": "/root/qa",
+      "parentId": "/root",
+      "kind": "subagent",
+      "role": "reviewer",
+      "specialty": "확장 부하·병목 측정 준비",
+      "taskId": "PERF-INSTRUMENT",
+      "requestedModel": "gpt-5.6-sol",
+      "requestedReasoning": "high",
+      "actualModel": null,
+      "actualReasoning": null,
+      "status": "completed",
+      "source": "collaboration.list_agents",
+      "reportBased": false,
+      "activity": "주 FPS 측정과 getImageData 진단의 간섭 분리",
+      "lastActivityAt": "2026-09-19T13:05:16.572913+00:00",
+      "observedAt": "2026-09-19T13:21:16.882796+00:00",
+      "statusSource": "collaboration.list_agents",
+      "changedFiles": [
+        "tests/performance.ts"
+      ]
+    },
+    {
+      "id": "/root/combat",
+      "parentId": "/root",
+      "kind": "subagent",
+      "role": "implementer",
+      "specialty": "확장 엔진 연결·승리 조건",
+      "taskId": "ENEMY-RANGED-CORE",
+      "requestedModel": "gpt-6-astra",
+      "requestedReasoning": "high",
+      "actualModel": null,
+      "actualReasoning": null,
+      "status": "completed",
+      "observedAt": "2026-09-19T13:21:16.882796+00:00",
+      "lastActivityAt": "2026-09-19T12:40:17.149969+00:00",
+      "activity": "버섯·보스 실제 포자 발사 연결",
+      "source": "collaboration.list_agents",
+      "reportBased": false,
+      "statusSource": "collaboration.list_agents",
+      "result": "정상600초·demo180초 시뮬레이션 승리, 무입력패배",
+      "changedFiles": [
+        "src/game/engine.ts"
+      ],
+      "verification": [
+        "단위검사22/22(main재현)",
+        "결정적 시뮬레이션 승패(agent보고)"
+      ]
+    },
+    {
+      "id": "/root/ui",
+      "parentId": "/root",
+      "kind": "subagent",
+      "role": "implementer",
+      "specialty": "캐릭터 선택·확장 HUD·화면 통합",
+      "taskId": "DASH-REUSE-LABEL",
+      "requestedModel": "gpt-5.6-sol",
+      "requestedReasoning": "high",
+      "actualModel": null,
+      "actualReasoning": null,
+      "status": "completed",
+      "observedAt": "2026-09-19T13:21:16.882796+00:00",
+      "lastActivityAt": "2026-09-19T12:47:06.559020+00:00",
+      "activity": "충전/재사용 문구 오류 수정 완료",
+      "source": "collaboration.list_agents",
+      "reportBased": false,
+      "statusSource": "collaboration.list_agents",
+      "changedFiles": [
+        "src/ui/styles.css",
+        "src/ui/ui.ts"
+      ]
+    },
+    {
+      "id": "/root/quality",
+      "parentId": "/root",
+      "kind": "subagent",
+      "role": "reviewer",
+      "specialty": "입력·전투 연결 독립 검토",
+      "taskId": "FINAL-REVIEW",
+      "requestedModel": "gpt-6-astra",
+      "requestedReasoning": "xhigh",
+      "actualModel": null,
+      "actualReasoning": null,
+      "status": "completed",
+      "observedAt": "2026-09-19T13:21:16.882796+00:00",
+      "lastActivityAt": "2026-09-19T13:19:43.979150+00:00",
+      "activity": "최종 기능·시각 수용, 성능미달과 한계 명시",
+      "source": "collaboration.list_agents",
+      "reportBased": false,
+      "statusSource": "collaboration.list_agents",
+      "changedFiles": [
+        ".agent-monitor/reports/visual-rc1-review.md"
+      ]
+    },
+    {
+      "id": "/root/parallel_planner",
+      "parentId": "/root",
+      "kind": "subagent",
+      "role": "implementer",
+      "specialty": "시드 도전 설정",
+      "taskId": "P2-CHALLENGE",
+      "requestedModel": "gpt-6-astra",
+      "requestedReasoning": "xhigh",
+      "actualModel": null,
+      "actualReasoning": null,
+      "status": "completed",
+      "observedAt": "2026-09-19T13:21:16.882796+00:00",
+      "lastActivityAt": "2026-09-19T12:20:20.101654+00:00",
+      "activity": "시드 도전 설정",
+      "source": "collaboration.list_agents",
+      "reportBased": false,
+      "changedFiles": [
+        "src/ui/challenge.ts",
+        "tests/challenge.test.ts"
+      ],
+      "statusSource": "collaboration.list_agents"
+    },
+    {
+      "id": "/root/weapon_tests",
+      "parentId": "/root",
+      "kind": "subagent",
+      "role": "reviewer",
+      "specialty": "세 캐릭터 실제 크기·포즈 비교",
+      "taskId": "ART-PREVIEW",
+      "requestedModel": "gpt-5.6-sol",
+      "requestedReasoning": "high",
+      "actualModel": null,
+      "actualReasoning": null,
+      "status": "completed",
+      "observedAt": "2026-09-19T13:21:16.882796+00:00",
+      "lastActivityAt": "2026-09-19T12:23:02.584227+00:00",
+      "activity": "세 캐릭터 실제 크기·포즈 비교",
+      "source": "collaboration.list_agents",
+      "reportBased": false,
+      "changedFiles": [
+        "tests/character-preview.html",
+        "tests/character-preview.ts"
+      ],
+      "statusSource": "collaboration.list_agents"
+    },
+    {
+      "id": "/root/synergy_tests",
+      "parentId": "/root",
+      "kind": "subagent",
+      "role": "implementer",
+      "specialty": "무기·캐릭터·조합 도감",
+      "taskId": "P1-CODEX",
+      "requestedModel": "gpt-5.6-sol",
+      "requestedReasoning": "high",
+      "actualModel": null,
+      "actualReasoning": null,
+      "status": "completed",
+      "observedAt": "2026-09-19T13:21:16.882796+00:00",
+      "lastActivityAt": "2026-09-19T12:20:20.101654+00:00",
+      "activity": "무기·캐릭터·조합 도감",
+      "source": "collaboration.list_agents",
+      "reportBased": false,
+      "changedFiles": [
+        "src/ui/codex.ts",
+        "src/ui/codex.css"
+      ],
+      "statusSource": "collaboration.list_agents"
+    },
+    {
+      "id": "/root/boss_tests",
+      "parentId": "/root",
+      "kind": "subagent",
+      "role": "reviewer",
+      "specialty": "골렘 예고 패턴",
+      "taskId": "ENEMY-RANGED-TEST",
+      "requestedModel": "gpt-6-astra",
+      "requestedReasoning": "high",
+      "actualModel": null,
+      "actualReasoning": null,
+      "status": "completed",
+      "observedAt": "2026-09-19T13:21:16.882796+00:00",
+      "lastActivityAt": "2026-09-19T12:40:17.149969+00:00",
+      "activity": "원거리 공격 실제 비행 통합 회귀",
+      "source": "collaboration.list_agents",
+      "reportBased": false,
+      "changedFiles": [
+        "tests/enemies.test.ts",
+        "tests/boss-patterns.test.ts",
+        "tests/boss-preview.ts",
+        "tests/ranged-enemies.test.ts"
+      ],
+      "statusSource": "collaboration.list_agents"
+    },
+    {
+      "id": "/root/growth_tests",
+      "parentId": "/root",
+      "kind": "subagent",
+      "role": "reviewer",
+      "specialty": "확장 콘텐츠·2보스 종료 경계 검증",
+      "taskId": "P1-CONTENT-TEST",
+      "requestedModel": "gpt-5.6-sol",
+      "requestedReasoning": "high",
+      "actualModel": null,
+      "actualReasoning": null,
+      "status": "completed",
+      "observedAt": "2026-09-19T13:21:16.882796+00:00",
+      "lastActivityAt": "2026-09-19T12:20:20.101654+00:00",
+      "activity": "확장 콘텐츠·2보스 종료 경계 검증",
+      "source": "collaboration.list_agents",
+      "reportBased": false,
+      "changedFiles": [
+        "tests/p1-content.test.ts"
+      ],
+      "statusSource": "collaboration.list_agents"
+    },
+    {
+      "id": "/root/enemy_tests",
+      "parentId": "/root",
+      "kind": "subagent",
+      "role": "implementer",
+      "specialty": "해골·박쥐·딱정벌레 행동",
+      "taskId": "P1-ENEMIES",
+      "requestedModel": "gpt-5.6-sol",
+      "requestedReasoning": "high",
+      "actualModel": null,
+      "actualReasoning": null,
+      "status": "completed",
+      "observedAt": "2026-09-19T13:21:16.882796+00:00",
+      "lastActivityAt": "2026-09-19T12:20:20.101654+00:00",
+      "activity": "해골·박쥐·딱정벌레 행동",
+      "source": "collaboration.list_agents",
+      "reportBased": false,
+      "changedFiles": [
+        "src/game/p1-enemies.ts",
+        "tests/p1-enemies.test.ts"
+      ],
+      "statusSource": "collaboration.list_agents"
+    },
+    {
+      "id": "/root/movement_tests",
+      "parentId": "/root",
+      "kind": "subagent",
+      "role": "reviewer",
+      "specialty": "물리이동",
+      "taskId": "DELIVERY-FINAL",
+      "requestedModel": "gpt-5.6-sol",
+      "requestedReasoning": "high",
+      "actualModel": null,
+      "actualReasoning": null,
+      "status": "completed",
+      "observedAt": "2026-09-19T13:21:16.882796+00:00",
+      "lastActivityAt": "2026-09-19T13:19:43.979150+00:00",
+      "activity": "최종 제출 문서의 기존 지적 해결 확인",
+      "source": "collaboration.list_agents",
+      "reportBased": false,
+      "changedFiles": [
+        ".agent-monitor/reports/delivery-audit.md"
+      ],
+      "statusSource": "collaboration.list_agents"
+    },
+    {
+      "id": "/root/resource_tests",
+      "parentId": "/root",
+      "kind": "subagent",
+      "role": "documenter",
+      "specialty": "실행 문서와 3분 시연 가이드",
+      "taskId": "FINAL-DOCS",
+      "requestedModel": "gpt-5.6-sol",
+      "requestedReasoning": "high",
+      "actualModel": null,
+      "actualReasoning": null,
+      "status": "completed",
+      "observedAt": "2026-09-19T13:21:16.882796+00:00",
+      "lastActivityAt": "2026-09-19T13:18:34.996673+00:00",
+      "activity": "제출 c68e8fb 독립 clean build 7/7 해시 일치",
+      "source": "collaboration.list_agents",
+      "reportBased": false,
+      "changedFiles": [
+        "README.md",
+        "DEMO.md"
+      ],
+      "statusSource": "collaboration.list_agents"
+    },
+    {
+      "id": "/root/gamepad",
+      "parentId": "/root",
+      "kind": "subagent",
+      "role": "implementer",
+      "specialty": "게임패드 입력",
+      "taskId": "P2-PAD",
+      "requestedModel": "gpt-5.6-sol",
+      "requestedReasoning": "high",
+      "actualModel": null,
+      "actualReasoning": null,
+      "status": "completed",
+      "observedAt": "2026-09-19T13:21:16.882796+00:00",
+      "lastActivityAt": "2026-09-19T12:20:20.101654+00:00",
+      "activity": "게임패드 입력",
+      "source": "collaboration.list_agents",
+      "reportBased": false,
+      "changedFiles": [
+        "src/controls/gamepad.ts",
+        "tests/gamepad.test.ts"
+      ],
+      "statusSource": "collaboration.list_agents"
+    },
+    {
+      "id": "/root/touch",
+      "parentId": "/root",
+      "kind": "subagent",
+      "role": "implementer",
+      "specialty": "터치 입력",
+      "taskId": "P2-TOUCH",
+      "requestedModel": "gpt-5.6-sol",
+      "requestedReasoning": "high",
+      "actualModel": null,
+      "actualReasoning": null,
+      "status": "completed",
+      "observedAt": "2026-09-19T13:21:16.882796+00:00",
+      "lastActivityAt": "2026-09-19T12:20:20.101654+00:00",
+      "activity": "터치 입력",
+      "source": "collaboration.list_agents",
+      "reportBased": false,
+      "changedFiles": [
+        "src/controls/touch.ts",
+        "src/controls/touch.css",
+        "tests/touch.test.ts"
+      ],
+      "statusSource": "collaboration.list_agents"
+    },
+    {
+      "id": "/root/p1_weapons",
+      "parentId": "/root",
+      "kind": "subagent",
+      "actualModel": null,
+      "actualReasoning": null,
+      "role": "implementer",
+      "specialty": "번개·서리·화염 구현",
+      "taskId": "ENEMY-FLIGHT",
+      "requestedModel": "gpt-6-astra",
+      "requestedReasoning": "high",
+      "status": "completed",
+      "activity": "적 투사체 비행·연속 충돌 판정",
+      "lastActivityAt": "2026-09-19T12:40:17.149969+00:00",
+      "observedAt": "2026-09-19T13:21:16.882796+00:00",
+      "source": "collaboration.list_agents",
+      "reportBased": false,
+      "changedFiles": [
+        "src/game/enemy-projectiles.ts",
+        "tests/enemy-flight.test.ts"
+      ],
+      "statusSource": "collaboration.list_agents"
+    },
+    {
+      "id": "/root/knight_design",
+      "kind": "subagent",
+      "parentId": "/root",
+      "actualModel": null,
+      "actualReasoning": null,
+      "role": "character_designer",
+      "specialty": "기사 검·방패 고유 공격 포즈",
+      "taskId": "ART-KNIGHT",
+      "status": "completed",
+      "changedFiles": [
+        "src/render/characters/knight.ts"
+      ],
+      "activity": "기사 검·방패 고유 공격 포즈",
+      "lastActivityAt": "2026-09-19T12:23:02.584227+00:00",
+      "requestedModel": "gpt-5.6-sol",
+      "requestedReasoning": "high",
+      "observedAt": "2026-09-19T13:21:16.882796+00:00",
+      "statusSource": "collaboration.list_agents",
+      "source": "collaboration.list_agents",
+      "reportBased": false
+    },
+    {
+      "id": "/root/mage_design",
+      "kind": "subagent",
+      "parentId": "/root",
+      "actualModel": null,
+      "actualReasoning": null,
+      "role": "character_designer",
+      "specialty": "견습 마법사 시전 포즈",
+      "taskId": "ART-MAGE",
+      "status": "completed",
+      "changedFiles": [
+        "src/render/characters/mage.ts"
+      ],
+      "activity": "견습 마법사 시전 포즈",
+      "lastActivityAt": "2026-09-19T12:23:02.584227+00:00",
+      "requestedModel": "gpt-5.6-sol",
+      "requestedReasoning": "high",
+      "observedAt": "2026-09-19T13:21:16.882796+00:00",
+      "statusSource": "collaboration.list_agents",
+      "source": "collaboration.list_agents",
+      "reportBased": false
+    },
+    {
+      "id": "/root/ranger_design",
+      "kind": "subagent",
+      "parentId": "/root",
+      "actualModel": null,
+      "actualReasoning": null,
+      "role": "character_designer",
+      "specialty": "숲 궁수 활 당김·발사 포즈",
+      "taskId": "ART-RANGER",
+      "status": "completed",
+      "changedFiles": [
+        "src/render/characters/ranger.ts"
+      ],
+      "activity": "숲 궁수 활 당김·발사 포즈",
+      "lastActivityAt": "2026-09-19T12:23:02.584227+00:00",
+      "requestedModel": "gpt-5.6-sol",
+      "requestedReasoning": "high",
+      "observedAt": "2026-09-19T13:21:16.882796+00:00",
+      "statusSource": "collaboration.list_agents",
+      "source": "collaboration.list_agents",
+      "reportBased": false
+    }
+  ],
+  "tasks": [
+    {
+      "id": "E01",
+      "summary": "환경·실행 조건",
+      "owner": "/root",
+      "dependsOn": [],
+      "implementation": "done",
+      "verification": "passed",
+      "integration": "done",
+      "status": "integrated",
+      "files": [
+        "STATUS.md",
+        "RUNBOOK.md"
+      ],
+      "integrator": "/root",
+      "interface": "도구 메타·설정·실제 런타임 조회",
+      "verificationMethod": "설치 런타임·설정과 도구 차이 확인",
+      "requestedModel": "gpt-6-astra (권장)",
+      "requestedReasoning": "xhigh (권장)"
+    },
+    {
+      "id": "M01",
+      "summary": "대시보드 MVP",
+      "owner": "/root/monitor",
+      "dependsOn": [
+        "E01"
+      ],
+      "implementation": "done",
+      "verification": "passed",
+      "integration": "done",
+      "status": "integrated",
+      "result": "Chrome 화면·실제 데이터·새로고침 확인, 오류0",
+      "files": [
+        ".agent-monitor/collector.py",
+        ".agent-monitor/index.html",
+        ".agent-monitor/assets"
+      ],
+      "integrator": "/root",
+      "interface": "coordinator report → normalized state/events",
+      "verificationMethod": "HTTP·한국어·필터·새로고침·연결·11 자동검사",
+      "requestedModel": "gpt-5.6-sol",
+      "requestedReasoning": "high"
+    },
+    {
+      "id": "A01",
+      "summary": "아트·구조 결정",
+      "owner": "/root/architecture",
+      "dependsOn": [
+        "E01"
+      ],
+      "implementation": "done",
+      "verification": "passed",
+      "integration": "done",
+      "status": "integrated",
+      "result": "Astra 설계 보고 검토, Canvas2D 채택",
+      "files": [
+        "ART_DIRECTION.md",
+        ".agent-monitor/reports/architecture-design.md"
+      ],
+      "integrator": "/root",
+      "interface": "Canvas2D feet anchor / sprite frame",
+      "verificationMethod": "초기 아트 및 성능 경계 검토",
+      "requestedModel": "gpt-6-astra",
+      "requestedReasoning": "xhigh"
+    },
+    {
+      "id": "A02",
+      "summary": "시각 프로토타입",
+      "owner": "/root",
+      "dependsOn": [
+        "M01",
+        "A01"
+      ],
+      "implementation": "done",
+      "verification": "passed",
+      "integration": "done",
+      "status": "integrated",
+      "result": "1280x720 타이틀/플레이 캡처, 기사·슬라임·버섯·성벽·그림자·이동·대시 확인. Canvas2D 확정.",
+      "files": [
+        "src/types.ts",
+        "src/main.ts",
+        "src/input.ts",
+        "src/audio.ts",
+        "src/storage.ts"
+      ],
+      "integrator": "/root",
+      "interface": "GameController / Renderer / GameUI",
+      "verificationMethod": "실제 프로토타입 화면·입력·오디오 상태",
+      "requestedModel": "gpt-6-astra (권장)",
+      "requestedReasoning": "xhigh (권장)"
+    },
+    {
+      "id": "G01",
+      "summary": "P0 전투·성장",
+      "owner": "/root/combat",
+      "dependsOn": [
+        "A02"
+      ],
+      "implementation": "done",
+      "verification": "passed",
+      "integration": "done",
+      "status": "integrated",
+      "result": "P0 구현 및 실제 브라우저 검증 완료; 이후 확장·사용자 추가 요구 통합 완료.",
+      "files": [
+        "src/game/engine.ts",
+        "src/game/content.ts"
+      ],
+      "integrator": "/root",
+      "interface": "createGame, step, dispatch, drainEvents",
+      "verificationMethod": "엔진 단위 및 P0 실제 플레이",
+      "requestedModel": "gpt-6-astra",
+      "requestedReasoning": "high"
+    },
+    {
+      "id": "G02",
+      "summary": "P0 UI·사운드·저장",
+      "owner": "/root/ui",
+      "dependsOn": [
+        "A02"
+      ],
+      "implementation": "done",
+      "verification": "passed",
+      "integration": "done",
+      "status": "integrated",
+      "result": "P0 구현 및 실제 브라우저 검증 완료; 이후 확장·사용자 추가 요구 통합 완료.",
+      "files": [
+        "src/ui/ui.ts",
+        "src/ui/styles.css"
+      ],
+      "integrator": "/root",
+      "interface": "createUI state read + commands",
+      "verificationMethod": "한국어 화면·저장·성장·결과 브라우저",
+      "requestedModel": "gpt-5.6-sol",
+      "requestedReasoning": "high"
+    },
+    {
+      "id": "G03",
+      "summary": "P0 렌더링·연출",
+      "owner": "/root/architecture",
+      "dependsOn": [
+        "A02"
+      ],
+      "implementation": "done",
+      "verification": "passed",
+      "integration": "done",
+      "status": "integrated",
+      "result": "P0 구현 및 실제 브라우저 검증 완료; 이후 확장·사용자 추가 요구 통합 완료.",
+      "files": [
+        "src/render"
+      ],
+      "integrator": "/root",
+      "interface": "createRenderer render/events/resize/dispose",
+      "verificationMethod": "캐릭터·가림·그림자·실제 화면 검토",
+      "requestedModel": "gpt-6-astra",
+      "requestedReasoning": "xhigh"
+    },
+    {
+      "id": "V01",
+      "summary": "P0 실제 플레이",
+      "owner": "/root",
+      "dependsOn": [
+        "G01",
+        "G02",
+        "G03"
+      ],
+      "implementation": "done",
+      "verification": "passed",
+      "integration": "done",
+      "status": "integrated",
+      "files": [
+        "evidence/p0-normal-retry-result.json",
+        "evidence/p0-demo-result.json"
+      ],
+      "integrator": "/root",
+      "interface": "키보드 실제 시간 / 읽기 전용 관찰",
+      "verificationMethod": "P0 600초·180초·재시작3회",
+      "requestedModel": "gpt-6-astra (권장)",
+      "requestedReasoning": "xhigh (권장)"
+    },
+    {
+      "id": "G04",
+      "summary": "P1 확장",
+      "owner": "/root",
+      "dependsOn": [],
+      "implementation": "done",
+      "verification": "passed",
+      "integration": "done",
+      "status": "integrated",
+      "files": [
+        "src/game/p1-*.ts",
+        "src/render/characters",
+        "src/ui/codex.ts"
+      ],
+      "integrator": "/root",
+      "interface": "P1Context / 3개 캐릭터 renderer contract",
+      "verificationMethod": "개별 P1 작업과 RC1 실제 통합 플레이",
+      "result": "개별 산출물 작업으로 분리; P0 전체 완료 착수 게이트 폐지",
+      "requestedModel": "gpt-6-astra (권장)",
+      "requestedReasoning": "xhigh (권장)"
+    },
+    {
+      "id": "G05",
+      "summary": "P2 입력·시드",
+      "owner": "/root",
+      "dependsOn": [],
+      "implementation": "done",
+      "verification": "passed",
+      "integration": "done",
+      "status": "integrated",
+      "files": [
+        "src/controls",
+        "src/ui/challenge.ts"
+      ],
+      "integrator": "/root",
+      "interface": "InputFrame / neutral gate / uint32 seed",
+      "verificationMethod": "독립 P2 단위 및 확장 브라우저 검증",
+      "result": "개별 산출물 작업으로 분리; P0 전체 완료 착수 게이트 폐지",
+      "requestedModel": "gpt-6-astra (권장)",
+      "requestedReasoning": "xhigh (권장)"
+    },
+    {
+      "id": "V02",
+      "summary": "최종 QA·성능",
+      "owner": "/root",
+      "dependsOn": [
+        "G05"
+      ],
+      "implementation": "done",
+      "verification": "기능·시각·실제플레이·재현빌드검증 수용. 최대부하60FPS목표미달·물리기기미검증을별도보존.",
+      "integration": "done",
+      "status": "integrated",
+      "files": [
+        "VALIDATION.md",
+        "evidence/final-performance.json"
+      ],
+      "integrator": "/root",
+      "interface": "고정 빌드·증거·독립 리뷰",
+      "verificationMethod": "정상 완주·시연·재시작·해상도·고부하",
+      "requestedModel": "gpt-6-astra (권장)",
+      "requestedReasoning": "xhigh (권장)"
+    },
+    {
+      "id": "D01",
+      "summary": "제출물 보존",
+      "owner": "/root",
+      "dependsOn": [
+        "V02"
+      ],
+      "implementation": "done",
+      "verification": "소스·프로덕션빌드·가이드·검증원본·관측이력 보존. 최종저장본 생성 후HTTP·화면검사.",
+      "integration": "done",
+      "status": "integrated",
+      "files": [
+        "VALIDATION.md",
+        "RUNBOOK.md",
+        "STATUS.md",
+        "AGENT_LOG.md",
+        ".agent-monitor/data/final-state.json"
+      ],
+      "integrator": "/root",
+      "interface": "실측 근거 + 최종 저장본",
+      "verificationMethod": "제출 링크·재실행·관측 한계·해시 확인",
+      "result": "README/DEMO 독립 담당 배정; 최종 증거 묶음 메인 통합",
+      "requestedModel": "gpt-6-astra (권장)",
+      "requestedReasoning": "xhigh (권장)"
+    },
+    {
+      "id": "PP01",
+      "summary": "병렬계획",
+      "owner": "/root/parallel_planner",
+      "dependsOn": [
+        "A02"
+      ],
+      "status": "integrated",
+      "implementation": "done",
+      "verification": "passed",
+      "integration": "done",
+      "files": [
+        ".agent-monitor/reports/parallel-plan.md"
+      ],
+      "interface": "src/types.ts + GameController; source read-only",
+      "requestedModel": "gpt-6-astra",
+      "requestedReasoning": "xhigh",
+      "verificationMethod": "전용 Node 검사/독립 보고; 브라우저는메인",
+      "integrator": "/root",
+      "result": "ready계획 및P1경계 보고완료"
+    },
+    {
+      "id": "T-WPN",
+      "summary": "무기동작",
+      "owner": "/root/weapon_tests",
+      "dependsOn": [
+        "A02"
+      ],
+      "status": "integrated",
+      "implementation": "done",
+      "verification": "passed",
+      "integration": "done",
+      "files": [
+        "tests/weapons.test.ts"
+      ],
+      "interface": "src/types.ts + GameController; source read-only",
+      "requestedModel": "gpt-5.6-sol",
+      "requestedReasoning": "high",
+      "verificationMethod": "전용 Node 검사/독립 보고; 브라우저는메인",
+      "integrator": "/root",
+      "result": "4/4 pass"
+    },
+    {
+      "id": "T-SYN",
+      "summary": "조합효과",
+      "owner": "/root/synergy_tests",
+      "dependsOn": [
+        "A02"
+      ],
+      "status": "integrated",
+      "implementation": "done",
+      "verification": "passed",
+      "integration": "done",
+      "files": [
+        "tests/synergies.test.ts"
+      ],
+      "interface": "src/types.ts + GameController; source read-only",
+      "requestedModel": "gpt-5.6-sol",
+      "requestedReasoning": "high",
+      "verificationMethod": "전용 Node 검사/독립 보고; 브라우저는메인",
+      "integrator": "/root",
+      "result": "4/4 pass"
+    },
+    {
+      "id": "T-BOSS",
+      "summary": "보스패턴",
+      "owner": "/root/boss_tests",
+      "dependsOn": [
+        "A02"
+      ],
+      "status": "integrated",
+      "implementation": "done",
+      "verification": "passed",
+      "integration": "done",
+      "files": [
+        "tests/boss-patterns.test.ts"
+      ],
+      "interface": "src/types.ts + GameController; source read-only",
+      "requestedModel": "gpt-6-astra",
+      "requestedReasoning": "high",
+      "verificationMethod": "전용 Node 검사/독립 보고; 브라우저는메인",
+      "integrator": "/root",
+      "result": "13/13 pass; 현재보스결함없음"
+    },
+    {
+      "id": "T-XP",
+      "summary": "성장경계",
+      "owner": "/root/growth_tests",
+      "dependsOn": [
+        "A02"
+      ],
+      "status": "integrated",
+      "implementation": "done",
+      "verification": "passed",
+      "integration": "done",
+      "files": [
+        "tests/progression.test.ts"
+      ],
+      "interface": "src/types.ts + GameController; source read-only",
+      "requestedModel": "gpt-5.6-sol",
+      "requestedReasoning": "high",
+      "verificationMethod": "전용 Node 검사/독립 보고; 브라우저는메인",
+      "integrator": "/root",
+      "result": "6/6 pass"
+    },
+    {
+      "id": "T-AI",
+      "summary": "적행동·스폰",
+      "owner": "/root/enemy_tests",
+      "dependsOn": [
+        "A02"
+      ],
+      "status": "integrated",
+      "implementation": "done",
+      "verification": "passed",
+      "integration": "done",
+      "files": [
+        "tests/enemies.test.ts"
+      ],
+      "interface": "src/types.ts + GameController; source read-only",
+      "requestedModel": "gpt-5.6-sol",
+      "requestedReasoning": "high",
+      "verificationMethod": "전용 Node 검사/독립 보고; 브라우저는메인",
+      "integrator": "/root",
+      "result": "7/7 pass; 내부비유한fixture한계보고"
+    },
+    {
+      "id": "T-MOVE",
+      "summary": "물리이동",
+      "owner": "/root/movement_tests",
+      "dependsOn": [
+        "A02"
+      ],
+      "status": "integrated",
+      "implementation": "done",
+      "verification": "passed",
+      "integration": "done",
+      "files": [
+        "tests/movement.test.ts"
+      ],
+      "interface": "src/types.ts + GameController; source read-only",
+      "requestedModel": "gpt-5.6-sol",
+      "requestedReasoning": "high",
+      "verificationMethod": "전용 Node 검사/독립 보고; 브라우저는메인",
+      "integrator": "/root",
+      "result": "모서리prop반발후경계이탈,combat이복구중"
+    },
+    {
+      "id": "T-CAP",
+      "summary": "개체상한·이벤트",
+      "owner": "/root/resource_tests",
+      "dependsOn": [
+        "A02"
+      ],
+      "status": "integrated",
+      "implementation": "done",
+      "verification": "passed",
+      "integration": "done",
+      "files": [
+        "tests/resource-limits.test.ts"
+      ],
+      "interface": "src/types.ts + GameController; source read-only",
+      "requestedModel": "gpt-5.6-sol",
+      "requestedReasoning": "high",
+      "verificationMethod": "전용 Node 검사/독립 보고; 브라우저는메인",
+      "integrator": "/root",
+      "result": "6/6 pass"
+    },
+    {
+      "id": "P2-PAD-D",
+      "summary": "게임패드계약",
+      "owner": "/root/gamepad",
+      "dependsOn": [
+        "A02"
+      ],
+      "status": "integrated",
+      "implementation": "done",
+      "verification": "passed",
+      "integration": "done",
+      "files": [
+        ".agent-monitor/reports/gamepad-design.md"
+      ],
+      "interface": "src/types.ts + GameController; source read-only",
+      "requestedModel": "gpt-5.6-sol",
+      "requestedReasoning": "high",
+      "verificationMethod": "전용 Node 검사/독립 보고; 브라우저는메인",
+      "integrator": "/root",
+      "result": null
+    },
+    {
+      "id": "P2-TOUCH-D",
+      "summary": "터치계약",
+      "owner": "/root/touch",
+      "dependsOn": [
+        "A02"
+      ],
+      "status": "integrated",
+      "implementation": "done",
+      "verification": "passed",
+      "integration": "done",
+      "files": [
+        ".agent-monitor/reports/touch-design.md"
+      ],
+      "interface": "src/types.ts + GameController; source read-only",
+      "requestedModel": "gpt-5.6-sol",
+      "requestedReasoning": "high",
+      "verificationMethod": "전용 Node 검사/독립 보고; 브라우저는메인",
+      "integrator": "/root",
+      "result": null
+    },
+    {
+      "id": "M02",
+      "summary": "병렬 정책·정확한계수 대시보드확장",
+      "owner": "/root/monitor",
+      "dependsOn": [
+        "M01"
+      ],
+      "status": "integrated",
+      "implementation": "done",
+      "verification": "passed",
+      "integration": "done",
+      "files": [
+        ".agent-monitor/** except coordinator.json"
+      ],
+      "interface": "새 limits 및task.status",
+      "requestedModel": "gpt-5.6-sol",
+      "requestedReasoning": "high",
+      "verificationMethod": "Python단위+Chrome화면",
+      "integrator": "/root"
+    },
+    {
+      "id": "M03",
+      "summary": "대시보드 최신 병렬정책",
+      "owner": "/root/monitor",
+      "dependsOn": [],
+      "status": "integrated",
+      "implementation": "done",
+      "verification": "passed",
+      "integration": "done",
+      "files": [
+        ".agent-monitor/** (coordinator.json 제외)"
+      ],
+      "interface": "새 limits/task schema",
+      "requestedModel": "gpt-5.6-sol",
+      "requestedReasoning": "high",
+      "verificationMethod": "모듈 전용 검사 후 메인 고정 빌드 통합 검증",
+      "integrator": "/root"
+    },
+    {
+      "id": "P1-ART",
+      "summary": "공용 아트 경계·확장 효과",
+      "owner": "/root/architecture",
+      "dependsOn": [],
+      "status": "integrated",
+      "implementation": "done",
+      "verification": "passed",
+      "integration": "done",
+      "files": [
+        "src/render/** (분리 후 characters 개별 파일 제외)"
+      ],
+      "interface": "기존 renderer + character pose contract",
+      "requestedModel": "gpt-6-astra",
+      "requestedReasoning": "xhigh",
+      "verificationMethod": "모듈 전용 검사 후 메인 고정 빌드 통합 검증",
+      "integrator": "/root"
+    },
+    {
+      "id": "P1-CORE",
+      "summary": "확장 엔진 연결·승리 조건",
+      "owner": "/root/combat",
+      "dependsOn": [],
+      "status": "integrated",
+      "implementation": "done",
+      "verification": "passed",
+      "integration": "done",
+      "files": [
+        "src/game/engine.ts",
+        "src/game/content.ts"
+      ],
+      "interface": "src/game/p1-context.ts",
+      "requestedModel": "gpt-6-astra",
+      "requestedReasoning": "high",
+      "verificationMethod": "모듈 전용 검사 후 메인 고정 빌드 통합 검증",
+      "integrator": "/root"
+    },
+    {
+      "id": "P1-WEAPONS",
+      "summary": "번개·서리·화염 구현",
+      "owner": "/root/p1_weapons",
+      "dependsOn": [],
+      "status": "integrated",
+      "implementation": "done",
+      "verification": "passed",
+      "integration": "done",
+      "files": [
+        "src/game/p1-weapons.ts",
+        "tests/p1-weapons.test.ts"
+      ],
+      "interface": "updateP1Weapon/onP1ProjectileHit + P1Context",
+      "requestedModel": "gpt-6-astra",
+      "requestedReasoning": "high",
+      "verificationMethod": "모듈 전용 검사 후 메인 고정 빌드 통합 검증",
+      "integrator": "/root"
+    },
+    {
+      "id": "P1-ENEMIES",
+      "summary": "해골·박쥐·딱정벌레 행동",
+      "owner": "/root/enemy_tests",
+      "dependsOn": [],
+      "status": "integrated",
+      "implementation": "done",
+      "verification": "passed",
+      "integration": "done",
+      "files": [
+        "src/game/p1-enemies.ts",
+        "tests/p1-enemies.test.ts"
+      ],
+      "interface": "updateP1Enemy + P1Context",
+      "requestedModel": "gpt-5.6-sol",
+      "requestedReasoning": "high",
+      "verificationMethod": "모듈 전용 검사 후 메인 고정 빌드 통합 검증",
+      "integrator": "/root"
+    },
+    {
+      "id": "P1-GOLEM",
+      "summary": "골렘 예고 패턴",
+      "owner": "/root/boss_tests",
+      "dependsOn": [],
+      "status": "integrated",
+      "implementation": "done",
+      "verification": "passed",
+      "integration": "done",
+      "files": [
+        "src/game/p1-boss.ts",
+        "tests/p1-boss.test.ts"
+      ],
+      "interface": "updateP1Boss + P1Context",
+      "requestedModel": "gpt-6-astra",
+      "requestedReasoning": "high",
+      "verificationMethod": "모듈 전용 검사 후 메인 고정 빌드 통합 검증",
+      "integrator": "/root"
+    },
+    {
+      "id": "P1-UI",
+      "summary": "캐릭터 선택·확장 HUD·화면 통합",
+      "owner": "/root/ui",
+      "dependsOn": [],
+      "status": "integrated",
+      "implementation": "done",
+      "verification": "passed",
+      "integration": "done",
+      "files": [
+        "src/ui/ui.ts",
+        "src/ui/styles.css"
+      ],
+      "interface": "UIHandlers + createCodex/createChallengeControls",
+      "requestedModel": "gpt-5.6-sol",
+      "requestedReasoning": "high",
+      "verificationMethod": "모듈 전용 검사 후 메인 고정 빌드 통합 검증",
+      "integrator": "/root"
+    },
+    {
+      "id": "P1-CODEX",
+      "summary": "무기·캐릭터·조합 도감",
+      "owner": "/root/synergy_tests",
+      "dependsOn": [],
+      "status": "integrated",
+      "implementation": "done",
+      "verification": "passed",
+      "integration": "done",
+      "files": [
+        "src/ui/codex.ts",
+        "src/ui/codex.css"
+      ],
+      "interface": "createCodex(onClose):HTMLElement",
+      "requestedModel": "gpt-5.6-sol",
+      "requestedReasoning": "high",
+      "verificationMethod": "모듈 전용 검사 후 메인 고정 빌드 통합 검증",
+      "integrator": "/root"
+    },
+    {
+      "id": "P2-CHALLENGE",
+      "summary": "시드 도전 설정",
+      "owner": "/root/parallel_planner",
+      "dependsOn": [],
+      "status": "integrated",
+      "implementation": "done",
+      "verification": "passed",
+      "integration": "done",
+      "files": [
+        "src/ui/challenge.ts",
+        "tests/challenge.test.ts"
+      ],
+      "interface": "createChallengeControls(options,onChange):HTMLElement",
+      "requestedModel": "gpt-6-astra",
+      "requestedReasoning": "xhigh",
+      "verificationMethod": "모듈 전용 검사 후 메인 고정 빌드 통합 검증",
+      "integrator": "/root"
+    },
+    {
+      "id": "P2-PAD",
+      "summary": "게임패드 입력",
+      "owner": "/root/gamepad",
+      "dependsOn": [],
+      "status": "integrated",
+      "implementation": "done",
+      "verification": "passed",
+      "integration": "done",
+      "files": [
+        "src/controls/gamepad.ts",
+        "tests/gamepad.test.ts"
+      ],
+      "interface": "createGamepadReader + mergeInputFrames",
+      "requestedModel": "gpt-5.6-sol",
+      "requestedReasoning": "high",
+      "verificationMethod": "모듈 전용 검사 후 메인 고정 빌드 통합 검증",
+      "integrator": "/root"
+    },
+    {
+      "id": "P2-TOUCH",
+      "summary": "터치 입력",
+      "owner": "/root/touch",
+      "dependsOn": [],
+      "status": "integrated",
+      "implementation": "done",
+      "verification": "passed",
+      "integration": "done",
+      "files": [
+        "src/controls/touch.ts",
+        "src/controls/touch.css",
+        "tests/touch.test.ts"
+      ],
+      "interface": "createTouchControls(root): read/clear/setEnabled/dispose",
+      "requestedModel": "gpt-5.6-sol",
+      "requestedReasoning": "high",
+      "verificationMethod": "모듈 전용 검사 후 메인 고정 빌드 통합 검증",
+      "integrator": "/root"
+    },
+    {
+      "id": "P1-CONTENT-TEST",
+      "summary": "확장 콘텐츠·2보스 종료 경계 검증",
+      "owner": "/root/growth_tests",
+      "dependsOn": [],
+      "status": "integrated",
+      "implementation": "done",
+      "verification": "passed",
+      "integration": "done",
+      "files": [
+        "tests/p1-content.test.ts"
+      ],
+      "interface": "GameController/contentTier=1",
+      "requestedModel": "gpt-5.6-sol",
+      "requestedReasoning": "high",
+      "verificationMethod": "모듈 전용 검사 후 메인 고정 빌드 통합 검증",
+      "integrator": "/root"
+    },
+    {
+      "id": "V-PERF-HARNESS",
+      "summary": "확장 부하·병목 측정 준비",
+      "owner": "/root/qa",
+      "dependsOn": [],
+      "status": "integrated",
+      "implementation": "done",
+      "verification": "passed",
+      "integration": "done",
+      "files": [
+        "tests/performance.ts",
+        "tests/performance.html"
+      ],
+      "interface": "__BENCH_RESULT__ Promise",
+      "requestedModel": "gpt-5.6-sol",
+      "requestedReasoning": "high",
+      "verificationMethod": "모듈 전용 검사 후 메인 고정 빌드 통합 검증",
+      "integrator": "/root"
+    },
+    {
+      "id": "ART-KNIGHT",
+      "summary": "기사 검·방패 고유 공격 포즈",
+      "owner": "/root/knight_design",
+      "status": "integrated",
+      "dependsOn": [],
+      "files": [
+        "src/render/characters/knight.ts"
+      ],
+      "interface": "paintKnight(ctx,frame,pose)",
+      "requestedModel": "gpt-5.6-sol",
+      "requestedReasoning": "high",
+      "verificationMethod": "개별 검증 및 통합 후 메인 브라우저 확인",
+      "integrator": "/root",
+      "implementation": "done",
+      "verification": "passed",
+      "integration": "done"
+    },
+    {
+      "id": "ART-MAGE",
+      "summary": "견습 마법사 시전 포즈",
+      "owner": "/root/mage_design",
+      "status": "integrated",
+      "dependsOn": [],
+      "files": [
+        "src/render/characters/mage.ts"
+      ],
+      "interface": "paintMage(ctx,frame,pose)",
+      "requestedModel": "gpt-5.6-sol",
+      "requestedReasoning": "high",
+      "verificationMethod": "개별 검증 및 통합 후 메인 브라우저 확인",
+      "integrator": "/root",
+      "implementation": "done",
+      "verification": "passed",
+      "integration": "done"
+    },
+    {
+      "id": "ART-RANGER",
+      "summary": "숲 궁수 활 당김·발사 포즈",
+      "owner": "/root/ranger_design",
+      "status": "integrated",
+      "dependsOn": [],
+      "files": [
+        "src/render/characters/ranger.ts"
+      ],
+      "interface": "paintRanger(ctx,frame,pose)",
+      "requestedModel": "gpt-5.6-sol",
+      "requestedReasoning": "high",
+      "verificationMethod": "개별 검증 및 통합 후 메인 브라우저 확인",
+      "integrator": "/root",
+      "implementation": "done",
+      "verification": "passed",
+      "integration": "done"
+    },
+    {
+      "id": "ART-PREVIEW",
+      "summary": "세 캐릭터 실제 크기·포즈 비교",
+      "owner": "/root/weapon_tests",
+      "status": "integrated",
+      "dependsOn": [],
+      "files": [
+        "tests/character-preview.html",
+        "tests/character-preview.ts"
+      ],
+      "interface": "actorSprite(kind,frame,pose)",
+      "requestedModel": "gpt-5.6-sol",
+      "requestedReasoning": "high",
+      "verificationMethod": "개별 검증 및 통합 후 메인 브라우저 확인",
+      "integrator": "/root",
+      "implementation": "done",
+      "verification": "passed",
+      "integration": "done"
+    },
+    {
+      "id": "D01-README",
+      "summary": "실행 문서와 3분 시연 가이드",
+      "owner": "/root/resource_tests",
+      "status": "integrated",
+      "dependsOn": [],
+      "files": [
+        "README.md",
+        "DEMO.md"
+      ],
+      "interface": "현재 구현과 검증 자료",
+      "requestedModel": "gpt-5.6-sol",
+      "requestedReasoning": "high",
+      "verificationMethod": "개별 검증 및 통합 후 메인 브라우저 확인",
+      "integrator": "/root",
+      "implementation": "done",
+      "verification": "passed",
+      "integration": "done"
+    },
+    {
+      "id": "V-INTEGRATION",
+      "summary": "입력·전투 연결 독립 검토",
+      "owner": "/root/quality",
+      "status": "integrated",
+      "dependsOn": [],
+      "files": [
+        ".agent-monitor/reports/integration-review.md"
+      ],
+      "interface": "소스 읽기 전용",
+      "requestedModel": "gpt-6-astra",
+      "requestedReasoning": "xhigh",
+      "verificationMethod": "개별 검증 및 통합 후 메인 브라우저 확인",
+      "integrator": "/root",
+      "implementation": "done",
+      "verification": "passed",
+      "integration": "done"
+    },
+    {
+      "id": "M04",
+      "summary": "오래된 실행·현재 확인 실행 분리",
+      "owner": "/root/monitor",
+      "status": "integrated",
+      "dependsOn": [],
+      "files": [
+        ".agent-monitor/collector.py",
+        ".agent-monitor/assets/app.js"
+      ],
+      "interface": "freshness <180s counts",
+      "requestedModel": "gpt-5.6-sol",
+      "requestedReasoning": "high",
+      "verificationMethod": "관련 단위검사 및 메인 통합 브라우저 검증",
+      "integrator": "/root",
+      "implementation": "done",
+      "verification": "passed",
+      "integration": "done"
+    },
+    {
+      "id": "DELIVERY-AUDIT",
+      "summary": "제출 사양·재현 절차 감사",
+      "owner": "/root/movement_tests",
+      "status": "integrated",
+      "dependsOn": [],
+      "files": [
+        ".agent-monitor/reports/delivery-audit.md"
+      ],
+      "interface": "원문 사양과 실제 증거 대조",
+      "requestedModel": "gpt-5.6-sol",
+      "requestedReasoning": "high",
+      "verificationMethod": "관련 단위검사 및 메인 통합 브라우저 검증",
+      "integrator": "/root",
+      "implementation": "done",
+      "verification": "passed",
+      "integration": "done"
+    },
+    {
+      "id": "V-VISUAL",
+      "summary": "캐릭터·UI 실제 캡처 검토",
+      "owner": "/root/quality",
+      "status": "integrated",
+      "dependsOn": [],
+      "files": [
+        ".agent-monitor/reports/visual-rc1-review.md"
+      ],
+      "interface": "3캐릭터 및720/1080/터치 화면",
+      "requestedModel": "gpt-6-astra",
+      "requestedReasoning": "xhigh",
+      "verificationMethod": "관련 단위검사 및 메인 통합 브라우저 검증",
+      "integrator": "/root",
+      "implementation": "done",
+      "verification": "passed",
+      "integration": "done"
+    },
+    {
+      "id": "V-BOSS-VIS",
+      "summary": "2보스 4패턴 실제 렌더 고정 장면",
+      "owner": "/root/boss_tests",
+      "status": "integrated",
+      "dependsOn": [],
+      "files": [
+        "tests/boss-preview.html",
+        "tests/boss-preview.ts"
+      ],
+      "interface": "__BOSS_PREVIEW__",
+      "requestedModel": "gpt-6-astra",
+      "requestedReasoning": "high",
+      "verificationMethod": "관련 단위검사 및 메인 통합 브라우저 검증",
+      "integrator": "/root",
+      "implementation": "done",
+      "verification": "passed",
+      "integration": "done"
+    },
+    {
+      "id": "SAVE-MODES",
+      "summary": "일반·시연 최고 기록 분리",
+      "owner": "/root/qa",
+      "status": "integrated",
+      "dependsOn": [],
+      "files": [
+        "src/storage.ts",
+        "tests/storage-modes.test.ts"
+      ],
+      "interface": "Profile.demoRecord + recordRunResult",
+      "requestedModel": "gpt-5.6-sol",
+      "requestedReasoning": "high",
+      "verificationMethod": "관련 단위검사 및 메인 통합 브라우저 검증",
+      "integrator": "/root",
+      "implementation": "done",
+      "verification": "passed",
+      "integration": "done"
+    },
+    {
+      "id": "UI-FIX-TOUCH",
+      "summary": "낮은 가로 화면 HUD 및 시연 기록 표시",
+      "owner": "/root/ui",
+      "status": "integrated",
+      "dependsOn": [],
+      "files": [
+        "src/ui/styles.css",
+        "src/ui/ui.ts"
+      ],
+      "interface": "Profile.demoRecord",
+      "requestedModel": "gpt-5.6-sol",
+      "requestedReasoning": "high",
+      "verificationMethod": "관련 단위검사 및 메인 통합 브라우저 검증",
+      "integrator": "/root",
+      "implementation": "done",
+      "verification": "passed",
+      "integration": "done"
+    },
+    {
+      "id": "DASH-CORE",
+      "summary": "캐릭터별 대시 충전·레벨 성장",
+      "owner": "/root/combat",
+      "status": "integrated",
+      "dependsOn": [],
+      "files": [
+        "src/game/dash.ts",
+        "src/game/engine.ts",
+        "src/game/content.ts"
+      ],
+      "interface": "Player dash charges + sequential recharge",
+      "requestedModel": "gpt-6-astra",
+      "requestedReasoning": "high",
+      "verificationMethod": "관련 단위·실제 Chrome UI·정상 플레이 검증",
+      "integrator": "/root",
+      "implementation": "done",
+      "verification": "passed",
+      "integration": "done"
+    },
+    {
+      "id": "DASH-HUD",
+      "summary": "충전칸·숫자·다음 충전 HUD",
+      "owner": "/root/ui",
+      "status": "integrated",
+      "dependsOn": [],
+      "files": [
+        "src/ui/ui.ts",
+        "src/ui/styles.css"
+      ],
+      "interface": "Player dash state",
+      "requestedModel": "gpt-5.6-sol",
+      "requestedReasoning": "high",
+      "verificationMethod": "관련 단위·실제 Chrome UI·정상 플레이 검증",
+      "integrator": "/root",
+      "implementation": "done",
+      "verification": "passed",
+      "integration": "done"
+    },
+    {
+      "id": "DASH-TOUCH",
+      "summary": "터치 대시 숫자·충전링",
+      "owner": "/root/touch",
+      "status": "integrated",
+      "dependsOn": [],
+      "files": [
+        "src/controls/touch.ts",
+        "src/controls/touch.css"
+      ],
+      "interface": "setDashState(Player subset)",
+      "requestedModel": "gpt-5.6-sol",
+      "requestedReasoning": "high",
+      "verificationMethod": "관련 단위·실제 Chrome UI·정상 플레이 검증",
+      "integrator": "/root",
+      "implementation": "done",
+      "verification": "passed",
+      "integration": "done"
+    },
+    {
+      "id": "DASH-TEST",
+      "summary": "대시 회복·성장·정지·재시작 검증",
+      "owner": "/root/movement_tests",
+      "status": "integrated",
+      "dependsOn": [],
+      "files": [
+        "tests/dash-charges.test.ts",
+        "tests/resource-limits.test.ts"
+      ],
+      "interface": "GameController + dash helpers",
+      "requestedModel": "gpt-5.6-sol",
+      "requestedReasoning": "high",
+      "verificationMethod": "관련 단위·실제 Chrome UI·정상 플레이 검증",
+      "integrator": "/root",
+      "implementation": "done",
+      "verification": "passed",
+      "integration": "done"
+    },
+    {
+      "id": "ENEMY-FLIGHT",
+      "summary": "적 투사체 비행·연속 충돌 판정",
+      "owner": "/root/p1_weapons",
+      "status": "integrated",
+      "dependsOn": [],
+      "files": [
+        "src/game/enemy-projectiles.ts",
+        "tests/enemy-flight.test.ts"
+      ],
+      "interface": "stepEnemyProjectile: direct/splash/null",
+      "requestedModel": "gpt-6-astra",
+      "requestedReasoning": "high",
+      "verificationMethod": "관련 단위·실제 Chrome UI·정상 플레이 검증",
+      "integrator": "/root",
+      "implementation": "done",
+      "verification": "passed",
+      "integration": "done"
+    },
+    {
+      "id": "ENEMY-RANGED-CORE",
+      "summary": "버섯·보스 실제 포자 발사 연결",
+      "owner": "/root/combat",
+      "status": "integrated",
+      "dependsOn": [],
+      "files": [
+        "src/game/engine.ts"
+      ],
+      "interface": "enemy-flight impact pipeline",
+      "requestedModel": "gpt-6-astra",
+      "requestedReasoning": "high",
+      "verificationMethod": "관련 단위·실제 Chrome UI·정상 플레이 검증",
+      "integrator": "/root",
+      "implementation": "done",
+      "verification": "passed",
+      "integration": "done"
+    },
+    {
+      "id": "ENEMY-SKELETON",
+      "summary": "해골 3연발 뼈 투사체",
+      "owner": "/root/enemy_tests",
+      "status": "integrated",
+      "dependsOn": [],
+      "files": [
+        "src/game/p1-enemies.ts",
+        "tests/p1-enemies.test.ts"
+      ],
+      "interface": "P1Context.addProjectile",
+      "requestedModel": "gpt-5.6-sol",
+      "requestedReasoning": "high",
+      "verificationMethod": "관련 단위·실제 Chrome UI·정상 플레이 검증",
+      "integrator": "/root",
+      "implementation": "done",
+      "verification": "passed",
+      "integration": "done"
+    },
+    {
+      "id": "ENEMY-PROJECTILE-VIS",
+      "summary": "적 포자·뼈 궤적·발사·착탄 표현",
+      "owner": "/root/architecture",
+      "status": "integrated",
+      "dependsOn": [],
+      "files": [
+        "src/render/renderer.ts",
+        "src/render/effects.ts"
+      ],
+      "interface": "Projectile.kind and enemy launch events",
+      "requestedModel": "gpt-6-astra",
+      "requestedReasoning": "xhigh",
+      "verificationMethod": "관련 단위·실제 Chrome UI·정상 플레이 검증",
+      "integrator": "/root",
+      "implementation": "done",
+      "verification": "passed",
+      "integration": "done"
+    },
+    {
+      "id": "ENEMY-RANGED-TEST",
+      "summary": "원거리 공격 실제 비행 통합 회귀",
+      "owner": "/root/boss_tests",
+      "status": "integrated",
+      "dependsOn": [],
+      "files": [
+        "tests/enemies.test.ts",
+        "tests/boss-patterns.test.ts",
+        "tests/boss-preview.ts",
+        "tests/ranged-enemies.test.ts"
+      ],
+      "interface": "engine and preview",
+      "requestedModel": "gpt-6-astra",
+      "requestedReasoning": "high",
+      "verificationMethod": "관련 단위·실제 Chrome UI·정상 플레이 검증",
+      "integrator": "/root",
+      "implementation": "done",
+      "verification": "passed",
+      "integration": "done"
+    },
+    {
+      "id": "V-PERF-FINAL",
+      "summary": "적 투사체 포함 상한부하 준비",
+      "owner": "/root/qa",
+      "status": "integrated",
+      "dependsOn": [],
+      "files": [
+        "tests/performance.ts"
+      ],
+      "interface": "__BENCH_RESULT__ Promise",
+      "requestedModel": "gpt-5.6-sol",
+      "requestedReasoning": "high",
+      "verificationMethod": "관련 단위·실제 Chrome UI·정상 플레이 검증",
+      "integrator": "/root",
+      "implementation": "done",
+      "verification": "passed",
+      "integration": "done",
+      "result": "하니스측정완료. 목표60fps 미달은 PERF-RENDER에서 개선 검토; 이 작업통과는 하니스정확성만 의미."
+    },
+    {
+      "id": "FINAL-PLAY",
+      "summary": "RC3 실제 10분·3분·재시작 검증",
+      "owner": "/root",
+      "status": "integrated",
+      "files": [
+        "evidence/rc3-normal-result.json",
+        "evidence/rc3-demo-result.json",
+        "evidence/final-browser-functional.json"
+      ],
+      "dependsOn": [],
+      "interface": "Read-only __LRG__ + real keyboard",
+      "requestedModel": "gpt-6-astra (권장)",
+      "requestedReasoning": "xhigh (권장)",
+      "verificationMethod": "600초 일반 및 180초 시연·3회 재시작",
+      "integrator": "/root",
+      "implementation": "done",
+      "verification": "passed",
+      "integration": "done",
+      "result": "RC3 정상600.017초 승리·2보스·2조합·비행3종, 최종1080 시연180초 승리·2조합, 실제3회 패배와3회 재시작 통과. 모든 해당경로 오류0."
+    },
+    {
+      "id": "FINAL-REVIEW",
+      "summary": "최종 소스·화면·근거 독립 리뷰",
+      "owner": "/root/quality",
+      "status": "integrated",
+      "files": [
+        ".agent-monitor/reports/final-review.md"
+      ],
+      "dependsOn": [],
+      "interface": "RC3 source + final UI correction + evidence",
+      "requestedModel": "gpt-6-astra",
+      "requestedReasoning": "xhigh",
+      "verificationMethod": "릴리스 차단 결함과 검증 누락 판단",
+      "integrator": "/root",
+      "implementation": "done",
+      "verification": "기능·시각 출시 수용.60FPS성능목표미달·물리장치미검증 별도 명시.",
+      "integration": "done"
+    },
+    {
+      "id": "DASH-REUSE-LABEL",
+      "summary": "짧은 재사용 대기와 충전 대기 문구 분리",
+      "owner": "/root/ui",
+      "status": "integrated",
+      "files": [
+        "src/ui/ui.ts"
+      ],
+      "dependsOn": [],
+      "interface": "dashReuseDelay for reuse, dashCooldown for readiness",
+      "requestedModel": "gpt-5.6-sol",
+      "requestedReasoning": "high",
+      "verificationMethod": "세 캐릭터 실제 Chrome HUD/aria 검증",
+      "integrator": "/root",
+      "implementation": "done",
+      "verification": "passed",
+      "integration": "done"
+    },
+    {
+      "id": "FINAL-DOCS",
+      "summary": "최종 실행 안내·시연 설명 반영",
+      "owner": "/root/resource_tests",
+      "status": "integrated",
+      "files": [
+        "README.md",
+        "DEMO.md"
+      ],
+      "dependsOn": [],
+      "interface": "확정 게임 규칙과 검증 링크",
+      "requestedModel": "gpt-5.6-sol",
+      "requestedReasoning": "high",
+      "verificationMethod": "최종 소스 및 브라우저 결과와 문서 비교",
+      "integrator": "/root",
+      "implementation": "done",
+      "verification": "passed",
+      "integration": "done"
+    },
+    {
+      "id": "M05",
+      "summary": "최종 대시보드 통합 판정·제한 오류·시각 정확성",
+      "owner": "/root/monitor",
+      "status": "integrated",
+      "files": [
+        ".agent-monitor/collector.py",
+        ".agent-monitor/assets/app.js",
+        ".agent-monitor/tests/test_monitor.py"
+      ],
+      "dependsOn": [
+        "M04"
+      ],
+      "interface": "coordinator task decisions / historical reports / final time",
+      "requestedModel": "gpt-5.6-sol",
+      "requestedReasoning": "high",
+      "verificationMethod": "병합 충돌 회귀 및 최종 브라우저",
+      "integrator": "/root",
+      "implementation": "done",
+      "verification": "passed",
+      "integration": "done",
+      "result": "12회귀 통과, 개별 보고가 coordinator 통합 판정 덮지 않음. 정책과 실제제한 분리, 최종시각동결."
+    },
+    {
+      "id": "DELIVERY-FINAL",
+      "summary": "최종 제출 문서의 이전 지적 해결 확인",
+      "owner": "/root/movement_tests",
+      "status": "integrated",
+      "files": [
+        ".agent-monitor/reports/delivery-audit-final.md"
+      ],
+      "dependsOn": [
+        "FINAL-DOCS",
+        "FINAL-PLAY"
+      ],
+      "interface": "최종 후보 소스·실측 증거·문서",
+      "requestedModel": "gpt-5.6-sol",
+      "requestedReasoning": "high",
+      "verificationMethod": "기존 감사6항목과 최종 설명 대조",
+      "integrator": "/root",
+      "implementation": "done",
+      "verification": "기존6지적 근거확인 및 삭제된zone-cache 문서오기수정. 최종저장본은메인이검사.",
+      "integration": "done"
+    },
+    {
+      "id": "PERF-RENDER",
+      "summary": "고부하 화면 그리기 비용 분석·최적화",
+      "owner": "/root/architecture",
+      "status": "integrated",
+      "files": [
+        "src/render/renderer.ts",
+        ".agent-monitor/reports/performance-analysis.md"
+      ],
+      "dependsOn": [
+        "V-PERF-FINAL"
+      ],
+      "interface": "동일 엔진·콘텐츠·부하, 시각 기능 보존",
+      "requestedModel": "gpt-6-astra",
+      "requestedReasoning": "xhigh",
+      "verificationMethod": "수정전후 같은60초 상한부하·화면비교·브라우저회귀",
+      "integrator": "/root",
+      "implementation": "done",
+      "verification": "측정 완료:28.909/18.167FPS,60목표미달. 24캔버스비교·실제입력·resize통과.",
+      "integration": "done",
+      "result": "후보A회귀로제거, 후보B시각유지·소폭개선하여채택; 게임규칙불변"
+    },
+    {
+      "id": "PERF-INSTRUMENT",
+      "summary": "반복 픽셀 읽기의 성능 계측 간섭 분리",
+      "owner": "/root/qa",
+      "status": "integrated",
+      "files": [
+        "tests/performance.ts",
+        ".agent-monitor/reports/performance-instrumentation.md"
+      ],
+      "dependsOn": [
+        "V-PERF-FINAL"
+      ],
+      "interface": "readback=0 기본 FPS / readback=1 별도진단",
+      "requestedModel": "gpt-5.6-sol",
+      "requestedReasoning": "high",
+      "verificationMethod": "동일부하·새Canvas·단독순차 A/B와5초시간구간",
+      "integrator": "/root",
+      "implementation": "in_progress",
+      "verification": "readback 기본 OFF 및 5초 구간 측정 적용. 실제60초 기준720/1080 모두 오류0; CDP software canvas 확인.",
+      "integration": "pending",
+      "lastActivityAt": "2026-09-19T13:10:12.986825+00:00"
+    }
+  ],
+  "events": [
+    {
+      "id": "spawn-monitor-request",
+      "agentId": "/root/monitor",
+      "taskId": "M01",
+      "type": "spawn-request",
+      "message": "Sol high 생성 요청",
+      "occurredAt": null,
+      "observedAt": "2026-09-19T11:44:25.818143+00:00",
+      "source": "coordinator tool call",
+      "kind": "direct"
+    },
+    {
+      "id": "spawn-monitor-success",
+      "agentId": "/root/monitor",
+      "taskId": "M01",
+      "type": "spawn-success",
+      "message": "생성 성공",
+      "occurredAt": null,
+      "observedAt": "2026-09-19T11:44:25.818143+00:00",
+      "source": "collaboration.spawn_agent",
+      "kind": "direct"
+    },
+    {
+      "id": "spawn-architecture-request",
+      "agentId": "/root/architecture",
+      "taskId": "A01",
+      "type": "spawn-request",
+      "message": "Astra xhigh 생성 요청",
+      "occurredAt": null,
+      "observedAt": "2026-09-19T11:44:25.818143+00:00",
+      "source": "coordinator tool call",
+      "kind": "direct"
+    },
+    {
+      "id": "spawn-architecture-success",
+      "agentId": "/root/architecture",
+      "taskId": "A01",
+      "type": "spawn-success",
+      "message": "생성 성공",
+      "occurredAt": null,
+      "observedAt": "2026-09-19T11:44:25.818143+00:00",
+      "source": "collaboration.spawn_agent",
+      "kind": "direct"
+    },
+    {
+      "id": "deadline-shortened-3h",
+      "type": "scope-change",
+      "message": "사용자 지시: 최대 실행 3시간으로 변경, 14:42:37 UTC 마감",
+      "observedAt": "2026-09-19T11:44:50.966690+00:00",
+      "source": "user",
+      "kind": "direct"
+    },
+    {
+      "id": "spawn-qa-success",
+      "agentId": "/root/qa",
+      "taskId": "Q00",
+      "type": "spawn-success",
+      "message": "Sol high 검증 설계 생성 성공",
+      "observedAt": "2026-09-19T11:45:17.450317+00:00",
+      "source": "coordinator",
+      "kind": "direct"
+    },
+    {
+      "id": "phase-2026-09-19T11:46:53.154576+00:00",
+      "type": "phase",
+      "message": "대시보드 검증 완료 · 게임 시각 프로토타입 준비",
+      "observedAt": "2026-09-19T11:46:53.154576+00:00",
+      "source": "coordinator",
+      "kind": "direct"
+    },
+    {
+      "id": "spawn-combat-request",
+      "type": "spawn-request",
+      "agentId": "/root/combat",
+      "taskId": "G01",
+      "message": "gpt-6-astra high 생성 요청",
+      "observedAt": "2026-09-19T11:50:47.580162+00:00",
+      "source": "coordinator",
+      "kind": "direct"
+    },
+    {
+      "id": "spawn-combat-success",
+      "type": "spawn-success",
+      "agentId": "/root/combat",
+      "taskId": "G01",
+      "message": "생성 성공 및 담당파일 배정",
+      "observedAt": "2026-09-19T11:50:47.580162+00:00",
+      "source": "collaboration.spawn_agent",
+      "kind": "direct"
+    },
+    {
+      "id": "spawn-ui-request",
+      "type": "spawn-request",
+      "agentId": "/root/ui",
+      "taskId": "G02",
+      "message": "gpt-5.6-sol high 생성 요청",
+      "observedAt": "2026-09-19T11:50:47.580162+00:00",
+      "source": "coordinator",
+      "kind": "direct"
+    },
+    {
+      "id": "spawn-ui-success",
+      "type": "spawn-success",
+      "agentId": "/root/ui",
+      "taskId": "G02",
+      "message": "생성 성공 및 담당파일 배정",
+      "observedAt": "2026-09-19T11:50:47.580162+00:00",
+      "source": "collaboration.spawn_agent",
+      "kind": "direct"
+    },
+    {
+      "id": "reassign-architecture-G03",
+      "type": "assignment",
+      "agentId": "/root/architecture",
+      "taskId": "G03",
+      "message": "설계 완료, researcher에서 렌더링 implementer로 재배정",
+      "observedAt": "2026-09-19T11:50:47.580162+00:00",
+      "source": "coordinator",
+      "kind": "direct"
+    },
+    {
+      "id": "reassign-monitor-reviewer",
+      "type": "assignment",
+      "agentId": "/root/monitor",
+      "taskId": "M01",
+      "message": "MVP 통합 후 대시보드 안정성 reviewer로 재배정",
+      "observedAt": "2026-09-19T11:50:47.580162+00:00",
+      "source": "coordinator",
+      "kind": "direct"
+    },
+    {
+      "id": "monitor-browser-validation-pass",
+      "type": "verification",
+      "taskId": "M01",
+      "message": "Chrome: 한글font·필터3/6·스크롤240유지·stale·안전로그·연결중단상태보존·실제갱신·재열람 통과. 오류0.",
+      "observedAt": "2026-09-19T11:52:12.122010+00:00",
+      "source": "coordinator",
+      "kind": "direct"
+    },
+    {
+      "id": "p0-unit-22-pass",
+      "type": "verification",
+      "taskId": "V01",
+      "message": "독립 QA 단위검사22/22 메인 재현, 브라우저 정상플레이는 아직 미검증",
+      "observedAt": "2026-09-19T11:55:11.219963+00:00",
+      "source": "coordinator",
+      "kind": "direct"
+    },
+    {
+      "id": "phase-2026-09-19T11:58:10.843396+00:00",
+      "type": "phase",
+      "message": "P0 실제 브라우저 검증",
+      "observedAt": "2026-09-19T11:58:10.843396+00:00",
+      "source": "coordinator",
+      "kind": "direct"
+    },
+    {
+      "id": "prototype-visual-pass",
+      "type": "verification",
+      "taskId": "A02",
+      "message": "첫 타이틀·플레이 실제스크린샷 검토 통과, 이동·대시·6적·HUD·한글 정상, JS오류0",
+      "observedAt": "2026-09-19T11:58:10.863837+00:00",
+      "source": "coordinator",
+      "kind": "direct"
+    },
+    {
+      "id": "spawn-quality-request",
+      "type": "spawn-request",
+      "agentId": "/root/quality",
+      "taskId": "V02",
+      "message": "Astra xhigh 독립품질리뷰 생성요청",
+      "observedAt": "2026-09-19T11:59:46.260281+00:00",
+      "source": "coordinator",
+      "kind": "direct"
+    },
+    {
+      "id": "spawn-quality-success",
+      "type": "spawn-success",
+      "agentId": "/root/quality",
+      "taskId": "V02",
+      "message": "생성성공, 누적/관리하위6(최대)",
+      "observedAt": "2026-09-19T11:59:46.260281+00:00",
+      "source": "collaboration.spawn_agent",
+      "kind": "direct"
+    },
+    {
+      "id": "p0-frozen-build",
+      "type": "verification-start",
+      "taskId": "V01",
+      "message": "P0 e131d35+SHA256 build manifest 고정스냅샷4174에서 정상10분·기능Chrome검증 시작",
+      "observedAt": "2026-09-19T11:59:46.260281+00:00",
+      "source": "coordinator",
+      "kind": "direct"
+    },
+    {
+      "id": "visual-seam-fix",
+      "type": "assignment",
+      "agentId": "/root/architecture",
+      "taskId": "G03",
+      "message": "Astra독립리뷰 잔디청크이음새·주인공분리 개선; 고정검증빌드는불변",
+      "observedAt": "2026-09-19T11:59:46.260281+00:00",
+      "source": "coordinator",
+      "kind": "direct"
+    },
+    {
+      "id": "p0-live-loss",
+      "type": "verification-failure",
+      "taskId": "V01",
+      "message": "첫실제키보드 정상모드145초패배. 봇이 성벽/예고무시해 픽업회수막힘; 결과와캡처보존. 게임밸런스변경안함.",
+      "observedAt": "2026-09-19T12:03:02.739949+00:00",
+      "source": "coordinator",
+      "kind": "direct"
+    },
+    {
+      "id": "p0-live-retry",
+      "type": "verification-retry",
+      "taskId": "V01",
+      "message": "장애물·공격예고를관찰하는8방향키보드경로로수정. 3seed100ms모의600초승리, 같은게임빌드 실제normal/demo재검증시작.",
+      "observedAt": "2026-09-19T12:03:02.767204+00:00",
+      "source": "coordinator",
+      "kind": "direct"
+    },
+    {
+      "id": "spawn-parallel_planner-request",
+      "type": "spawn-request",
+      "agentId": "/root/parallel_planner",
+      "taskId": "PP01",
+      "message": "gpt-6-astra xhigh 생성 요청",
+      "occurredAt": null,
+      "observedAt": "2026-09-19T12:10:02.812784+00:00",
+      "source": "collaboration.spawn_agent",
+      "kind": "direct"
+    },
+    {
+      "id": "spawn-parallel_planner-success",
+      "type": "spawn-success",
+      "agentId": "/root/parallel_planner",
+      "taskId": "PP01",
+      "message": "gpt-6-astra xhigh 실제 생성 성공, 독립 파일 배정",
+      "occurredAt": null,
+      "observedAt": "2026-09-19T12:10:02.812784+00:00",
+      "source": "collaboration.spawn_agent",
+      "kind": "direct"
+    },
+    {
+      "id": "spawn-weapon_tests-request",
+      "type": "spawn-request",
+      "agentId": "/root/weapon_tests",
+      "taskId": "T-WPN",
+      "message": "gpt-5.6-sol high 생성 요청",
+      "occurredAt": null,
+      "observedAt": "2026-09-19T12:10:02.812784+00:00",
+      "source": "collaboration.spawn_agent",
+      "kind": "direct"
+    },
+    {
+      "id": "spawn-weapon_tests-success",
+      "type": "spawn-success",
+      "agentId": "/root/weapon_tests",
+      "taskId": "T-WPN",
+      "message": "gpt-5.6-sol high 실제 생성 성공, 독립 파일 배정",
+      "occurredAt": null,
+      "observedAt": "2026-09-19T12:10:02.812784+00:00",
+      "source": "collaboration.spawn_agent",
+      "kind": "direct"
+    },
+    {
+      "id": "spawn-synergy_tests-request",
+      "type": "spawn-request",
+      "agentId": "/root/synergy_tests",
+      "taskId": "T-SYN",
+      "message": "gpt-5.6-sol high 생성 요청",
+      "occurredAt": null,
+      "observedAt": "2026-09-19T12:10:02.812784+00:00",
+      "source": "collaboration.spawn_agent",
+      "kind": "direct"
+    },
+    {
+      "id": "spawn-synergy_tests-success",
+      "type": "spawn-success",
+      "agentId": "/root/synergy_tests",
+      "taskId": "T-SYN",
+      "message": "gpt-5.6-sol high 실제 생성 성공, 독립 파일 배정",
+      "occurredAt": null,
+      "observedAt": "2026-09-19T12:10:02.812784+00:00",
+      "source": "collaboration.spawn_agent",
+      "kind": "direct"
+    },
+    {
+      "id": "spawn-boss_tests-request",
+      "type": "spawn-request",
+      "agentId": "/root/boss_tests",
+      "taskId": "T-BOSS",
+      "message": "gpt-6-astra high 생성 요청",
+      "occurredAt": null,
+      "observedAt": "2026-09-19T12:10:02.812784+00:00",
+      "source": "collaboration.spawn_agent",
+      "kind": "direct"
+    },
+    {
+      "id": "spawn-boss_tests-success",
+      "type": "spawn-success",
+      "agentId": "/root/boss_tests",
+      "taskId": "T-BOSS",
+      "message": "gpt-6-astra high 실제 생성 성공, 독립 파일 배정",
+      "occurredAt": null,
+      "observedAt": "2026-09-19T12:10:02.812784+00:00",
+      "source": "collaboration.spawn_agent",
+      "kind": "direct"
+    },
+    {
+      "id": "spawn-growth_tests-request",
+      "type": "spawn-request",
+      "agentId": "/root/growth_tests",
+      "taskId": "T-XP",
+      "message": "gpt-5.6-sol high 생성 요청",
+      "occurredAt": null,
+      "observedAt": "2026-09-19T12:10:02.812784+00:00",
+      "source": "collaboration.spawn_agent",
+      "kind": "direct"
+    },
+    {
+      "id": "spawn-growth_tests-success",
+      "type": "spawn-success",
+      "agentId": "/root/growth_tests",
+      "taskId": "T-XP",
+      "message": "gpt-5.6-sol high 실제 생성 성공, 독립 파일 배정",
+      "occurredAt": null,
+      "observedAt": "2026-09-19T12:10:02.812784+00:00",
+      "source": "collaboration.spawn_agent",
+      "kind": "direct"
+    },
+    {
+      "id": "spawn-enemy_tests-request",
+      "type": "spawn-request",
+      "agentId": "/root/enemy_tests",
+      "taskId": "T-AI",
+      "message": "gpt-5.6-sol high 생성 요청",
+      "occurredAt": null,
+      "observedAt": "2026-09-19T12:10:02.812784+00:00",
+      "source": "collaboration.spawn_agent",
+      "kind": "direct"
+    },
+    {
+      "id": "spawn-enemy_tests-success",
+      "type": "spawn-success",
+      "agentId": "/root/enemy_tests",
+      "taskId": "T-AI",
+      "message": "gpt-5.6-sol high 실제 생성 성공, 독립 파일 배정",
+      "occurredAt": null,
+      "observedAt": "2026-09-19T12:10:02.812784+00:00",
+      "source": "collaboration.spawn_agent",
+      "kind": "direct"
+    },
+    {
+      "id": "spawn-movement_tests-request",
+      "type": "spawn-request",
+      "agentId": "/root/movement_tests",
+      "taskId": "T-MOVE",
+      "message": "gpt-5.6-sol high 생성 요청",
+      "occurredAt": null,
+      "observedAt": "2026-09-19T12:10:02.812784+00:00",
+      "source": "collaboration.spawn_agent",
+      "kind": "direct"
+    },
+    {
+      "id": "spawn-movement_tests-success",
+      "type": "spawn-success",
+      "agentId": "/root/movement_tests",
+      "taskId": "T-MOVE",
+      "message": "gpt-5.6-sol high 실제 생성 성공, 독립 파일 배정",
+      "occurredAt": null,
+      "observedAt": "2026-09-19T12:10:02.812784+00:00",
+      "source": "collaboration.spawn_agent",
+      "kind": "direct"
+    },
+    {
+      "id": "spawn-resource_tests-request",
+      "type": "spawn-request",
+      "agentId": "/root/resource_tests",
+      "taskId": "T-CAP",
+      "message": "gpt-5.6-sol high 생성 요청",
+      "occurredAt": null,
+      "observedAt": "2026-09-19T12:10:02.812784+00:00",
+      "source": "collaboration.spawn_agent",
+      "kind": "direct"
+    },
+    {
+      "id": "spawn-resource_tests-success",
+      "type": "spawn-success",
+      "agentId": "/root/resource_tests",
+      "taskId": "T-CAP",
+      "message": "gpt-5.6-sol high 실제 생성 성공, 독립 파일 배정",
+      "occurredAt": null,
+      "observedAt": "2026-09-19T12:10:02.812784+00:00",
+      "source": "collaboration.spawn_agent",
+      "kind": "direct"
+    },
+    {
+      "id": "spawn-gamepad-request",
+      "type": "spawn-request",
+      "agentId": "/root/gamepad",
+      "taskId": "P2-PAD-D",
+      "message": "gpt-5.6-sol high 생성 요청",
+      "occurredAt": null,
+      "observedAt": "2026-09-19T12:10:02.812784+00:00",
+      "source": "collaboration.spawn_agent",
+      "kind": "direct"
+    },
+    {
+      "id": "spawn-gamepad-success",
+      "type": "spawn-success",
+      "agentId": "/root/gamepad",
+      "taskId": "P2-PAD-D",
+      "message": "gpt-5.6-sol high 실제 생성 성공, 독립 파일 배정",
+      "occurredAt": null,
+      "observedAt": "2026-09-19T12:10:02.812784+00:00",
+      "source": "collaboration.spawn_agent",
+      "kind": "direct"
+    },
+    {
+      "id": "spawn-touch-request",
+      "type": "spawn-request",
+      "agentId": "/root/touch",
+      "taskId": "P2-TOUCH-D",
+      "message": "gpt-5.6-sol high 생성 요청",
+      "occurredAt": null,
+      "observedAt": "2026-09-19T12:10:02.812784+00:00",
+      "source": "collaboration.spawn_agent",
+      "kind": "direct"
+    },
+    {
+      "id": "spawn-touch-success",
+      "type": "spawn-success",
+      "agentId": "/root/touch",
+      "taskId": "P2-TOUCH-D",
+      "message": "gpt-5.6-sol high 실제 생성 성공, 독립 파일 배정",
+      "occurredAt": null,
+      "observedAt": "2026-09-19T12:10:02.812784+00:00",
+      "source": "collaboration.spawn_agent",
+      "kind": "direct"
+    },
+    {
+      "id": "parallel-policy-expanded",
+      "type": "policy-change",
+      "message": "사용자지시 기존6/역할제한폐지. 설정1000하위/도구고지1001메인포함/실제생성16분리. ready검증10개추가,작업범위12→23개 변경.",
+      "observedAt": "2026-09-19T12:10:02.812784+00:00",
+      "source": "user + collaboration",
+      "kind": "direct"
+    },
+    {
+      "id": "p0-demo-browser-win",
+      "type": "verification",
+      "taskId": "V01",
+      "message": "실제Chrome3분demo180.000초승리,두시너지활성,오류0;정상600초재검증진행중",
+      "observedAt": "2026-09-19T12:12:25.608586+00:00",
+      "source": "browser result JSON",
+      "kind": "direct"
+    },
+    {
+      "id": "browser-functional-pass",
+      "type": "verification",
+      "taskId": "V01",
+      "message": "Chrome 720/1080시작UI,이동·대시·pause·설정유지·실제3회재시작·손상저장시작·오류0 통과",
+      "observedAt": "2026-09-19T12:12:25.608586+00:00",
+      "source": "evidence/browser-functional.json",
+      "kind": "direct"
+    },
+    {
+      "id": "assign-M03-2026-09-19T12:20:20.101654+00:00",
+      "type": "assignment",
+      "agentId": "/root/monitor",
+      "taskId": "M03",
+      "message": "대시보드 최신 병렬정책 독립 파일 배정",
+      "observedAt": "2026-09-19T12:20:20.101654+00:00",
+      "source": "collaboration tools",
+      "kind": "direct"
+    },
+    {
+      "id": "assign-P1-ART-2026-09-19T12:20:20.101654+00:00",
+      "type": "assignment",
+      "agentId": "/root/architecture",
+      "taskId": "P1-ART",
+      "message": "공용 아트 경계·확장 효과 독립 파일 배정",
+      "observedAt": "2026-09-19T12:20:20.101654+00:00",
+      "source": "collaboration tools",
+      "kind": "direct"
+    },
+    {
+      "id": "assign-P1-CORE-2026-09-19T12:20:20.101654+00:00",
+      "type": "assignment",
+      "agentId": "/root/combat",
+      "taskId": "P1-CORE",
+      "message": "확장 엔진 연결·승리 조건 독립 파일 배정",
+      "observedAt": "2026-09-19T12:20:20.101654+00:00",
+      "source": "collaboration tools",
+      "kind": "direct"
+    },
+    {
+      "id": "assign-P1-WEAPONS-2026-09-19T12:20:20.101654+00:00",
+      "type": "assignment",
+      "agentId": "/root/p1_weapons",
+      "taskId": "P1-WEAPONS",
+      "message": "번개·서리·화염 구현 독립 파일 배정",
+      "observedAt": "2026-09-19T12:20:20.101654+00:00",
+      "source": "collaboration tools",
+      "kind": "direct"
+    },
+    {
+      "id": "assign-P1-ENEMIES-2026-09-19T12:20:20.101654+00:00",
+      "type": "assignment",
+      "agentId": "/root/enemy_tests",
+      "taskId": "P1-ENEMIES",
+      "message": "해골·박쥐·딱정벌레 행동 독립 파일 배정",
+      "observedAt": "2026-09-19T12:20:20.101654+00:00",
+      "source": "collaboration tools",
+      "kind": "direct"
+    },
+    {
+      "id": "assign-P1-GOLEM-2026-09-19T12:20:20.101654+00:00",
+      "type": "assignment",
+      "agentId": "/root/boss_tests",
+      "taskId": "P1-GOLEM",
+      "message": "골렘 예고 패턴 독립 파일 배정",
+      "observedAt": "2026-09-19T12:20:20.101654+00:00",
+      "source": "collaboration tools",
+      "kind": "direct"
+    },
+    {
+      "id": "assign-P1-UI-2026-09-19T12:20:20.101654+00:00",
+      "type": "assignment",
+      "agentId": "/root/ui",
+      "taskId": "P1-UI",
+      "message": "캐릭터 선택·확장 HUD·화면 통합 독립 파일 배정",
+      "observedAt": "2026-09-19T12:20:20.101654+00:00",
+      "source": "collaboration tools",
+      "kind": "direct"
+    },
+    {
+      "id": "assign-P1-CODEX-2026-09-19T12:20:20.101654+00:00",
+      "type": "assignment",
+      "agentId": "/root/synergy_tests",
+      "taskId": "P1-CODEX",
+      "message": "무기·캐릭터·조합 도감 독립 파일 배정",
+      "observedAt": "2026-09-19T12:20:20.101654+00:00",
+      "source": "collaboration tools",
+      "kind": "direct"
+    },
+    {
+      "id": "assign-P2-CHALLENGE-2026-09-19T12:20:20.101654+00:00",
+      "type": "assignment",
+      "agentId": "/root/parallel_planner",
+      "taskId": "P2-CHALLENGE",
+      "message": "시드 도전 설정 독립 파일 배정",
+      "observedAt": "2026-09-19T12:20:20.101654+00:00",
+      "source": "collaboration tools",
+      "kind": "direct"
+    },
+    {
+      "id": "assign-P2-PAD-2026-09-19T12:20:20.101654+00:00",
+      "type": "assignment",
+      "agentId": "/root/gamepad",
+      "taskId": "P2-PAD",
+      "message": "게임패드 입력 독립 파일 배정",
+      "observedAt": "2026-09-19T12:20:20.101654+00:00",
+      "source": "collaboration tools",
+      "kind": "direct"
+    },
+    {
+      "id": "assign-P2-TOUCH-2026-09-19T12:20:20.101654+00:00",
+      "type": "assignment",
+      "agentId": "/root/touch",
+      "taskId": "P2-TOUCH",
+      "message": "터치 입력 독립 파일 배정",
+      "observedAt": "2026-09-19T12:20:20.101654+00:00",
+      "source": "collaboration tools",
+      "kind": "direct"
+    },
+    {
+      "id": "assign-P1-CONTENT-TEST-2026-09-19T12:20:20.101654+00:00",
+      "type": "assignment",
+      "agentId": "/root/growth_tests",
+      "taskId": "P1-CONTENT-TEST",
+      "message": "확장 콘텐츠·2보스 종료 경계 검증 독립 파일 배정",
+      "observedAt": "2026-09-19T12:20:20.101654+00:00",
+      "source": "collaboration tools",
+      "kind": "direct"
+    },
+    {
+      "id": "assign-V-PERF-HARNESS-2026-09-19T12:20:20.101654+00:00",
+      "type": "assignment",
+      "agentId": "/root/qa",
+      "taskId": "V-PERF-HARNESS",
+      "message": "확장 부하·병목 측정 준비 독립 파일 배정",
+      "observedAt": "2026-09-19T12:20:20.101654+00:00",
+      "source": "collaboration tools",
+      "kind": "direct"
+    },
+    {
+      "id": "spawn-p1-weapons-success",
+      "type": "spawn-success",
+      "agentId": "/root/p1_weapons",
+      "taskId": "P1-WEAPONS",
+      "message": "Astra high 실제 생성 성공",
+      "observedAt": "2026-09-19T12:20:20.101654+00:00",
+      "source": "collaboration.spawn_agent",
+      "kind": "direct"
+    },
+    {
+      "id": "policy-1000-immediate",
+      "type": "policy-change",
+      "message": "사용자 상한1000. 목표16 및 단계적 확대·역할상한·P0 전체 완료 착수 게이트 폐지. 실제 선행 인터페이스만 적용. 마감 유지.",
+      "observedAt": "2026-09-19T12:20:20.101654+00:00",
+      "source": "user",
+      "kind": "direct"
+    },
+    {
+      "id": "p0-normal-600-win",
+      "type": "verification",
+      "message": "고정 P0 Chrome 600.016초 승리(실시간602.7초), 오류0, 두 조합 활성. 단위검사75/75.",
+      "observedAt": "2026-09-19T12:20:20.101654+00:00",
+      "source": "evidence/p0-normal-retry-result.json + npm test",
+      "kind": "direct"
+    },
+    {
+      "id": "ART-KNIGHT-2026-09-19T12:23:02.584227+00:00",
+      "type": "spawn-success",
+      "agentId": "/root/knight_design",
+      "taskId": "ART-KNIGHT",
+      "message": "기사 검·방패 고유 공격 포즈 실제 배정",
+      "observedAt": "2026-09-19T12:23:02.584227+00:00",
+      "source": "collaboration tool",
+      "kind": "direct"
+    },
+    {
+      "id": "ART-MAGE-2026-09-19T12:23:02.584227+00:00",
+      "type": "spawn-success",
+      "agentId": "/root/mage_design",
+      "taskId": "ART-MAGE",
+      "message": "견습 마법사 시전 포즈 실제 배정",
+      "observedAt": "2026-09-19T12:23:02.584227+00:00",
+      "source": "collaboration tool",
+      "kind": "direct"
+    },
+    {
+      "id": "ART-RANGER-2026-09-19T12:23:02.584227+00:00",
+      "type": "spawn-success",
+      "agentId": "/root/ranger_design",
+      "taskId": "ART-RANGER",
+      "message": "숲 궁수 활 당김·발사 포즈 실제 배정",
+      "observedAt": "2026-09-19T12:23:02.584227+00:00",
+      "source": "collaboration tool",
+      "kind": "direct"
+    },
+    {
+      "id": "ART-PREVIEW-2026-09-19T12:23:02.584227+00:00",
+      "type": "assignment",
+      "agentId": "/root/weapon_tests",
+      "taskId": "ART-PREVIEW",
+      "message": "세 캐릭터 실제 크기·포즈 비교 실제 배정",
+      "observedAt": "2026-09-19T12:23:02.584227+00:00",
+      "source": "collaboration tool",
+      "kind": "direct"
+    },
+    {
+      "id": "D01-README-2026-09-19T12:23:02.584227+00:00",
+      "type": "assignment",
+      "agentId": "/root/resource_tests",
+      "taskId": "D01-README",
+      "message": "실행 문서와 3분 시연 가이드 실제 배정",
+      "observedAt": "2026-09-19T12:23:02.584227+00:00",
+      "source": "collaboration tool",
+      "kind": "direct"
+    },
+    {
+      "id": "V-INTEGRATION-2026-09-19T12:23:02.584227+00:00",
+      "type": "assignment",
+      "agentId": "/root/quality",
+      "taskId": "V-INTEGRATION",
+      "message": "입력·전투 연결 독립 검토 실제 배정",
+      "observedAt": "2026-09-19T12:23:02.584227+00:00",
+      "source": "collaboration tool",
+      "kind": "direct"
+    },
+    {
+      "id": "M04-2026-09-19T12:30:37.872976+00:00",
+      "type": "integration",
+      "agentId": "/root/monitor",
+      "taskId": "M04",
+      "message": "오래된 실행·현재 확인 실행 분리 · integrated",
+      "observedAt": "2026-09-19T12:30:37.872976+00:00",
+      "source": "coordinator + tool results",
+      "kind": "direct"
+    },
+    {
+      "id": "DELIVERY-AUDIT-2026-09-19T12:30:37.872976+00:00",
+      "type": "integration",
+      "agentId": "/root/movement_tests",
+      "taskId": "DELIVERY-AUDIT",
+      "message": "제출 사양·재현 절차 감사 · integrated",
+      "observedAt": "2026-09-19T12:30:37.872976+00:00",
+      "source": "coordinator + tool results",
+      "kind": "direct"
+    },
+    {
+      "id": "V-VISUAL-2026-09-19T12:30:37.872976+00:00",
+      "type": "integration",
+      "agentId": "/root/quality",
+      "taskId": "V-VISUAL",
+      "message": "캐릭터·UI 실제 캡처 검토 · integrated",
+      "observedAt": "2026-09-19T12:30:37.872976+00:00",
+      "source": "coordinator + tool results",
+      "kind": "direct"
+    },
+    {
+      "id": "V-BOSS-VIS-2026-09-19T12:30:37.872976+00:00",
+      "type": "integration",
+      "agentId": "/root/boss_tests",
+      "taskId": "V-BOSS-VIS",
+      "message": "2보스 4패턴 실제 렌더 고정 장면 · review",
+      "observedAt": "2026-09-19T12:30:37.872976+00:00",
+      "source": "coordinator + tool results",
+      "kind": "direct"
+    },
+    {
+      "id": "SAVE-MODES-2026-09-19T12:30:37.872976+00:00",
+      "type": "assignment",
+      "agentId": "/root/qa",
+      "taskId": "SAVE-MODES",
+      "message": "일반·시연 최고 기록 분리 · running",
+      "observedAt": "2026-09-19T12:30:37.872976+00:00",
+      "source": "coordinator + tool results",
+      "kind": "direct"
+    },
+    {
+      "id": "UI-FIX-TOUCH-2026-09-19T12:30:37.872976+00:00",
+      "type": "assignment",
+      "agentId": "/root/ui",
+      "taskId": "UI-FIX-TOUCH",
+      "message": "낮은 가로 화면 HUD 및 시연 기록 표시 · running",
+      "observedAt": "2026-09-19T12:30:37.872976+00:00",
+      "source": "coordinator + tool results",
+      "kind": "direct"
+    },
+    {
+      "id": "rc1-demo-win",
+      "type": "verification",
+      "message": "통합RC1 Chrome demo180초/실시간182.224초 승리,두보스,두조합,오류0. 원본결과보존.",
+      "observedAt": "2026-09-19T12:30:37.872976+00:00",
+      "source": "evidence/rc1-demo-result.json",
+      "kind": "direct"
+    },
+    {
+      "id": "rc1-controls-pass",
+      "type": "verification",
+      "message": "RC1 확장브라우저20검사통과:3캐릭터,도감720/1080,시드,패드스냅샷,멀티터치. 물리기기미확인.",
+      "observedAt": "2026-09-19T12:30:37.872976+00:00",
+      "source": "evidence/rc1-extended-browser.json",
+      "kind": "direct"
+    },
+    {
+      "id": "task-scope-decomposition-final",
+      "type": "scope-change",
+      "message": "P1/P2 독립 산출물·시각검증·발견결함 작업분해로 측정 작업 수 갱신. 게임범위 확대 없음.",
+      "observedAt": "2026-09-19T12:30:37.872976+00:00",
+      "source": "coordinator",
+      "kind": "direct"
+    },
+    {
+      "id": "assign-DASH-CORE-2026-09-19T12:40:17.149969+00:00",
+      "type": "assignment",
+      "agentId": "/root/combat",
+      "taskId": "DASH-CORE",
+      "message": "캐릭터별 대시 충전·레벨 성장",
+      "observedAt": "2026-09-19T12:40:17.149969+00:00",
+      "source": "collaboration tools",
+      "kind": "direct"
+    },
+    {
+      "id": "assign-DASH-HUD-2026-09-19T12:40:17.149969+00:00",
+      "type": "assignment",
+      "agentId": "/root/ui",
+      "taskId": "DASH-HUD",
+      "message": "충전칸·숫자·다음 충전 HUD",
+      "observedAt": "2026-09-19T12:40:17.149969+00:00",
+      "source": "collaboration tools",
+      "kind": "direct"
+    },
+    {
+      "id": "assign-DASH-TOUCH-2026-09-19T12:40:17.149969+00:00",
+      "type": "assignment",
+      "agentId": "/root/touch",
+      "taskId": "DASH-TOUCH",
+      "message": "터치 대시 숫자·충전링",
+      "observedAt": "2026-09-19T12:40:17.149969+00:00",
+      "source": "collaboration tools",
+      "kind": "direct"
+    },
+    {
+      "id": "assign-DASH-TEST-2026-09-19T12:40:17.149969+00:00",
+      "type": "assignment",
+      "agentId": "/root/movement_tests",
+      "taskId": "DASH-TEST",
+      "message": "대시 회복·성장·정지·재시작 검증",
+      "observedAt": "2026-09-19T12:40:17.149969+00:00",
+      "source": "collaboration tools",
+      "kind": "direct"
+    },
+    {
+      "id": "assign-ENEMY-FLIGHT-2026-09-19T12:40:17.149969+00:00",
+      "type": "assignment",
+      "agentId": "/root/p1_weapons",
+      "taskId": "ENEMY-FLIGHT",
+      "message": "적 투사체 비행·연속 충돌 판정",
+      "observedAt": "2026-09-19T12:40:17.149969+00:00",
+      "source": "collaboration tools",
+      "kind": "direct"
+    },
+    {
+      "id": "assign-ENEMY-RANGED-CORE-2026-09-19T12:40:17.149969+00:00",
+      "type": "assignment",
+      "agentId": "/root/combat",
+      "taskId": "ENEMY-RANGED-CORE",
+      "message": "버섯·보스 실제 포자 발사 연결",
+      "observedAt": "2026-09-19T12:40:17.149969+00:00",
+      "source": "collaboration tools",
+      "kind": "direct"
+    },
+    {
+      "id": "assign-ENEMY-SKELETON-2026-09-19T12:40:17.149969+00:00",
+      "type": "assignment",
+      "agentId": "/root/enemy_tests",
+      "taskId": "ENEMY-SKELETON",
+      "message": "해골 3연발 뼈 투사체",
+      "observedAt": "2026-09-19T12:40:17.149969+00:00",
+      "source": "collaboration tools",
+      "kind": "direct"
+    },
+    {
+      "id": "assign-ENEMY-PROJECTILE-VIS-2026-09-19T12:40:17.149969+00:00",
+      "type": "assignment",
+      "agentId": "/root/architecture",
+      "taskId": "ENEMY-PROJECTILE-VIS",
+      "message": "적 포자·뼈 궤적·발사·착탄 표현",
+      "observedAt": "2026-09-19T12:40:17.149969+00:00",
+      "source": "collaboration tools",
+      "kind": "direct"
+    },
+    {
+      "id": "assign-ENEMY-RANGED-TEST-2026-09-19T12:40:17.149969+00:00",
+      "type": "assignment",
+      "agentId": "/root/boss_tests",
+      "taskId": "ENEMY-RANGED-TEST",
+      "message": "원거리 공격 실제 비행 통합 회귀",
+      "observedAt": "2026-09-19T12:40:17.149969+00:00",
+      "source": "collaboration tools",
+      "kind": "direct"
+    },
+    {
+      "id": "assign-V-PERF-FINAL-2026-09-19T12:40:17.149969+00:00",
+      "type": "assignment",
+      "agentId": "/root/qa",
+      "taskId": "V-PERF-FINAL",
+      "message": "적 투사체 포함 상한부하 준비",
+      "observedAt": "2026-09-19T12:40:17.149969+00:00",
+      "source": "collaboration tools",
+      "kind": "direct"
+    },
+    {
+      "id": "scope-dash-projectiles",
+      "type": "scope-change",
+      "message": "사용자 추가: 대시 횟수·충전 UI·캐릭터 차이·레벨 성장 및 적 원거리 실제 투사체. 기존 마감14:42:37Z 유지.",
+      "observedAt": "2026-09-19T12:40:17.149969+00:00",
+      "source": "user",
+      "kind": "direct"
+    },
+    {
+      "id": "rc1-normal-complete",
+      "type": "verification",
+      "message": "RC1 정상600.016초·2보스·2시너지 승리/실시간602.907초/오류0. RC2시연180초승리, 모드별기록분리 브라우저통과. 새추가전투규칙은다시검증예정.",
+      "observedAt": "2026-09-19T12:40:17.149969+00:00",
+      "source": "evidence result JSON",
+      "kind": "direct"
+    },
+    {
+      "id": "rc3-integration-1249",
+      "type": "integration",
+      "message": "대시 충전·성장·적 실제 투사체 통합, 162검사 PASS. RC3 시연180초 승리·2보스·투사체3종 관측, 확장입력20검사 통과. HUD 짧은 재사용 문구 수정 후 재검증 중.",
+      "observedAt": "2026-09-19T12:47:06.559020+00:00",
+      "source": "main browser/build evidence",
+      "kind": "direct"
+    },
+    {
+      "id": "assign-M05-2026-09-19T12:52:59.953998+00:00",
+      "type": "assignment",
+      "agentId": "/root/monitor",
+      "taskId": "M05",
+      "message": "최종 관제 검토에서 오래된 작업보고가 최신 통합상태를 덮는 결함 발견. 담당자 재사용해 병합 우선순위·실제 제한오류 구분·최종시각 고정 수정 배정.",
+      "observedAt": "2026-09-19T12:52:59.953998+00:00",
+      "source": "main direct inspection + followup_task",
+      "kind": "direct"
+    },
+    {
+      "id": "final-ui-clean-2026-09-19T12:52:59.953998+00:00",
+      "type": "verification",
+      "message": "최종 UI 재사용 문구 수정판 대시 Chrome20검사 통과. 최종 소스 독립 빌드7파일hash일치. 1080p 첫 시연91초 패배는 보존하고 실제 비행회피 조작을 추가한 경로 검증 중.",
+      "observedAt": "2026-09-19T12:52:59.953998+00:00",
+      "source": "browser results + independent clean-build report",
+      "kind": "direct"
+    },
+    {
+      "id": "final-real-play-2026-09-19T12:54:43.505168+00:00",
+      "type": "verification",
+      "message": "RC3 정상600.017초/벽611.444초·2보스·2조합·오류0. 최종1080 시연180초/벽186.504초·2보스·2조합·오류0. 실제3패배/3재시작·설정·손상저장복구17체크통과. 나머지검증브라우저종료후 단독성능측정시작.",
+      "observedAt": "2026-09-19T12:54:43.505168+00:00",
+      "source": "main real Chrome evidence",
+      "kind": "direct"
+    },
+    {
+      "id": "assign-DELIVERY-FINAL-2026-09-19T12:55:12.898674+00:00",
+      "type": "assignment",
+      "agentId": "/root/movement_tests",
+      "taskId": "DELIVERY-FINAL",
+      "message": "최종 제출 문서 감사 재배정. 이전 지적6항목의 실제 해결 근거 대조, 성능·최종관제는 완료전 pending 유지.",
+      "observedAt": "2026-09-19T12:55:12.898674+00:00",
+      "source": "main followup_task",
+      "kind": "direct"
+    },
+    {
+      "id": "perf-baseline-2026-09-19T12:57:15.461198+00:00",
+      "type": "performance",
+      "message": "상한합성부하180적/300투사체/260픽업/최대84zone,720p26.968fps·1080p16.301fps 목표미달. JS시간보다그리기동기화비용큼. 기록보존후렌더담당병목개선배정. 정상플레이라스트3600프레임평균60fps와분리.",
+      "observedAt": "2026-09-19T12:57:15.461198+00:00",
+      "source": "evidence/final-performance.json",
+      "kind": "direct"
+    },
+    {
+      "id": "perf-instrument-2026-09-19T13:05:16.572913+00:00",
+      "type": "verification-analysis",
+      "message": "상한부하 재측정에서 반복getImageData가가속경로를바꿀수있는계측간섭검토. Chromium공식소스에서가능성확인;현재환경원인단정없이 readback없는주FPS와별도진단을분리하여같은부하A/B예정. 기존수치보존.",
+      "observedAt": "2026-09-19T13:05:16.572913+00:00",
+      "source": "main primary source + measured comparison",
+      "kind": "inference"
+    },
+    {
+      "id": "perf-a-rejected",
+      "at": "2026-09-19T13:12:19.216428+00:00",
+      "type": "verification",
+      "agentId": "/root",
+      "taskId": "PERF-RENDER",
+      "message": "주계측(readback OFF) 기준28.209/17.224fps → 영역캐시27.491/15.509fps. 실제 성능 이득 없어 후보 A 제외, 결과 보존. 같은 규격의 고정 비네트 후보 B 제작 중."
+    },
+    {
+      "id": "perf-b-built",
+      "at": "2026-09-19T13:14:19.130279+00:00",
+      "type": "integration",
+      "agentId": "/root",
+      "taskId": "PERF-RENDER",
+      "message": "c68e8fb: 비효율적인 영역 캐시 제거, 불투명 Canvas와 동일 해상도 고정 비네트 재사용. 타입·빌드 성공, 같은 하니스로 독립 A/B 측정 시작."
+    },
+    {
+      "id": "release-render-accepted",
+      "at": "2026-09-19T13:18:34.996673+00:00",
+      "type": "integration",
+      "agentId": "/root",
+      "taskId": "PERF-RENDER",
+      "message": "c68e8fb채택: 주계측28.909/18.167FPS(60목표미달),24캔버스DPR·resize비교최대차2/255·실제입력오류0. 독립clean빌드7/7해시일치. 게임규칙RC4와동일."
+    },
+    {
+      "id": "release-review-accepted",
+      "at": "2026-09-19T13:19:43.979150+00:00",
+      "type": "verification",
+      "agentId": "/root/quality",
+      "taskId": "FINAL-REVIEW",
+      "message": "독립 최종 리뷰: 기능·시각 출시 수용, 산출물/실제플레이/시각비교/재현빌드 근거 정합.60FPS최대부하목표는미달이며전체품질PASS로표현하지않음."
+    },
+    {
+      "id": "delivery-finalized",
+      "at": "2026-09-19T13:21:16.882796+00:00",
+      "type": "integration",
+      "agentId": "/root",
+      "taskId": "D01",
+      "message": "독립 리뷰와 제출 감사 반영. 누적생성20, 하위실행0·완료20을직접관측. 메인은저장시실행중이며스레드개폐미확인. 소스/빌드/실제검증/실패이력/최종대시보드보존. 최대부하60FPS미달명시."
+    }
+  ],
+  "blockers": [],
+  "links": [
+    {
+      "label": "제출 게임",
+      "url": "http://127.0.0.1:4174/"
+    },
+    {
+      "label": "보스 공격 비교 (고정 시각 장면)",
+      "url": "http://127.0.0.1:4175/tests/boss-preview.html"
+    }
+  ],
+  "observedAt": "2026-09-19T13:21:16.882796+00:00",
+  "lastRuntimeObservationAt": "2026-09-19T13:21:16.882796+00:00",
+  "mode": "final",
+  "finalizedAt": "2026-09-19T13:21:16.882796+00:00"
+}

@@ -10,6 +10,11 @@ function inside(zone,x,y,padding=22){
  if(zone.shape==='line'){const along=dx*Math.cos(zone.angle)+dy*Math.sin(zone.angle),cross=-dx*Math.sin(zone.angle)+dy*Math.cos(zone.angle);return along>-padding&&along<(zone.length||zone.radius)+padding&&Math.abs(cross)<(zone.width||24)/2+padding;}
  const a=Math.atan2(Math.sin(Math.atan2(dy,dx)-zone.angle),Math.cos(Math.atan2(dy,dx)-zone.angle));return d<zone.radius+padding&&Math.abs(a)<(zone.width||1.6)/2+.2;
 }
+function projectileSeparation(projectile,p,vx,vy,horizon){
+ const dx=projectile.x-p.x,dy=projectile.y-p.y,rvx=projectile.vx-vx,rvy=projectile.vy-vy;
+ const speed2=rvx*rvx+rvy*rvy,t=speed2>0?clamp(-(dx*rvx+dy*rvy)/speed2,0,horizon):0;
+ return length(dx+rvx*t,dy+rvy*t);
+}
 export function steer(state,previous={x:0,y:0}){
  const p=state.player;
  const accessible=t=>Math.abs(t.x)<800&&t.y>-370&&t.y<510&&!state.props.some(o=>o.solid&&distance(t,o)<o.radius+p.radius+3);
@@ -40,10 +45,17 @@ export function steer(state,previous={x:0,y:0}){
    if(separation<safe)score-=150+(safe-separation)*4;
    else if(separation<100)score-=(100-separation)*.65;
   }
+  for(const projectile of state.projectiles){
+   if(projectile.owner!=='enemy'||distance(projectile,p)>300)continue;
+   const separation=projectileSeparation(projectile,p,x*p.speed,y*p.speed,.5),safe=projectile.radius+p.radius+12;
+   if(separation<safe)score-=260+(safe-separation)*5;
+   else if(separation<60)score-=(60-separation)*1.2;
+  }
   for(const zone of state.zones){if(zone.owner!=='enemy')continue;if(inside(zone,end.x,end.y))score-=220;if(inside(zone,p.x,p.y)&&!inside(zone,end.x,end.y))score+=80;}
   if(score>best.score)best={x,y,score};
  }
  const near=state.enemies.some(e=>distance(p,e)<e.radius+p.radius+30);
  const danger=state.zones.some(z=>z.owner==='enemy'&&z.telegraph<.4&&inside(z,p.x,p.y));
- return{moveX:Math.abs(best.x)<.1?0:Math.sign(best.x),moveY:Math.abs(best.y)<.1?0:Math.sign(best.y),dashPressed:p.dashCooldown<=0&&(near||danger),pausePressed:false,target:{x:target.x,y:target.y}};
+ const incoming=state.projectiles.some(q=>q.owner==='enemy'&&projectileSeparation(q,p,best.x*p.speed,best.y*p.speed,.22)<q.radius+p.radius+6);
+ return{moveX:Math.abs(best.x)<.1?0:Math.sign(best.x),moveY:Math.abs(best.y)<.1?0:Math.sign(best.y),dashPressed:p.dashCooldown<=0&&(near||danger||incoming),pausePressed:false,target:{x:target.x,y:target.y}};
 }

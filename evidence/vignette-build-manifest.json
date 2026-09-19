@@ -1,0 +1,14 @@
+{
+  "sourceCommit": "c68e8fbca1c21baf75cb728e73c57243d68a5115",
+  "builtAt": "2026-09-19T13:13:50.172340+00:00",
+  "description": "Candidate B only: opaque canvas, removed redundant clear, static vignette reuse; original zone drawing restored.",
+  "files": {
+    "FONT-LICENSE.txt": "18aabf190848725e2576eefb5c29ba06aac1029d02132252a7f312eac2e50cf3",
+    "assets/index-VImh_xM7.js": "cb4aef1f912a484f8aca8a2d95ffaeb6e75af8c797825ac581367ef8b8af32e8",
+    "assets/index-ibxWOD-d.css": "2bcce5c1b855e48e0dc5884881160902173e8e1e09c567dac6fd9b237108f3a6",
+    "assets/noto-sans-kr-korean-400-normal-CmjJz_gz.woff2": "3aa0d1d63f3b5b2a33053a41a34512eac63abfb1dc2112aeda04733656a1a6d9",
+    "assets/noto-sans-kr-korean-700-normal-DvnDzSjd.woff2": "dab3d492daa687386292cff1499225db580f931f800ee0d124eb0636378c6020",
+    "favicon.svg": "5cb530e04b91a1240082f1b6a7a9cd26c26ff54dc77e8580c75760f5a14becb2",
+    "index.html": "0cdc6f394d5722e46a1bb5b6e7c24246500568ac0a819130b984ca02e0f03ab3"
+  }
+}

@@ -1,0 +1,205 @@
+{
+  "url": "http://127.0.0.1:4174",
+  "checks": [
+    {
+      "name": "title-1280x720",
+      "ok": true,
+      "details": [
+        {
+          "x": 87.453125,
+          "y": 152.53125,
+          "w": 407.46875,
+          "h": 82.3125,
+          "text": "리틀 룬가디언즈"
+        },
+        {
+          "x": 87.453125,
+          "y": 342.53125,
+          "w": 407.46875,
+          "h": 44,
+          "text": "수호 임무 시작 · 10분"
+        },
+        {
+          "x": 87.453125,
+          "y": 395.53125,
+          "w": 407.46875,
+          "h": 44,
+          "text": "빠른 시연 · 3분"
+        },
+        {
+          "x": 87.453125,
+          "y": 449.53125,
+          "w": 407.46875,
+          "h": 119.9375,
+          "text": "\n    조작법\n    WASD또는방향키이동\n    Space대시ESC일시정지\n    공격은 가장 가까운 적에게 자동으로 발동됩니다.\n  "
+        }
+      ]
+    },
+    {
+      "name": "title-1920x1080",
+      "ok": true,
+      "details": [
+        {
+          "x": 105,
+          "y": 297.9375,
+          "w": 398,
+          "h": 121.5,
+          "text": "리틀 룬가디언즈"
+        },
+        {
+          "x": 105,
+          "y": 547.125,
+          "w": 398,
+          "h": 44,
+          "text": "수호 임무 시작 · 10분"
+        },
+        {
+          "x": 105,
+          "y": 600.125,
+          "w": 398,
+          "h": 44,
+          "text": "빠른 시연 · 3분"
+        },
+        {
+          "x": 105,
+          "y": 658.125,
+          "w": 398,
+          "h": 125.9375,
+          "text": "\n    조작법\n    WASD또는방향키이동\n    Space대시ESC일시정지\n    공격은 가장 가까운 적에게 자동으로 발동됩니다.\n  "
+        }
+      ]
+    },
+    {
+      "name": "screen-right-key-moves-right",
+      "ok": true,
+      "details": {
+        "before": 0,
+        "after": 84.99999999999999
+      }
+    },
+    {
+      "name": "dash-activates",
+      "ok": true
+    },
+    {
+      "name": "pause-freezes-time",
+      "ok": true,
+      "details": {
+        "before": 1.0666666666666678,
+        "after": 1.0666666666666678
+      }
+    },
+    {
+      "name": "settings-saved",
+      "ok": true,
+      "details": {
+        "version": 1,
+        "bestScore": 0,
+        "bestTime": 0,
+        "wins": 0,
+        "settings": {
+          "muted": true,
+          "reducedMotion": true
+        }
+      }
+    },
+    {
+      "name": "settings-survive-reload",
+      "ok": true
+    },
+    {
+      "name": "defeat-1",
+      "ok": true,
+      "details": {
+        "elapsed": 24.58333333333322,
+        "hp": 0
+      }
+    },
+    {
+      "name": "restart-clean-1",
+      "ok": true,
+      "details": {
+        "run": 1,
+        "elapsed": 0.08333333333333333,
+        "enemies": 0,
+        "projectiles": 0,
+        "kills": 0,
+        "level": 1,
+        "listeners": 3,
+        "raf": 1
+      }
+    },
+    {
+      "name": "defeat-2",
+      "ok": true,
+      "details": {
+        "elapsed": 49.299999999998484,
+        "hp": 0
+      }
+    },
+    {
+      "name": "restart-clean-2",
+      "ok": true,
+      "details": {
+        "run": 2,
+        "elapsed": 0.09999999999999999,
+        "enemies": 0,
+        "projectiles": 0,
+        "kills": 0,
+        "level": 1,
+        "listeners": 3,
+        "raf": 1
+      }
+    },
+    {
+      "name": "defeat-3",
+      "ok": true,
+      "details": {
+        "elapsed": 45.89999999999868,
+        "hp": 0
+      }
+    },
+    {
+      "name": "restart-clean-3",
+      "ok": true,
+      "details": {
+        "run": 3,
+        "elapsed": 0.09999999999999999,
+        "enemies": 0,
+        "projectiles": 0,
+        "kills": 0,
+        "level": 1,
+        "listeners": 3,
+        "raf": 1
+      }
+    },
+    {
+      "name": "third-restart-continues",
+      "ok": true
+    },
+    {
+      "name": "best-record-saved",
+      "ok": true,
+      "details": {
+        "version": 1,
+        "bestScore": 586,
+        "bestTime": 49.299999999998484,
+        "wins": 0,
+        "settings": {
+          "muted": true,
+          "reducedMotion": true
+        }
+      }
+    },
+    {
+      "name": "corrupt-storage-starts",
+      "ok": true
+    },
+    {
+      "name": "no-runtime-errors",
+      "ok": true,
+      "details": []
+    }
+  ],
+  "errors": []
+}

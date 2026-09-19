@@ -1,0 +1,16 @@
+
+> little-rune-guardians@1.0.0 build
+> tsc --noEmit && vite build
+
+vite v8.3.0 building client environment for production...
+transforming...
+✓ 30 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                                              0.71 kB │ gzip:  0.51 kB
+dist/assets/noto-sans-kr-korean-400-normal-CmjJz_gz.woff2  541.86 kB
+dist/assets/noto-sans-kr-korean-700-normal-DvnDzSjd.woff2  559.19 kB
+dist/assets/index-D61Mkepm.css                              25.96 kB │ gzip:  6.93 kB
+dist/assets/index-CZ1vzKk1.js                              109.23 kB │ gzip: 39.88 kB
+
+✓ built in 66ms

@@ -1,0 +1,12 @@
+{
+  "observedAt": "2026-09-19T11:55:11.129Z",
+  "os": "Linux",
+  "release": "6.6.87.2-microsoft-standard-WSL2",
+  "arch": "x64",
+  "cpu": "Intel(R) Core(TM) i7-14700KF",
+  "logicalCPUs": 8,
+  "totalMemoryGiB": 23.5,
+  "node": "v24.14.0",
+  "browser": "Google Chrome 151.0.7922.169, Playwright headless, 1280×720",
+  "scope": "local Linux environment exposed to this task, not the entire user PC"
+}

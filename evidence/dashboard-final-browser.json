@@ -1,0 +1,47 @@
+{
+  "observedAt": "2026-09-19T13:21:39.181Z",
+  "checks": [
+    "cumulative creation, explicit integration authority, historical conflicts, real limit errors",
+    "three independent character designers and filter preserved across polling",
+    "final snapshot, all integrations, frozen summary, reload"
+  ],
+  "errors": [],
+  "passed": true,
+  "counts": {
+    "agents": 21,
+    "running": 1,
+    "runningTotal": 1,
+    "runningSubagents": 0,
+    "lastKnownRunningTotal": 1,
+    "lastKnownRunningSubagents": 0,
+    "staleRunningTotal": 0,
+    "staleRunningSubagents": 0,
+    "unobservedRunningTotal": 0,
+    "unobservedRunningSubagents": 0,
+    "waitingSubagents": 0,
+    "completedSubagents": 20,
+    "stale": 0,
+    "unknown": 0,
+    "createdSubagents": 20,
+    "createdSubagentsSource": "unique spawn-success events",
+    "openSubthreads": null,
+    "closedSubthreads": null,
+    "byRole": {
+      "coordinator": 1
+    },
+    "byRequestedModel": {
+      "gpt-6-astra (권장)": 1
+    },
+    "byRequestedReasoning": {
+      "xhigh (권장)": 1
+    },
+    "tasks": {
+      "ready": 0,
+      "running": 0,
+      "blocked": 0,
+      "review": 0,
+      "integrated": 66
+    },
+    "readyUnassignedTasks": 0
+  }
+}

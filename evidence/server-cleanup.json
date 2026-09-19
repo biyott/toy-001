@@ -1,0 +1,19 @@
+{
+  "observedAt": "2026-09-19T13:19:08.447015+00:00",
+  "actions": [
+    {
+      "pid": 69187,
+      "argv": [
+        "python3",
+        "-m",
+        "http.server",
+        "4177",
+        "--bind",
+        "127.0.0.1",
+        "--directory",
+        "artifacts/rc1-build"
+      ],
+      "action": "stopped unused historical build server"
+    }
+  ]
+}

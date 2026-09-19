@@ -1,0 +1,99 @@
+Little Rune Guardians release-candidate clean build
+===================================================
+
+Result: PASS (installation/build reproducibility only)
+Release candidate: c68e8fbca1c21baf75cb728e73c57243d68a5115
+Commit subject: Replace ineffective warning cache with fixed viewport overlay reuse
+Commit time: 2026-09-19 22:13:40 +0900
+RC4 comparison commit: 4c3419109ad8dce9649c9fe26d19197731e12105
+Preserved RC2 clean-install commit: e7bb3acdf8a1059c628e83c0eae392113cb361b7
+Clean directory: /tmp/lrg-clean-1kzRiA
+Build window: 2026-09-19T13:17:04Z
+
+Scope and source comparison
+---------------------------
+`git diff --name-status 4c34191 c68e8fb -- src package.json package-lock.json public index.html tsconfig.json vite.config.ts`
+reported exactly one changed source file:
+
+  M  src/render/renderer.ts
+
+package.json and package-lock.json had no differences between RC4 and the
+release candidate (`git diff --exit-code` returned 0). The preserved clean
+directory's dependency files also retained the same SHA-256 values:
+
+  package.json       88b638a5409e4cb873adb09ff846d6b066df402fd5cd78583e1a147fdfaae59e
+  package-lock.json  99943d54d758a41508aaf74a8676691bf8e97014819191de8dfa6955e10b747a
+
+No npm install or npm ci command was run for this release check. The node_modules
+created by the earlier successful RC2 `npm ci` was reused unchanged.
+
+Stale-source prevention
+-----------------------
+The existing temporary source tree was moved, without deletion, to:
+
+  /tmp/lrg-clean-1kzRiA/src-before-c68e8fb
+
+The release candidate's complete src tree was then extracted from Git into a
+new `/tmp/lrg-clean-1kzRiA/src`:
+
+  git archive c68e8fbca1c21baf75cb728e73c57243d68a5115 src | \
+    tar -x -C /tmp/lrg-clean-1kzRiA
+
+The new source tree contained 34 files. The build consumed only this new src
+path; the preserved backup was outside the source path and was not compiled.
+
+Production build
+----------------
+Command, run exactly once:
+
+  cd /tmp/lrg-clean-1kzRiA
+  npm run build
+
+Script:
+
+  tsc --noEmit && vite build
+
+Output summary:
+
+  vite v8.3.0
+  32 modules transformed
+  built in 77ms
+  exit code 0
+
+Release candidate isolated dist SHA-256
+--------------------------------------
+18aabf190848725e2576eefb5c29ba06aac1029d02132252a7f312eac2e50cf3  FONT-LICENSE.txt
+cb4aef1f912a484f8aca8a2d95ffaeb6e75af8c797825ac581367ef8b8af32e8  assets/index-VImh_xM7.js
+2bcce5c1b855e48e0dc5884881160902173e8e1e09c567dac6fd9b237108f3a6  assets/index-ibxWOD-d.css
+3aa0d1d63f3b5b2a33053a41a34512eac63abfb1dc2112aeda04733656a1a6d9  assets/noto-sans-kr-korean-400-normal-CmjJz_gz.woff2
+dab3d492daa687386292cff1499225db580f931f800ee0d124eb0636378c6020  assets/noto-sans-kr-korean-700-normal-DvnDzSjd.woff2
+5cb530e04b91a1240082f1b6a7a9cd26c26ff54dc77e8580c75760f5a14becb2  favicon.svg
+0cdc6f394d5722e46a1bb5b6e7c24246500568ac0a819130b984ca02e0f03ab3  index.html
+
+Comparison with current workspace dist
+--------------------------------------
+The current workspace dist had the same seven relative paths and the same
+SHA-256 value for every file.
+
+  DIST_HASHES_MATCH=yes
+
+Performance result supplied by the completed primary browser measurement
+------------------------------------------------------------------------
+The renderer candidate was measured separately from this clean-build check.
+The primary high-load results supplied for release selection were:
+
+  1280x720:  baseline 28.209 fps -> candidate B 28.909 fps
+  1920x1080: baseline 17.224 fps -> candidate B 18.167 fps
+
+This is a small improvement at both sizes. Both candidate results remain below
+the 60fps target. The clean-build task did not rerun a browser, performance
+measurement, gameplay, or the full test suite, so it does not broaden those
+performance findings or turn the target miss into a pass.
+
+History and isolation
+---------------------
+Earlier RC4 clean-install and build evidence remains intact; this file adds a
+release-candidate result rather than replacing it. The workspace src/, dist/,
+and node_modules/ were not written by this check. The rebuilt temporary output,
+new source, and preserved pre-candidate source remain under
+`/tmp/lrg-clean-1kzRiA` for inspection.

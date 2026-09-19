@@ -1,0 +1,230 @@
+{
+  "observedAt": "2026-09-19T12:55:17Z",
+  "agent": {
+    "id": "/root/monitor",
+    "parentId": "/root",
+    "kind": "subagent",
+    "role": "implementer",
+    "specialty": "대시보드 확장",
+    "taskId": "M05",
+    "taskSummary": "coordinator 작업 판정 우선·이벤트 분리·최종 시간 동결",
+    "requestedModel": "gpt-5.6-sol",
+    "requestedReasoning": "high",
+    "actualModel": null,
+    "actualReasoning": null,
+    "status": "running",
+    "observedAt": "2026-09-19T12:55:17Z",
+    "lastActivityAt": "2026-09-19T12:55:17Z",
+    "activity": "M02~M04 coordinator integrated 우선, 이벤트 분리, final 동결 검증 12/12 통과",
+    "result": "127.0.0.1:4310에서 운영 중",
+    "source": "에이전트 직접 보고",
+    "reportBased": true,
+    "changedFiles": [
+      ".agent-monitor/collector.py",
+      ".agent-monitor/index.html",
+      ".agent-monitor/assets/app.js",
+      ".agent-monitor/assets/style.css",
+      ".agent-monitor/assets/fonts/noto-sans-kr-400.woff2",
+      ".agent-monitor/assets/fonts/noto-sans-kr-700.woff2",
+      ".agent-monitor/assets/fonts/LICENSE",
+      ".agent-monitor/README.md",
+      ".agent-monitor/tests/test_monitor.py",
+      ".agent-monitor/reports/monitor.json"
+    ],
+    "verification": [
+      "HTTP 200 및 비허용 경로 404",
+      "Python unittest 12/12 통과",
+      "실데이터 180초 stale 전환: current 1 / lastKnown 9 / stale 8",
+      "재시작 후 이벤트 중복 없음",
+      "최종 스냅샷 저장 및 재열람",
+      "Chrome 화면·한국어·실데이터·새로고침 확인(메인 보고)"
+    ]
+  },
+  "tasks": [
+    {
+      "id": "M01",
+      "summary": "대시보드 MVP",
+      "owner": "/root/monitor",
+      "dependsOn": ["E01"],
+      "implementation": "complete",
+      "verification": "complete",
+      "integration": "complete",
+      "status": "verified",
+      "result": "표준 라이브러리 수집기·allowlist 서버·한국어 대시보드 운영 및 안정성 검사 완료"
+    },
+    {
+      "id": "M02",
+      "summary": "대시보드 확장 운영 정책 반영",
+      "owner": "/root/monitor",
+      "files": [
+        ".agent-monitor/collector.py",
+        ".agent-monitor/index.html",
+        ".agent-monitor/assets/app.js",
+        ".agent-monitor/assets/style.css",
+        ".agent-monitor/README.md",
+        ".agent-monitor/tests/test_monitor.py",
+        ".agent-monitor/reports/monitor.json"
+      ],
+      "dependsOn": ["M01"],
+      "requestedModel": "gpt-5.6-sol",
+      "requestedReasoning": "high",
+      "implementation": "complete",
+      "verification": ["Python unittest 9/9", "HTTP 상태 확인", "브라우저 검증 대기"],
+      "integration": "pending",
+      "integrator": "/root",
+      "status": "review",
+      "result": "인원·작업·분포·운영 이벤트 화면 확장; 운영 정책은 M03으로 교체"
+    },
+    {
+      "id": "M03",
+      "summary": "사용자 상한 1000 즉시 배정 정책",
+      "owner": "/root/monitor",
+      "files": [
+        ".agent-monitor/collector.py",
+        ".agent-monitor/index.html",
+        ".agent-monitor/assets/app.js",
+        ".agent-monitor/assets/style.css",
+        ".agent-monitor/README.md",
+        ".agent-monitor/tests/test_monitor.py",
+        ".agent-monitor/reports/monitor.json"
+      ],
+      "dependsOn": ["M02"],
+      "requestedModel": "gpt-5.6-sol",
+      "requestedReasoning": "high",
+      "implementation": "complete",
+      "verification": ["Python unittest 10/10", "새 limits 실데이터 입력 대기", "브라우저 검증 대기"],
+      "integration": "pending",
+      "integrator": "/root",
+      "status": "review",
+      "result": "고정 목표·단계 삭제, 유효 상한·실제 확장 요인·ready 미배정·엄격 unknown 집계 구현"
+    },
+    {
+      "id": "M04",
+      "summary": "fresh running 정확성 보완",
+      "owner": "/root/monitor",
+      "files": [
+        ".agent-monitor/collector.py",
+        ".agent-monitor/index.html",
+        ".agent-monitor/assets/app.js",
+        ".agent-monitor/README.md",
+        ".agent-monitor/tests/test_monitor.py",
+        ".agent-monitor/reports/monitor.json"
+      ],
+      "dependsOn": ["M03"],
+      "requestedModel": "gpt-5.6-sol",
+      "requestedReasoning": "high",
+      "implementation": "complete",
+      "verification": ["Python unittest 11/11", "실데이터 fresh running 하위 8 확인", "180초 뒤 current 1 / lastKnown 9 / stale 8 전환 확인", "브라우저 검증은 메인 담당"],
+      "integration": "pending",
+      "integrator": "/root",
+      "status": "review",
+      "result": "현재 실행·분포=fresh running, 마지막 running·stale·관측 없음 별도 집계"
+    },
+    {
+      "id": "M05",
+      "summary": "최종 대시보드 정확성 보완",
+      "owner": "/root/monitor",
+      "files": [
+        ".agent-monitor/collector.py",
+        ".agent-monitor/assets/app.js",
+        ".agent-monitor/README.md",
+        ".agent-monitor/tests/test_monitor.py",
+        ".agent-monitor/reports/monitor.json"
+      ],
+      "dependsOn": ["M04"],
+      "requestedModel": "gpt-5.6-sol",
+      "requestedReasoning": "high",
+      "implementation": "complete",
+      "verification": [
+        "Python unittest 12/12",
+        "M02~M04 coordinator integrated/done 우선 확인",
+        "legacy tasks 통합 대기열 제외 확인",
+        "실제 제한 오류·정책 이벤트 분리 확인",
+        "finalizedAt freshness·시간 동결 확인"
+      ],
+      "integration": "pending",
+      "integrator": "/root",
+      "status": "review",
+      "result": "작업 판정 권한·충돌 증거·이벤트 의미·최종 시간 기준 정확성 보완"
+    }
+  ],
+  "events": [
+    {
+      "id": "m01-stability-tests-pass",
+      "agentId": "/root/monitor",
+      "taskId": "M01",
+      "type": "verification",
+      "message": "원자쓰기·재시작·allowlist·HTML 안전·stale 보존 검사 5/5 통과",
+      "occurredAt": "2026-09-19T11:47:26Z",
+      "observedAt": "2026-09-19T11:47:26Z",
+      "source": "에이전트 직접 보고",
+      "kind": "agent-report"
+    },
+    {
+      "id": "m01-korean-font-local",
+      "agentId": "/root/monitor",
+      "taskId": "M01",
+      "type": "fix",
+      "message": "Noto Sans KR 400/700 WOFF2 로컬 제공 및 라이선스 보존",
+      "occurredAt": "2026-09-19T11:50:21Z",
+      "observedAt": "2026-09-19T11:50:21Z",
+      "source": "에이전트 직접 보고",
+      "kind": "agent-report"
+    },
+    {
+      "id": "m01-final-mode-pass",
+      "agentId": "/root/monitor",
+      "taskId": "M01",
+      "type": "verification",
+      "message": "최종화 입력의 관측시각 고정·원자 저장·읽기 전용 재열람과 표시 결함 검사 통과",
+      "occurredAt": "2026-09-19T11:53:44Z",
+      "observedAt": "2026-09-19T11:53:44Z",
+      "source": "에이전트 직접 보고",
+      "kind": "agent-report"
+    },
+    {
+      "id": "m02-dashboard-expansion-ready",
+      "agentId": "/root/monitor",
+      "taskId": "M02",
+      "type": "implementation-complete",
+      "message": "에이전트/작업 상태 집계·통합 대기열·운영 이벤트 화면 구현; 운영 정책은 M03으로 교체",
+      "occurredAt": "2026-09-19T12:10:35Z",
+      "observedAt": "2026-09-19T12:10:35Z",
+      "source": "에이전트 직접 보고",
+      "kind": "agent-report"
+    },
+    {
+      "id": "m03-policy-1000-ready",
+      "agentId": "/root/monitor",
+      "taskId": "M03",
+      "type": "implementation-complete",
+      "message": "운영 목표 단계 제거, 사용자·설정·런타임 유효 상한 1000과 ready 미배정·엄격 관측 집계 구현",
+      "occurredAt": "2026-09-19T12:18:09Z",
+      "observedAt": "2026-09-19T12:18:09Z",
+      "source": "에이전트 직접 보고",
+      "kind": "agent-report"
+    },
+    {
+      "id": "m04-fresh-running-ready",
+      "agentId": "/root/monitor",
+      "taskId": "M04",
+      "type": "verification-complete",
+      "message": "fresh running만 현재 실행 수와 분포에 포함하고 stale·관측 없음 running을 별도 보존하는 검사 통과",
+      "occurredAt": "2026-09-19T12:25:02Z",
+      "observedAt": "2026-09-19T12:25:02Z",
+      "source": "에이전트 직접 보고",
+      "kind": "agent-report"
+    },
+    {
+      "id": "m05-dashboard-accuracy-ready",
+      "agentId": "/root/monitor",
+      "taskId": "M05",
+      "type": "verification-complete",
+      "message": "coordinator 작업 판정 우선·보고 충돌 보존·제한/정책 분리·finalizedAt 시간 동결 회귀검사 통과",
+      "occurredAt": "2026-09-19T12:55:17Z",
+      "observedAt": "2026-09-19T12:55:17Z",
+      "source": "에이전트 직접 보고",
+      "kind": "agent-report"
+    }
+  ]
+}

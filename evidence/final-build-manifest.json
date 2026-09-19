@@ -1,0 +1,14 @@
+{
+  "builtAt": "2026-09-19T12:47:06.559020+00:00",
+  "sourceCommit": "4c3419109ad8dce9649c9fe26d19197731e12105",
+  "changesFromRC3": "HUD reuse-delay text/aria only; gameplay unchanged",
+  "files": {
+    "FONT-LICENSE.txt": "18aabf190848725e2576eefb5c29ba06aac1029d02132252a7f312eac2e50cf3",
+    "assets/index-ibxWOD-d.css": "2bcce5c1b855e48e0dc5884881160902173e8e1e09c567dac6fd9b237108f3a6",
+    "assets/index-qLwRGcuQ.js": "2bfd9ff944ec4be07c90251a5c7ecc807d7c535aef3a2c3eec987e5eb1ccda17",
+    "assets/noto-sans-kr-korean-400-normal-CmjJz_gz.woff2": "3aa0d1d63f3b5b2a33053a41a34512eac63abfb1dc2112aeda04733656a1a6d9",
+    "assets/noto-sans-kr-korean-700-normal-DvnDzSjd.woff2": "dab3d492daa687386292cff1499225db580f931f800ee0d124eb0636378c6020",
+    "favicon.svg": "5cb530e04b91a1240082f1b6a7a9cd26c26ff54dc77e8580c75760f5a14becb2",
+    "index.html": "7718879f40f128ec4d1f21c08ab6aa19d8943b8cbd79eded0c02e7ec9ca1e67f"
+  }
+}

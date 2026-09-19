@@ -1,0 +1,354 @@
+{
+  "observedAt": "2026-09-19T13:16:30.179Z",
+  "baseline": "http://127.0.0.1:4181",
+  "candidate": "http://127.0.0.1:4175",
+  "fixture": true,
+  "normalPlayEvidence": false,
+  "method": "Frozen real-engine boss scenes; identical viewport and DPR. Pixel readback only for visual comparison, separate from FPS measurements.",
+  "comparisons": [
+    {
+      "viewport": {
+        "width": 1440,
+        "height": 1080
+      },
+      "dpr": 1,
+      "differences": [
+        {
+          "canvas": 0,
+          "width": 649,
+          "height": 400,
+          "maxChannelDifference": 2,
+          "meanChannelDifference": 0.4340241397021058,
+          "pixelsOver4": 0,
+          "nonOpaque": 0
+        },
+        {
+          "canvas": 1,
+          "width": 649,
+          "height": 400,
+          "maxChannelDifference": 2,
+          "meanChannelDifference": 0.43553543913713405,
+          "pixelsOver4": 0,
+          "nonOpaque": 0
+        },
+        {
+          "canvas": 2,
+          "width": 649,
+          "height": 400,
+          "maxChannelDifference": 2,
+          "meanChannelDifference": 0.4357960965588084,
+          "pixelsOver4": 0,
+          "nonOpaque": 0
+        },
+        {
+          "canvas": 3,
+          "width": 649,
+          "height": 400,
+          "maxChannelDifference": 2,
+          "meanChannelDifference": 0.43436055469953777,
+          "pixelsOver4": 0,
+          "nonOpaque": 0
+        }
+      ]
+    },
+    {
+      "viewport": {
+        "width": 1000,
+        "height": 1080
+      },
+      "dpr": 1,
+      "differences": [
+        {
+          "canvas": 0,
+          "width": 469,
+          "height": 400,
+          "maxChannelDifference": 2,
+          "meanChannelDifference": 0.41395700071073205,
+          "pixelsOver4": 0,
+          "nonOpaque": 0
+        },
+        {
+          "canvas": 1,
+          "width": 469,
+          "height": 400,
+          "maxChannelDifference": 2,
+          "meanChannelDifference": 0.4150159914712154,
+          "pixelsOver4": 0,
+          "nonOpaque": 0
+        },
+        {
+          "canvas": 2,
+          "width": 469,
+          "height": 400,
+          "maxChannelDifference": 2,
+          "meanChannelDifference": 0.4143958777540867,
+          "pixelsOver4": 0,
+          "nonOpaque": 0
+        },
+        {
+          "canvas": 3,
+          "width": 469,
+          "height": 400,
+          "maxChannelDifference": 2,
+          "meanChannelDifference": 0.414273276474769,
+          "pixelsOver4": 0,
+          "nonOpaque": 0
+        }
+      ]
+    },
+    {
+      "viewport": {
+        "width": 1440,
+        "height": 1080
+      },
+      "dpr": 1.25,
+      "differences": [
+        {
+          "canvas": 0,
+          "width": 811,
+          "height": 500,
+          "maxChannelDifference": 2,
+          "meanChannelDifference": 0.43417262638717635,
+          "pixelsOver4": 0,
+          "nonOpaque": 0
+        },
+        {
+          "canvas": 1,
+          "width": 811,
+          "height": 500,
+          "maxChannelDifference": 2,
+          "meanChannelDifference": 0.43575174681463213,
+          "pixelsOver4": 0,
+          "nonOpaque": 0
+        },
+        {
+          "canvas": 2,
+          "width": 811,
+          "height": 500,
+          "maxChannelDifference": 2,
+          "meanChannelDifference": 0.436275380189067,
+          "pixelsOver4": 0,
+          "nonOpaque": 0
+        },
+        {
+          "canvas": 3,
+          "width": 811,
+          "height": 500,
+          "maxChannelDifference": 2,
+          "meanChannelDifference": 0.43462474311549526,
+          "pixelsOver4": 0,
+          "nonOpaque": 0
+        }
+      ]
+    },
+    {
+      "viewport": {
+        "width": 1000,
+        "height": 1080
+      },
+      "dpr": 1.25,
+      "differences": [
+        {
+          "canvas": 0,
+          "width": 586,
+          "height": 500,
+          "maxChannelDifference": 2,
+          "meanChannelDifference": 0.41351763367463024,
+          "pixelsOver4": 0,
+          "nonOpaque": 0
+        },
+        {
+          "canvas": 1,
+          "width": 586,
+          "height": 500,
+          "maxChannelDifference": 2,
+          "meanChannelDifference": 0.41457110352673493,
+          "pixelsOver4": 0,
+          "nonOpaque": 0
+        },
+        {
+          "canvas": 2,
+          "width": 586,
+          "height": 500,
+          "maxChannelDifference": 2,
+          "meanChannelDifference": 0.4142377701934016,
+          "pixelsOver4": 0,
+          "nonOpaque": 0
+        },
+        {
+          "canvas": 3,
+          "width": 586,
+          "height": 500,
+          "maxChannelDifference": 2,
+          "meanChannelDifference": 0.4141763367463026,
+          "pixelsOver4": 0,
+          "nonOpaque": 0
+        }
+      ]
+    },
+    {
+      "viewport": {
+        "width": 1440,
+        "height": 1080
+      },
+      "dpr": 2,
+      "differences": [
+        {
+          "canvas": 0,
+          "width": 1298,
+          "height": 800,
+          "maxChannelDifference": 2,
+          "meanChannelDifference": 0.43418624807395995,
+          "pixelsOver4": 0,
+          "nonOpaque": 0
+        },
+        {
+          "canvas": 1,
+          "width": 1298,
+          "height": 800,
+          "maxChannelDifference": 2,
+          "meanChannelDifference": 0.43586382896764253,
+          "pixelsOver4": 0,
+          "nonOpaque": 0
+        },
+        {
+          "canvas": 2,
+          "width": 1298,
+          "height": 800,
+          "maxChannelDifference": 2,
+          "meanChannelDifference": 0.4363090652285568,
+          "pixelsOver4": 0,
+          "nonOpaque": 0
+        },
+        {
+          "canvas": 3,
+          "width": 1298,
+          "height": 800,
+          "maxChannelDifference": 2,
+          "meanChannelDifference": 0.434553800719055,
+          "pixelsOver4": 0,
+          "nonOpaque": 0
+        }
+      ]
+    },
+    {
+      "viewport": {
+        "width": 1000,
+        "height": 1080
+      },
+      "dpr": 2,
+      "differences": [
+        {
+          "canvas": 0,
+          "width": 938,
+          "height": 800,
+          "maxChannelDifference": 2,
+          "meanChannelDifference": 0.4138197405828003,
+          "pixelsOver4": 0,
+          "nonOpaque": 0
+        },
+        {
+          "canvas": 1,
+          "width": 938,
+          "height": 800,
+          "maxChannelDifference": 2,
+          "meanChannelDifference": 0.4148507462686567,
+          "pixelsOver4": 0,
+          "nonOpaque": 0
+        },
+        {
+          "canvas": 2,
+          "width": 938,
+          "height": 800,
+          "maxChannelDifference": 2,
+          "meanChannelDifference": 0.4145744491826581,
+          "pixelsOver4": 0,
+          "nonOpaque": 0
+        },
+        {
+          "canvas": 3,
+          "width": 938,
+          "height": 800,
+          "maxChannelDifference": 2,
+          "meanChannelDifference": 0.41445362473347547,
+          "pixelsOver4": 0,
+          "nonOpaque": 0
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "uiChecks": [
+    {
+      "viewport": {
+        "width": 1920,
+        "height": 1080
+      },
+      "dpr": 1.25,
+      "dimensions": {
+        "width": 2400,
+        "height": 1350,
+        "attributes": {
+          "alpha": false,
+          "colorSpace": "srgb",
+          "colorType": "unorm8",
+          "desynchronized": false,
+          "toneMapping": {
+            "mode": "standard"
+          },
+          "willReadFrequently": false
+        }
+      },
+      "pausedElapsed": 0.6166666666666669
+    },
+    {
+      "viewport": {
+        "width": 960,
+        "height": 540
+      },
+      "dpr": 1.25,
+      "dimensions": {
+        "width": 1200,
+        "height": 675,
+        "attributes": {
+          "alpha": false,
+          "colorSpace": "srgb",
+          "colorType": "unorm8",
+          "desynchronized": false,
+          "toneMapping": {
+            "mode": "standard"
+          },
+          "willReadFrequently": false
+        }
+      },
+      "pausedElapsed": 0.6166666666666669
+    },
+    {
+      "viewport": {
+        "width": 1280,
+        "height": 720
+      },
+      "dpr": 1.25,
+      "dimensions": {
+        "width": 1600,
+        "height": 900,
+        "attributes": {
+          "alpha": false,
+          "colorSpace": "srgb",
+          "colorType": "unorm8",
+          "desynchronized": false,
+          "toneMapping": {
+            "mode": "standard"
+          },
+          "willReadFrequently": false
+        }
+      },
+      "pausedElapsed": 0.6166666666666669
+    },
+    {
+      "name": "title, movement, dash, pause, resize, resume, return-title",
+      "passed": true
+    }
+  ],
+  "passed": true
+}

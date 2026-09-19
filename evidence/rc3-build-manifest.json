@@ -1,0 +1,13 @@
+{
+  "builtAt": "2026-09-19T12:42:09.068139+00:00",
+  "sourceCommit": "5d30cce05a70968f5c0e9a937a4adc3cecb5ece2",
+  "files": {
+    "FONT-LICENSE.txt": "18aabf190848725e2576eefb5c29ba06aac1029d02132252a7f312eac2e50cf3",
+    "assets/index-DThtEN0N.js": "c359cb2d1ab7a6dc40fe24e648f5105c22ecdc1cad90eea60ba43e797b672775",
+    "assets/index-ibxWOD-d.css": "2bcce5c1b855e48e0dc5884881160902173e8e1e09c567dac6fd9b237108f3a6",
+    "assets/noto-sans-kr-korean-400-normal-CmjJz_gz.woff2": "3aa0d1d63f3b5b2a33053a41a34512eac63abfb1dc2112aeda04733656a1a6d9",
+    "assets/noto-sans-kr-korean-700-normal-DvnDzSjd.woff2": "dab3d492daa687386292cff1499225db580f931f800ee0d124eb0636378c6020",
+    "favicon.svg": "5cb530e04b91a1240082f1b6a7a9cd26c26ff54dc77e8580c75760f5a14becb2",
+    "index.html": "40269f5ced9f37c06ce4221940bbf85a5a6bedbc77639c3abcb8ade999afce5a"
+  }
+}

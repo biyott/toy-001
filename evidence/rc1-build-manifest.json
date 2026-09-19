@@ -1,0 +1,14 @@
+{
+  "builtAt": "2026-09-19T12:24:52.522933+00:00",
+  "sourceCommit": "2a892bb3267d78f15dc7491cac1954d2ff83e975",
+  "directory": "artifacts/rc1-build",
+  "files": {
+    "FONT-LICENSE.txt": "18aabf190848725e2576eefb5c29ba06aac1029d02132252a7f312eac2e50cf3",
+    "assets/index-BR8H_tz1.js": "015aabb291da0ab5616aef916c09bdebb0c57593a280f8a8c348789e82b32697",
+    "assets/index-C2n8aYWt.css": "836d31d431c535509508b7fff2a3e0626b73086b071dd71e63f6b16710878845",
+    "assets/noto-sans-kr-korean-400-normal-CmjJz_gz.woff2": "3aa0d1d63f3b5b2a33053a41a34512eac63abfb1dc2112aeda04733656a1a6d9",
+    "assets/noto-sans-kr-korean-700-normal-DvnDzSjd.woff2": "dab3d492daa687386292cff1499225db580f931f800ee0d124eb0636378c6020",
+    "favicon.svg": "5cb530e04b91a1240082f1b6a7a9cd26c26ff54dc77e8580c75760f5a14becb2",
+    "index.html": "8c524d8aa0711cc51245c137ed490d1b6620522b49db091e55426b775a4d32ea"
+  }
+}

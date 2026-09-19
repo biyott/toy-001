@@ -1,0 +1,14 @@
+{
+  "builtAt": "2026-09-19T13:01:48.381877+00:00",
+  "sourceCommit": "b1221065392a81e90cdac24f9ef0fe67419ee809",
+  "changesFromRC4": "Static enemy zone fill/hatch bounded cache only; gameplay and dynamic warnings unchanged",
+  "files": {
+    "FONT-LICENSE.txt": "18aabf190848725e2576eefb5c29ba06aac1029d02132252a7f312eac2e50cf3",
+    "assets/index-C0o1r7xw.js": "25ad1ec7af13bf73dfea2ba6f9c32297866cf0ff445e89d652d49310102b885a",
+    "assets/index-ibxWOD-d.css": "2bcce5c1b855e48e0dc5884881160902173e8e1e09c567dac6fd9b237108f3a6",
+    "assets/noto-sans-kr-korean-400-normal-CmjJz_gz.woff2": "3aa0d1d63f3b5b2a33053a41a34512eac63abfb1dc2112aeda04733656a1a6d9",
+    "assets/noto-sans-kr-korean-700-normal-DvnDzSjd.woff2": "dab3d492daa687386292cff1499225db580f931f800ee0d124eb0636378c6020",
+    "favicon.svg": "5cb530e04b91a1240082f1b6a7a9cd26c26ff54dc77e8580c75760f5a14becb2",
+    "index.html": "d33fb04e9546a969df6196e728511fad5a6c598d06292b64096f65808d5c80e4"
+  }
+}

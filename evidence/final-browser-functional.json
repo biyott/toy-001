@@ -1,0 +1,309 @@
+{
+  "at": "2026-09-19T12:53:16.785Z",
+  "url": "http://127.0.0.1:4174",
+  "checks": [
+    {
+      "name": "title-1280x720",
+      "ok": true,
+      "details": [
+        {
+          "x": 87.453125,
+          "y": 106.953125,
+          "w": 407.46875,
+          "h": 74.46875,
+          "text": "리틀 룬가디언즈"
+        },
+        {
+          "x": 87.453125,
+          "y": 243.109375,
+          "w": 131.8125,
+          "h": 51,
+          "text": "로로완작은 새벽 기사"
+        },
+        {
+          "x": 225.265625,
+          "y": 243.109375,
+          "w": 131.828125,
+          "h": 51,
+          "text": "루루미별빛 견습 마법사"
+        },
+        {
+          "x": 363.09375,
+          "y": 243.109375,
+          "w": 131.828125,
+          "h": 51,
+          "text": "페페른숲길의 작은 궁수"
+        },
+        {
+          "x": 87.453125,
+          "y": 320.109375,
+          "w": 217.34375,
+          "h": 44,
+          "text": "수호 임무 시작 · 10분"
+        },
+        {
+          "x": 313.796875,
+          "y": 320.109375,
+          "w": 181.125,
+          "h": 44,
+          "text": "빠른 시연 · 3분"
+        },
+        {
+          "x": 295.1875,
+          "y": 390.109375,
+          "w": 199.734375,
+          "h": 44,
+          "text": "시드 도전 · 10분"
+        },
+        {
+          "x": 237.90625,
+          "y": 446.109375,
+          "w": 106.5625,
+          "h": 38,
+          "text": "룬 조합 도감"
+        },
+        {
+          "x": 87.453125,
+          "y": 492.109375,
+          "w": 407.46875,
+          "h": 145.9375,
+          "text": "\n    조작법\n    WASD또는방향키이동\n    Space대시ESC일시정지\n    공격은 자동입니다. 제한시간을 버티고 우두머리 2명을 모두 처치하면 승리합니다.\n    게임패드와 터치 조작도 지원됩니다.\n  "
+        }
+      ]
+    },
+    {
+      "name": "title-1920x1080",
+      "ok": true,
+      "details": [
+        {
+          "x": 105,
+          "y": 222.859375,
+          "w": 398,
+          "h": 121.5,
+          "text": "리틀 룬가디언즈"
+        },
+        {
+          "x": 105,
+          "y": 416.046875,
+          "w": 128.65625,
+          "h": 58,
+          "text": "로로완작은 새벽 기사"
+        },
+        {
+          "x": 239.65625,
+          "y": 416.046875,
+          "w": 128.671875,
+          "h": 58,
+          "text": "루루미별빛 견습 마법사"
+        },
+        {
+          "x": 374.328125,
+          "y": 416.046875,
+          "w": 128.671875,
+          "h": 58,
+          "text": "페페른숲길의 작은 궁수"
+        },
+        {
+          "x": 105,
+          "y": 505.046875,
+          "w": 212.171875,
+          "h": 44,
+          "text": "수호 임무 시작 · 10분"
+        },
+        {
+          "x": 326.171875,
+          "y": 505.046875,
+          "w": 176.828125,
+          "h": 44,
+          "text": "빠른 시연 · 3분"
+        },
+        {
+          "x": 308,
+          "y": 577.046875,
+          "w": 195,
+          "h": 44,
+          "text": "시드 도전 · 10분"
+        },
+        {
+          "x": 250.71875,
+          "y": 651.1875,
+          "w": 106.5625,
+          "h": 38,
+          "text": "룬 조합 도감"
+        },
+        {
+          "x": 105,
+          "y": 703.1875,
+          "w": 398,
+          "h": 155.9375,
+          "text": "\n    조작법\n    WASD또는방향키이동\n    Space대시ESC일시정지\n    공격은 자동입니다. 제한시간을 버티고 우두머리 2명을 모두 처치하면 승리합니다.\n    게임패드와 터치 조작도 지원됩니다.\n  "
+        }
+      ]
+    },
+    {
+      "name": "screen-right-key-moves-right",
+      "ok": true,
+      "details": {
+        "before": 0,
+        "after": 84.99999999999999
+      }
+    },
+    {
+      "name": "dash-activates",
+      "ok": true
+    },
+    {
+      "name": "pause-freezes-time",
+      "ok": true,
+      "details": {
+        "before": 1.0666666666666678,
+        "after": 1.0666666666666678
+      }
+    },
+    {
+      "name": "settings-saved",
+      "ok": true,
+      "details": {
+        "version": 1,
+        "bestScore": 0,
+        "bestTime": 0,
+        "wins": 0,
+        "settings": {
+          "muted": true,
+          "reducedMotion": true
+        }
+      }
+    },
+    {
+      "name": "settings-survive-reload",
+      "ok": true
+    },
+    {
+      "name": "defeat-1",
+      "ok": true,
+      "details": {
+        "elapsed": 49.883333333331784,
+        "hp": 0
+      }
+    },
+    {
+      "name": "restart-clean-1",
+      "ok": true,
+      "details": {
+        "run": 1,
+        "elapsed": 0.09999999999999999,
+        "enemies": 0,
+        "projectiles": 0,
+        "kills": 0,
+        "level": 1,
+        "listeners": 3,
+        "raf": 1
+      }
+    },
+    {
+      "name": "defeat-2",
+      "ok": true,
+      "details": {
+        "elapsed": 49.883333333331784,
+        "hp": 0
+      }
+    },
+    {
+      "name": "restart-clean-2",
+      "ok": true,
+      "details": {
+        "run": 2,
+        "elapsed": 0.09999999999999999,
+        "enemies": 0,
+        "projectiles": 0,
+        "kills": 0,
+        "level": 1,
+        "listeners": 3,
+        "raf": 1
+      }
+    },
+    {
+      "name": "defeat-3",
+      "ok": true,
+      "details": {
+        "elapsed": 49.883333333331784,
+        "hp": 0
+      }
+    },
+    {
+      "name": "restart-clean-3",
+      "ok": true,
+      "details": {
+        "run": 3,
+        "elapsed": 0.09999999999999999,
+        "enemies": 0,
+        "projectiles": 0,
+        "kills": 0,
+        "level": 1,
+        "listeners": 3,
+        "raf": 1
+      }
+    },
+    {
+      "name": "third-restart-continues",
+      "ok": true
+    },
+    {
+      "name": "best-record-saved",
+      "ok": true,
+      "details": {
+        "version": 1,
+        "bestScore": 499,
+        "bestTime": 49.883333333331784,
+        "wins": 0,
+        "settings": {
+          "muted": true,
+          "reducedMotion": true
+        }
+      }
+    },
+    {
+      "name": "corrupt-storage-starts",
+      "ok": true
+    },
+    {
+      "name": "no-runtime-errors",
+      "ok": true,
+      "details": []
+    }
+  ],
+  "restarts": [
+    {
+      "run": 1,
+      "elapsed": 0.09999999999999999,
+      "enemies": 0,
+      "projectiles": 0,
+      "kills": 0,
+      "level": 1,
+      "listeners": 3,
+      "raf": 1
+    },
+    {
+      "run": 2,
+      "elapsed": 0.09999999999999999,
+      "enemies": 0,
+      "projectiles": 0,
+      "kills": 0,
+      "level": 1,
+      "listeners": 3,
+      "raf": 1
+    },
+    {
+      "run": 3,
+      "elapsed": 0.09999999999999999,
+      "enemies": 0,
+      "projectiles": 0,
+      "kills": 0,
+      "level": 1,
+      "listeners": 3,
+      "raf": 1
+    }
+  ],
+  "errors": [],
+  "method": "UI and keyboard only. localStorage corruption is a storage-recovery fixture; game state never mutated."
+}

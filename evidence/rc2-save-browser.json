@@ -1,0 +1,55 @@
+{
+  "url": "http://127.0.0.1:4174",
+  "startedAt": "2026-09-19T12:32:32.845Z",
+  "method": "UI and keyboard game input. Initial localStorage profile fixture only; no game state mutation.",
+  "checks": [
+    {
+      "name": "normal defeat saves normal only",
+      "detail": {
+        "elapsed": 11.550000000000153,
+        "saved": {
+          "version": 1,
+          "bestScore": 48,
+          "bestTime": 12,
+          "wins": 2,
+          "settings": {
+            "muted": true,
+            "reducedMotion": true
+          },
+          "demoRecord": {
+            "bestScore": 19,
+            "bestTime": 22,
+            "wins": 3
+          }
+        }
+      },
+      "passed": true
+    },
+    {
+      "name": "challenge defeat leaves both records unchanged",
+      "detail": {
+        "elapsed": 13.783333333333598,
+        "score": 72,
+        "after": {
+          "version": 1,
+          "bestScore": 48,
+          "bestTime": 12,
+          "wins": 2,
+          "settings": {
+            "muted": true,
+            "reducedMotion": true
+          },
+          "demoRecord": {
+            "bestScore": 19,
+            "bestTime": 22,
+            "wins": 3
+          }
+        }
+      },
+      "passed": true
+    }
+  ],
+  "errors": [],
+  "passed": true,
+  "finishedAt": "2026-09-19T12:32:59.205Z"
+}

@@ -1,0 +1,97 @@
+Little Rune Guardians RC2 clean-install evidence
+================================================
+
+Result: PASS
+Source commit: e7bb3acdf8a1059c628e83c0eae392113cb361b7
+Source subject: Separate demo records and prevent compact HUD overlap
+Source commit time: 2026-09-19 21:31:27 +0900
+Execution window: 2026-09-19T12:33:27Z .. 2026-09-19T12:33:29Z
+Clean directory: /tmp/lrg-clean-1kzRiA
+Working repository: /90_biyott@github/toy-001
+
+Environment
+-----------
+OS: Linux 6.6.87.2-microsoft-standard-WSL2 x86_64 GNU/Linux
+Node.js: v24.14.0
+npm: 11.18.0
+
+Isolation
+---------
+The clean directory was created with:
+  mktemp -d /tmp/lrg-clean-XXXXXX
+
+Only these tracked paths from the frozen commit were extracted:
+  package.json
+  package-lock.json
+  src/
+  public/
+  index.html
+  tsconfig.json
+
+vite.config.ts did not exist in the frozen commit. The extracted source set
+contained 38 files before dependency installation. The repository's existing
+node_modules/, dist/, and src/ were not used as the npm working directory and
+were not modified by this validation.
+
+Source extraction command
+-------------------------
+  git archive e7bb3ac package.json package-lock.json src public index.html tsconfig.json | tar -x -C /tmp/lrg-clean-1kzRiA
+
+Clean install
+-------------
+Command:
+  cd /tmp/lrg-clean-1kzRiA
+  npm ci
+
+Output:
+  added 25 packages, and audited 26 packages in 2s
+  9 packages are looking for funding
+  found 0 vulnerabilities
+
+npm emitted this non-blocking warning:
+  allow-scripts: esbuild@0.28.2 has a postinstall script not yet covered by allowScripts.
+  npm suggested `npm install-scripts ls` or an explicit approval command.
+
+No approval command, registry override, alternate install path, or additional
+account was used. npm ci exited successfully, and the following production
+build also completed successfully with the installed dependency tree.
+
+Production build
+----------------
+Command:
+  npm run build
+
+Script:
+  tsc --noEmit && vite build
+
+Output summary:
+  vite v8.3.0
+  30 modules transformed
+  built in 87ms
+  exit code 0
+
+Generated files in the isolated dist/
+-------------------------------------
+  FONT-LICENSE.txt                                             4,314 bytes
+  assets/index-CZ1vzKk1.js                                   109,237 bytes
+  assets/index-D61Mkepm.css                                   25,965 bytes
+  assets/noto-sans-kr-korean-400-normal-CmjJz_gz.woff2       541,864 bytes
+  assets/noto-sans-kr-korean-700-normal-DvnDzSjd.woff2       559,192 bytes
+  favicon.svg                                                     254 bytes
+  index.html                                                       718 bytes
+
+Installed top-level dependencies
+--------------------------------
+  @fontsource/noto-sans-kr@5.3.0
+  @types/node@26.6.2
+  playwright@1.63.0
+  tsx@4.23.13
+  typescript@7.0.2
+  vite@8.3.0
+
+Conclusion
+----------
+README's clean-install path (`npm ci` followed by `npm run build`) is
+reproducible from the frozen RC2 source and lockfile in an independent
+directory. The temporary installation and its dist output remain available at
+/tmp/lrg-clean-1kzRiA for inspection.

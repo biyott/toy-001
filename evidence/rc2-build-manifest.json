@@ -1,0 +1,18 @@
+{
+  "builtAt": "2026-09-19T12:31:27.369208+00:00",
+  "sourceCommit": "e7bb3acdf8a1059c628e83c0eae392113cb361b7",
+  "files": {
+    "FONT-LICENSE.txt": "18aabf190848725e2576eefb5c29ba06aac1029d02132252a7f312eac2e50cf3",
+    "assets/index-CZ1vzKk1.js": "87ef843887323c74018df604451abb0685187be5a9bee40af95b35873f22789b",
+    "assets/index-D61Mkepm.css": "a72dc473ee00917970b933f075d549b0a573948bc9efcebbc29e268ea4f07058",
+    "assets/noto-sans-kr-korean-400-normal-CmjJz_gz.woff2": "3aa0d1d63f3b5b2a33053a41a34512eac63abfb1dc2112aeda04733656a1a6d9",
+    "assets/noto-sans-kr-korean-700-normal-DvnDzSjd.woff2": "dab3d492daa687386292cff1499225db580f931f800ee0d124eb0636378c6020",
+    "favicon.svg": "5cb530e04b91a1240082f1b6a7a9cd26c26ff54dc77e8580c75760f5a14becb2",
+    "index.html": "9d97a06ae8081316484574644ca5731beca4d7709117ec48031b2d774249940e"
+  },
+  "changesFromRc1": [
+    "mode-specific result persistence and UI record label",
+    "compact touch HUD CSS overlap fix"
+  ],
+  "gameplayAndRenderingSourceUnchanged": true
+}

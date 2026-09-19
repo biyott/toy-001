@@ -1,0 +1,25 @@
+{
+  "status": "harness-failed-after-required-restarts",
+  "passed": [
+    "title1280x720",
+    "title1920x1080",
+    "rightMovement",
+    "dash",
+    "pauseFreeze",
+    "settingsSave",
+    "settingsReload",
+    "defeat1",
+    "restart1",
+    "defeat2",
+    "restart2",
+    "defeat3",
+    "restart3"
+  ],
+  "failure": {
+    "name": "redundant fourth defeat",
+    "elapsed": 99.55,
+    "hp": 93.7894,
+    "reason": "Harness erroneously required four defeats for three restarts; fourth run stayed alive. Original user requirement is three clean restarts. Corrected loop to three defeat+restart pairs; no gameplay change."
+  },
+  "evidenceSource": "exec session39871 stdout; retained from actual observation"
+}

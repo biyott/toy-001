@@ -1,0 +1,129 @@
+{
+  "startedAt": "2026-09-19T12:31:56.828Z",
+  "url": "http://127.0.0.1:4174",
+  "method": "Real UI and keyboard, Chrome synthetic touch, navigator gamepad snapshots. No game state mutation. Physical controller/device not tested.",
+  "checks": [
+    {
+      "name": "title-1280x720",
+      "passed": true,
+      "detail": {
+        "x": 51.1875,
+        "y": 62.953125,
+        "width": 480,
+        "height": 594.09375
+      }
+    },
+    {
+      "name": "codex-720",
+      "passed": true,
+      "detail": {
+        "x": 160,
+        "y": 20,
+        "width": 960,
+        "height": 680
+      }
+    },
+    {
+      "name": "title-1920x1080",
+      "passed": true,
+      "detail": {
+        "x": 64,
+        "y": 162.859375,
+        "width": 480,
+        "height": 754.265625
+      }
+    },
+    {
+      "name": "codex-1080",
+      "passed": true,
+      "detail": {
+        "x": 480,
+        "y": 172.703125,
+        "width": 960,
+        "height": 734.59375
+      }
+    },
+    {
+      "name": "character-knight",
+      "passed": true,
+      "detail": {
+        "hp": 120,
+        "speed": 170,
+        "weapon": "sword"
+      }
+    },
+    {
+      "name": "character-mage",
+      "passed": true,
+      "detail": {
+        "hp": 100,
+        "speed": 170,
+        "weapon": "spirit"
+      }
+    },
+    {
+      "name": "character-ranger",
+      "passed": true,
+      "detail": {
+        "hp": 100,
+        "speed": 190,
+        "weapon": "arrow"
+      }
+    },
+    {
+      "name": "challenge rejects out-of-range",
+      "passed": true
+    },
+    {
+      "name": "challenge zero accepted",
+      "passed": true
+    },
+    {
+      "name": "challenge repeatable initial world",
+      "passed": true
+    },
+    {
+      "name": "pad A starts focused mode",
+      "passed": true
+    },
+    {
+      "name": "pad analog moves player",
+      "passed": true
+    },
+    {
+      "name": "pad A dash",
+      "passed": true
+    },
+    {
+      "name": "pad Start pause freezes",
+      "passed": true
+    },
+    {
+      "name": "pad B resumes without hidden codex click",
+      "passed": true
+    },
+    {
+      "name": "pad B closes visible codex",
+      "passed": true
+    },
+    {
+      "name": "touch joystick movement",
+      "passed": true
+    },
+    {
+      "name": "touch simultaneous joystick and dash",
+      "passed": true
+    },
+    {
+      "name": "touch release clears movement",
+      "passed": true
+    },
+    {
+      "name": "touch pause hides controls",
+      "passed": true
+    }
+  ],
+  "errors": [],
+  "passed": true,
+  "finishedAt": "2026-09-19T12:32:06.092Z"
+}

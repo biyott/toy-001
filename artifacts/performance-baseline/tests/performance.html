@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Little Rune Guardians — 합성 고부하 벤치마크</title>
+    <style>html,body,#app{background:#162d2b;width:100%;height:100%;margin:0;overflow:hidden}#bench-canvas{width:100%;height:100%;position:fixed;inset:0}#ui-root{position:fixed;inset:0}#bench-notice{z-index:1000;color:#fff8dc;text-align:center;pointer-events:none;background:#261712eb;border:2px solid #f0c768;border-radius:8px;max-width:min(920px,100vw - 24px);padding:7px 12px;font:700 12px/1.45 Noto Sans KR,sans-serif;position:fixed;top:8px;left:50%;transform:translate(-50%)}#bench-notice strong{color:#ffd56f}#bench-status{color:#cce8c7;margin-left:8px}</style>
+    <script type="module" crossorigin src="/assets/performance-IB7Ue4ba.js"></script>
+    <link rel="modulepreload" crossorigin href="/assets/sprites-CuJdHU_Z.js">
+    <link rel="modulepreload" crossorigin href="/assets/renderer-CJeNNLfR.js">
+    <link rel="stylesheet" crossorigin href="/assets/sprites-DQp1HXjK.css">
+    <link rel="stylesheet" crossorigin href="/assets/performance-DtF4bxqQ.css">
+  </head>
+  <body>
+    <div id="app">
+      <canvas id="bench-canvas" aria-label="합성 고부하 렌더링"></canvas>
+      <div id="ui-root"></div>
+      <div id="bench-notice" role="status">
+        <strong>합성 fixture 성능 측정</strong> — 정상 플레이와 승패 검증을 대체하지 않습니다.
+        <span id="bench-tier">P0</span> · 180 적 · 300 투사체 · 260 XP · 약 10 공격 영역과 실제 엔진·렌더러·HUD를 사용합니다.
+        <span id="bench-status">준비 중</span>
+      </div>
+    </div>
+  </body>
+</html>

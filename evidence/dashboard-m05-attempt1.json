@@ -1,0 +1,7 @@
+{
+  "recordedAt": "2026-09-19T13:00:55.307703+00:00",
+  "passed": false,
+  "failure": "Test script TypeError: read reportConflicts.length, but actual public task schema uses conflicts. Also corrected DOM selector from assumed agent-card to actual .agent before retry.",
+  "applicationErrorsObserved": [],
+  "fix": "Read collector/app schema, use task.conflicts and #agents .agent; corrected reusable dashboard-browser.mjs passed."
+}

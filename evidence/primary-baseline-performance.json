@@ -1,0 +1,695 @@
+{
+  "startedAt": "2026-09-19T13:06:12.954Z",
+  "url": "http://127.0.0.1:4181",
+  "browser": "151.0.7922.169",
+  "readbackProbe": false,
+  "host": {
+    "platform": "linux",
+    "release": "6.6.87.2-microsoft-standard-WSL2",
+    "cpu": "Intel(R) Core(TM) i7-14700KF",
+    "logicalCpus": 8,
+    "memoryGiB": 23.47
+  },
+  "method": "Sequential 60-second synthetic upper-bound load at each viewport, after other browser play runs. Real renderer, engine and HUD; fixture state mutation explicitly separate from normal play. Headless Chrome environment. Repeated getImageData is disabled in the primary FPS pass and enabled only by explicit READBACK_PROBE=1.",
+  "runs": [
+    {
+      "status": "complete",
+      "fixture": {
+        "synthetic": true,
+        "normalPlayEvidence": false,
+        "description": "엔진 상태를 명시적으로 채우고 hit 등록을 주기적으로 초기화해 충돌 부하를 유지하는 합성 fixture. 투사체 300개 중 플레이어 220개와 spore/bone 적 투사체 80개를 유지하며, 적 투사체는 TTL·화면 이탈 대신 플레이어 주변 저속 궤도로 매 프레임 되돌려 실제 flight/충돌 경로를 반복한다. 정상 600초 플레이·승패 증거가 아님.",
+        "targetCounts": {
+          "enemies": 180,
+          "projectiles": 300,
+          "playerProjectiles": 220,
+          "enemyProjectiles": 80,
+          "pickups": 260,
+          "zones": 10
+        },
+        "hudIncluded": true,
+        "contentTier": 1,
+        "enemyKinds": [
+          "slime",
+          "mushroom",
+          "goblin",
+          "skeleton",
+          "bat",
+          "beetle"
+        ],
+        "weaponIds": [
+          "sword",
+          "arrow",
+          "spirit",
+          "lightning",
+          "frost",
+          "fireball"
+        ]
+      },
+      "environment": {
+        "viewport": {
+          "width": 1280,
+          "height": 720,
+          "dpr": 1
+        },
+        "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/151.0.0.0 Safari/537.36",
+        "durationSeconds": 60
+      },
+      "timing": {
+        "frameCount": 1692,
+        "meanFps": 28.209,
+        "meanFrameMs": 35.45,
+        "p95FrameMs": 50,
+        "maxFrameMs": 50.1,
+        "longFramesOver33Ms": 1568,
+        "simulationSteps": 3601,
+        "engineElapsedSeconds": 60.017
+      },
+      "entities": {
+        "enemies": {
+          "min": 180,
+          "max": 180
+        },
+        "projectiles": {
+          "min": 300,
+          "max": 300
+        },
+        "pickups": {
+          "min": 260,
+          "max": 260
+        },
+        "zones": {
+          "min": 18,
+          "max": 91
+        }
+      },
+      "segments": {
+        "engineJs": {
+          "samples": 1693,
+          "meanMs": 1.168,
+          "p95Ms": 1.9,
+          "maxMs": 3.2
+        },
+        "fixtureMaintenanceJs": {
+          "samples": 1693,
+          "meanMs": 0.035,
+          "p95Ms": 0.1,
+          "maxMs": 0.2
+        },
+        "rendererJs": {
+          "samples": 1693,
+          "meanMs": 3.009,
+          "p95Ms": 3.6,
+          "maxMs": 5.2
+        },
+        "uiUpdateJs": {
+          "samples": 645,
+          "meanMs": 0.175,
+          "p95Ms": 0.3,
+          "maxMs": 1.5
+        },
+        "totalMeasuredJs": {
+          "samples": 1693,
+          "meanMs": 4.28,
+          "p95Ms": 5.3,
+          "maxMs": 7.9
+        },
+        "gpuReadbackProbe": {
+          "samples": 0,
+          "meanMs": 0,
+          "p95Ms": 0,
+          "maxMs": 0
+        }
+      },
+      "instrumentation": {
+        "collisionEstimateIntervalMs": 5000,
+        "gpuReadbackEnabled": false,
+        "gpuReadbackIntervalMs": 0,
+        "explanation": "주 성능 측정 패스다. getImageData readback을 전혀 수행하지 않는다. engine/render/UI는 performance.now 구간의 JS 실행시간이며 각 프레임의 시계 호출 오버헤드를 조금 포함한다. renderer는 Canvas2D 명령 생성·제출 시간이며 순수 GPU 시간은 아니다. 충돌 후보 O(투사체×적) 추정은 5초마다만 실행해 p95 오염을 제한한다."
+      },
+      "intervalWindows": [
+        {
+          "fromSecond": 0.034,
+          "toSecond": 5.051,
+          "frameCount": 143,
+          "meanFps": 28.506,
+          "meanFrameMs": 35.08,
+          "p95FrameMs": 50,
+          "longFramesOver33Ms": 129,
+          "entities": {
+            "enemies": 180,
+            "projectiles": 300,
+            "pickups": 260,
+            "zones": 52
+          }
+        },
+        {
+          "fromSecond": 5.051,
+          "toSecond": 10.067,
+          "frameCount": 131,
+          "meanFps": 26.114,
+          "meanFrameMs": 38.294,
+          "p95FrameMs": 50,
+          "longFramesOver33Ms": 128,
+          "entities": {
+            "enemies": 180,
+            "projectiles": 300,
+            "pickups": 260,
+            "zones": 57
+          }
+        },
+        {
+          "fromSecond": 10.067,
+          "toSecond": 15.084,
+          "frameCount": 142,
+          "meanFps": 28.307,
+          "meanFrameMs": 35.327,
+          "p95FrameMs": 50,
+          "longFramesOver33Ms": 137,
+          "entities": {
+            "enemies": 180,
+            "projectiles": 300,
+            "pickups": 260,
+            "zones": 56
+          }
+        },
+        {
+          "fromSecond": 15.084,
+          "toSecond": 20.1,
+          "frameCount": 137,
+          "meanFps": 27.31,
+          "meanFrameMs": 36.617,
+          "p95FrameMs": 50.1,
+          "longFramesOver33Ms": 126,
+          "entities": {
+            "enemies": 180,
+            "projectiles": 300,
+            "pickups": 260,
+            "zones": 37
+          }
+        },
+        {
+          "fromSecond": 20.1,
+          "toSecond": 25.133,
+          "frameCount": 149,
+          "meanFps": 29.605,
+          "meanFrameMs": 33.779,
+          "p95FrameMs": 50,
+          "longFramesOver33Ms": 131,
+          "entities": {
+            "enemies": 180,
+            "projectiles": 300,
+            "pickups": 260,
+            "zones": 51
+          }
+        },
+        {
+          "fromSecond": 25.133,
+          "toSecond": 30.183,
+          "frameCount": 137,
+          "meanFps": 27.129,
+          "meanFrameMs": 36.861,
+          "p95FrameMs": 50,
+          "longFramesOver33Ms": 130,
+          "entities": {
+            "enemies": 180,
+            "projectiles": 300,
+            "pickups": 260,
+            "zones": 60
+          }
+        },
+        {
+          "fromSecond": 30.183,
+          "toSecond": 35.2,
+          "frameCount": 145,
+          "meanFps": 28.905,
+          "meanFrameMs": 34.596,
+          "p95FrameMs": 50,
+          "longFramesOver33Ms": 136,
+          "entities": {
+            "enemies": 180,
+            "projectiles": 300,
+            "pickups": 260,
+            "zones": 62
+          }
+        },
+        {
+          "fromSecond": 35.2,
+          "toSecond": 40.233,
+          "frameCount": 144,
+          "meanFps": 28.61,
+          "meanFrameMs": 34.953,
+          "p95FrameMs": 50,
+          "longFramesOver33Ms": 130,
+          "entities": {
+            "enemies": 180,
+            "projectiles": 300,
+            "pickups": 260,
+            "zones": 36
+          }
+        },
+        {
+          "fromSecond": 40.233,
+          "toSecond": 45.283,
+          "frameCount": 143,
+          "meanFps": 28.318,
+          "meanFrameMs": 35.313,
+          "p95FrameMs": 50,
+          "longFramesOver33Ms": 135,
+          "entities": {
+            "enemies": 180,
+            "projectiles": 300,
+            "pickups": 260,
+            "zones": 48
+          }
+        },
+        {
+          "fromSecond": 45.283,
+          "toSecond": 50.316,
+          "frameCount": 144,
+          "meanFps": 28.611,
+          "meanFrameMs": 34.952,
+          "p95FrameMs": 50,
+          "longFramesOver33Ms": 127,
+          "entities": {
+            "enemies": 180,
+            "projectiles": 300,
+            "pickups": 260,
+            "zones": 20
+          }
+        },
+        {
+          "fromSecond": 50.316,
+          "toSecond": 55.332,
+          "frameCount": 144,
+          "meanFps": 28.705,
+          "meanFrameMs": 34.837,
+          "p95FrameMs": 50.1,
+          "longFramesOver33Ms": 130,
+          "entities": {
+            "enemies": 180,
+            "projectiles": 300,
+            "pickups": 260,
+            "zones": 50
+          }
+        },
+        {
+          "fromSecond": 55.332,
+          "toSecond": 60.015,
+          "frameCount": 133,
+          "meanFps": 28.4,
+          "meanFrameMs": 35.211,
+          "p95FrameMs": 50,
+          "longFramesOver33Ms": 129,
+          "entities": {
+            "enemies": 180,
+            "projectiles": 300,
+            "pickups": 260,
+            "zones": 64
+          }
+        }
+      ],
+      "collisionCandidateEstimate": {
+        "min": 2574,
+        "max": 7751,
+        "mean": 5365,
+        "samples": 13
+      },
+      "runtimeErrors": [],
+      "pageErrors": [],
+      "consoleWarnings": []
+    },
+    {
+      "status": "complete",
+      "fixture": {
+        "synthetic": true,
+        "normalPlayEvidence": false,
+        "description": "엔진 상태를 명시적으로 채우고 hit 등록을 주기적으로 초기화해 충돌 부하를 유지하는 합성 fixture. 투사체 300개 중 플레이어 220개와 spore/bone 적 투사체 80개를 유지하며, 적 투사체는 TTL·화면 이탈 대신 플레이어 주변 저속 궤도로 매 프레임 되돌려 실제 flight/충돌 경로를 반복한다. 정상 600초 플레이·승패 증거가 아님.",
+        "targetCounts": {
+          "enemies": 180,
+          "projectiles": 300,
+          "playerProjectiles": 220,
+          "enemyProjectiles": 80,
+          "pickups": 260,
+          "zones": 10
+        },
+        "hudIncluded": true,
+        "contentTier": 1,
+        "enemyKinds": [
+          "slime",
+          "mushroom",
+          "goblin",
+          "skeleton",
+          "bat",
+          "beetle"
+        ],
+        "weaponIds": [
+          "sword",
+          "arrow",
+          "spirit",
+          "lightning",
+          "frost",
+          "fireball"
+        ]
+      },
+      "environment": {
+        "viewport": {
+          "width": 1920,
+          "height": 1080,
+          "dpr": 1
+        },
+        "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/151.0.0.0 Safari/537.36",
+        "durationSeconds": 60
+      },
+      "timing": {
+        "frameCount": 1034,
+        "meanFps": 17.224,
+        "meanFrameMs": 58.057,
+        "p95FrameMs": 66.7,
+        "maxFrameMs": 83.4,
+        "longFramesOver33Ms": 1034,
+        "simulationSteps": 3607,
+        "engineElapsedSeconds": 60.117
+      },
+      "entities": {
+        "enemies": {
+          "min": 180,
+          "max": 180
+        },
+        "projectiles": {
+          "min": 300,
+          "max": 300
+        },
+        "pickups": {
+          "min": 260,
+          "max": 260
+        },
+        "zones": {
+          "min": 21,
+          "max": 86
+        }
+      },
+      "segments": {
+        "engineJs": {
+          "samples": 1035,
+          "meanMs": 1.872,
+          "p95Ms": 2.7,
+          "maxMs": 4.6
+        },
+        "fixtureMaintenanceJs": {
+          "samples": 1035,
+          "meanMs": 0.036,
+          "p95Ms": 0.1,
+          "maxMs": 0.2
+        },
+        "rendererJs": {
+          "samples": 1035,
+          "meanMs": 3.117,
+          "p95Ms": 3.9,
+          "maxMs": 5.6
+        },
+        "uiUpdateJs": {
+          "samples": 523,
+          "meanMs": 0.183,
+          "p95Ms": 0.3,
+          "maxMs": 1.4
+        },
+        "totalMeasuredJs": {
+          "samples": 1035,
+          "meanMs": 5.119,
+          "p95Ms": 6.4,
+          "maxMs": 8.8
+        },
+        "gpuReadbackProbe": {
+          "samples": 0,
+          "meanMs": 0,
+          "p95Ms": 0,
+          "maxMs": 0
+        }
+      },
+      "instrumentation": {
+        "collisionEstimateIntervalMs": 5000,
+        "gpuReadbackEnabled": false,
+        "gpuReadbackIntervalMs": 0,
+        "explanation": "주 성능 측정 패스다. getImageData readback을 전혀 수행하지 않는다. engine/render/UI는 performance.now 구간의 JS 실행시간이며 각 프레임의 시계 호출 오버헤드를 조금 포함한다. renderer는 Canvas2D 명령 생성·제출 시간이며 순수 GPU 시간은 아니다. 충돌 후보 O(투사체×적) 추정은 5초마다만 실행해 p95 오염을 제한한다."
+      },
+      "intervalWindows": [
+        {
+          "fromSecond": 0.019,
+          "toSecond": 5.086,
+          "frameCount": 87,
+          "meanFps": 17.172,
+          "meanFrameMs": 58.234,
+          "p95FrameMs": 83.3,
+          "longFramesOver33Ms": 87,
+          "entities": {
+            "enemies": 180,
+            "projectiles": 300,
+            "pickups": 260,
+            "zones": 55
+          }
+        },
+        {
+          "fromSecond": 5.086,
+          "toSecond": 10.102,
+          "frameCount": 81,
+          "meanFps": 16.147,
+          "meanFrameMs": 61.932,
+          "p95FrameMs": 66.8,
+          "longFramesOver33Ms": 81,
+          "entities": {
+            "enemies": 180,
+            "projectiles": 300,
+            "pickups": 260,
+            "zones": 58
+          }
+        },
+        {
+          "fromSecond": 10.102,
+          "toSecond": 15.169,
+          "frameCount": 87,
+          "meanFps": 17.172,
+          "meanFrameMs": 58.236,
+          "p95FrameMs": 66.7,
+          "longFramesOver33Ms": 87,
+          "entities": {
+            "enemies": 180,
+            "projectiles": 300,
+            "pickups": 260,
+            "zones": 58
+          }
+        },
+        {
+          "fromSecond": 15.169,
+          "toSecond": 20.202,
+          "frameCount": 84,
+          "meanFps": 16.69,
+          "meanFrameMs": 59.918,
+          "p95FrameMs": 83.3,
+          "longFramesOver33Ms": 84,
+          "entities": {
+            "enemies": 180,
+            "projectiles": 300,
+            "pickups": 260,
+            "zones": 35
+          }
+        },
+        {
+          "fromSecond": 20.202,
+          "toSecond": 25.218,
+          "frameCount": 89,
+          "meanFps": 17.741,
+          "meanFrameMs": 56.365,
+          "p95FrameMs": 66.7,
+          "longFramesOver33Ms": 89,
+          "entities": {
+            "enemies": 180,
+            "projectiles": 300,
+            "pickups": 260,
+            "zones": 54
+          }
+        },
+        {
+          "fromSecond": 25.218,
+          "toSecond": 30.252,
+          "frameCount": 84,
+          "meanFps": 16.69,
+          "meanFrameMs": 59.918,
+          "p95FrameMs": 66.7,
+          "longFramesOver33Ms": 84,
+          "entities": {
+            "enemies": 180,
+            "projectiles": 300,
+            "pickups": 260,
+            "zones": 49
+          }
+        },
+        {
+          "fromSecond": 30.252,
+          "toSecond": 35.268,
+          "frameCount": 88,
+          "meanFps": 17.542,
+          "meanFrameMs": 57.006,
+          "p95FrameMs": 66.7,
+          "longFramesOver33Ms": 88,
+          "entities": {
+            "enemies": 180,
+            "projectiles": 300,
+            "pickups": 260,
+            "zones": 65
+          }
+        },
+        {
+          "fromSecond": 35.268,
+          "toSecond": 40.301,
+          "frameCount": 88,
+          "meanFps": 17.484,
+          "meanFrameMs": 57.195,
+          "p95FrameMs": 66.7,
+          "longFramesOver33Ms": 88,
+          "entities": {
+            "enemies": 180,
+            "projectiles": 300,
+            "pickups": 260,
+            "zones": 38
+          }
+        },
+        {
+          "fromSecond": 40.301,
+          "toSecond": 45.318,
+          "frameCount": 87,
+          "meanFps": 17.343,
+          "meanFrameMs": 57.66,
+          "p95FrameMs": 66.7,
+          "longFramesOver33Ms": 87,
+          "entities": {
+            "enemies": 180,
+            "projectiles": 300,
+            "pickups": 260,
+            "zones": 44
+          }
+        },
+        {
+          "fromSecond": 45.318,
+          "toSecond": 50.334,
+          "frameCount": 89,
+          "meanFps": 17.742,
+          "meanFrameMs": 56.364,
+          "p95FrameMs": 66.7,
+          "longFramesOver33Ms": 89,
+          "entities": {
+            "enemies": 180,
+            "projectiles": 300,
+            "pickups": 260,
+            "zones": 21
+          }
+        },
+        {
+          "fromSecond": 50.334,
+          "toSecond": 55.351,
+          "frameCount": 88,
+          "meanFps": 17.542,
+          "meanFrameMs": 57.006,
+          "p95FrameMs": 66.7,
+          "longFramesOver33Ms": 88,
+          "entities": {
+            "enemies": 180,
+            "projectiles": 300,
+            "pickups": 260,
+            "zones": 50
+          }
+        },
+        {
+          "fromSecond": 55.351,
+          "toSecond": 60.05,
+          "frameCount": 82,
+          "meanFps": 17.448,
+          "meanFrameMs": 57.315,
+          "p95FrameMs": 66.7,
+          "longFramesOver33Ms": 82,
+          "entities": {
+            "enemies": 180,
+            "projectiles": 300,
+            "pickups": 260,
+            "zones": 64
+          }
+        }
+      ],
+      "collisionCandidateEstimate": {
+        "min": 2785,
+        "max": 7898,
+        "mean": 5285.231,
+        "samples": 13
+      },
+      "runtimeErrors": [],
+      "pageErrors": [],
+      "consoleWarnings": []
+    }
+  ],
+  "graphics": {
+    "devices": [
+      {
+        "vendorId": 65535,
+        "deviceId": 65535,
+        "vendorString": "Google Inc. (Google)",
+        "deviceString": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver-5.0.0)",
+        "driverVendor": "SwANGLE",
+        "driverVersion": "5.0.0"
+      }
+    ],
+    "auxAttributes": {
+      "amdSwitchable": false,
+      "canSupportThreadedTextureMailbox": false,
+      "directRenderingVersion": "",
+      "displayType": "ANGLE_SWIFTSHADER",
+      "glExtensions": "GL_AMD_performance_monitor GL_ANGLE_base_vertex_base_instance_shader_builtin GL_ANGLE_blob_cache GL_ANGLE_client_arrays GL_ANGLE_clip_cull_distance GL_ANGLE_compressed_texture_etc GL_ANGLE_copy_texture_3d GL_ANGLE_depth_texture GL_ANGLE_framebuffer_blit GL_ANGLE_framebuffer_multisample GL_ANGLE_get_image GL_ANGLE_get_serialized_context_string GL_ANGLE_get_tex_level_parameter GL_ANGLE_instanced_arrays GL_ANGLE_memory_object_flags GL_ANGLE_memory_size GL_ANGLE_multi_draw GL_ANGLE_pack_reverse_row_order GL_ANGLE_polygon_mode GL_ANGLE_program_binary_readiness_query GL_ANGLE_program_cache_control GL_ANGLE_read_only_depth_stencil_feedback_loops GL_ANGLE_relaxed_vertex_attribute_type GL_ANGLE_renderability_validation GL_ANGLE_request_extension GL_ANGLE_rgbx_internal_format GL_ANGLE_robust_client_memory GL_ANGLE_robust_fragment_shader_output GL_ANGLE_robust_resource_initialization GL_ANGLE_shader_pixel_local_storage GL_ANGLE_shader_pixel_local_storage_coherent GL_ANGLE_stencil_texturing GL_ANGLE_texture_compression_dxt3 GL_ANGLE_texture_compression_dxt5 GL_ANGLE_texture_multisample GL_ANGLE_texture_usage GL_ANGLE_translated_shader_source GL_ANGLE_vulkan_image GL_ANGLE_yuv_internal_format GL_APPLE_clip_distance GL_ARM_rgba8 GL_ARM_shader_framebuffer_fetch GL_ARM_shader_framebuffer_fetch_depth_stencil GL_CHROMIUM_bind_generates_resource GL_CHROMIUM_bind_uniform_location GL_CHROMIUM_copy_compressed_texture GL_CHROMIUM_copy_texture GL_CHROMIUM_lose_context GL_EXT_EGL_image_array GL_EXT_EGL_image_external_wrap_modes GL_EXT_EGL_image_storage GL_EXT_base_instance GL_EXT_blend_minmax GL_EXT_buffer_storage GL_EXT_clear_texture GL_EXT_clip_control GL_EXT_clip_cull_distance GL_EXT_color_buffer_float GL_EXT_color_buffer_half_float GL_EXT_compressed_ETC1_RGB8_sub_texture GL_EXT_conservative_depth GL_EXT_copy_image GL_EXT_debug_label GL_EXT_debug_marker GL_EXT_depth_clamp GL_EXT_discard_framebuffer GL_EXT_disjoint_timer_query GL_EXT_draw_buffers GL_EXT_draw_buffers_indexed GL_EXT_draw_elements_base_vertex GL_EXT_float_blend GL_EXT_frag_depth GL_EXT_instanced_arrays GL_EXT_map_buffer_range GL_EXT_memory_object GL_EXT_memory_object_fd GL_EXT_occlusion_query_boolean GL_EXT_polygon_offset_clamp GL_EXT_read_format_bgra GL_EXT_robustness GL_EXT_sRGB GL_EXT_sRGB_write_control GL_EXT_semaphore GL_EXT_semaphore_fd GL_EXT_separate_shader_objects GL_EXT_shader_framebuffer_fetch GL_EXT_shader_framebuffer_fetch_non_coherent GL_EXT_shader_non_constant_global_initializers GL_EXT_shader_texture_lod GL_EXT_shadow_samplers GL_EXT_texture_border_clamp GL_EXT_texture_compression_bptc GL_EXT_texture_compression_dxt1 GL_EXT_texture_compression_rgtc GL_EXT_texture_compression_s3tc_srgb GL_EXT_texture_cube_map_array GL_EXT_texture_filter_anisotropic GL_EXT_texture_format_BGRA8888 GL_EXT_texture_lod_bias GL_EXT_texture_mirror_clamp_to_edge GL_EXT_texture_rg GL_EXT_texture_sRGB_R8 GL_EXT_texture_sRGB_RG8 GL_EXT_texture_sRGB_decode GL_EXT_texture_shadow_lod GL_EXT_texture_storage GL_EXT_texture_type_2_10_10_10_REV GL_EXT_unpack_subimage GL_KHR_blend_equation_advanced GL_KHR_debug GL_KHR_robust_buffer_access_behavior GL_KHR_robustness GL_KHR_texture_compression_astc_ldr GL_NV_fence GL_NV_framebuffer_blit GL_NV_pack_subimage GL_NV_pixel_buffer_object GL_NV_polygon_mode GL_NV_read_depth GL_NV_read_depth_stencil GL_NV_read_stencil GL_NV_shader_noperspective_interpolation GL_OES_EGL_image GL_OES_EGL_image_external GL_OES_EGL_image_external_essl3 GL_OES_EGL_sync GL_OES_compressed_EAC_R11_signed_texture GL_OES_compressed_EAC_R11_unsigned_texture GL_OES_compressed_EAC_RG11_signed_texture GL_OES_compressed_EAC_RG11_unsigned_texture GL_OES_compressed_ETC1_RGB8_texture GL_OES_compressed_ETC2_RGB8_texture GL_OES_compressed_ETC2_RGBA8_texture GL_OES_compressed_ETC2_punchthroughA_RGBA8_texture GL_OES_compressed_ETC2_punchthroughA_sRGB8_alpha_texture GL_OES_compressed_ETC2_sRGB8_alpha8_texture GL_OES_compressed_ETC2_sRGB8_texture GL_OES_compressed_paletted_texture GL_OES_copy_image GL_OES_depth24 GL_OES_depth32 GL_OES_depth_texture GL_OES_depth_texture_cube_map GL_OES_draw_buffers_indexed GL_OES_draw_elements_base_vertex GL_OES_element_index_uint GL_OES_fbo_render_mipmap GL_OES_get_program_binary GL_OES_mapbuffer GL_OES_packed_depth_stencil GL_OES_required_internalformat GL_OES_rgb8_rgba8 GL_OES_sample_shading GL_OES_sample_variables GL_OES_shader_multisample_interpolation GL_OES_standard_derivatives GL_OES_surfaceless_context GL_OES_texture_3D GL_OES_texture_border_clamp GL_OES_texture_cube_map_array GL_OES_texture_float GL_OES_texture_float_linear GL_OES_texture_half_float GL_OES_texture_half_float_linear GL_OES_texture_npot GL_OES_texture_stencil8 GL_OES_texture_storage_multisample_2d_array GL_OES_vertex_array_object GL_OES_vertex_half_float GL_OES_vertex_type_10_10_10_2 GL_OVR_multiview GL_OVR_multiview2 GL_QCOM_texture_lod_bias ",
+      "glImplementationParts": "(gl=egl-angle,angle=swiftshader)",
+      "glRenderer": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver-5.0.0)",
+      "glResetNotificationStrategy": 33362,
+      "glVendor": "Google Inc. (Google)",
+      "glVersion": "OpenGL ES 3.0 (ANGLE 2.1.28234 git hash: a17d6c8e9269)",
+      "glWsExtensions": "EGL_EXT_create_context_robustness EGL_ANGLE_surface_orientation EGL_KHR_create_context EGL_KHR_image EGL_KHR_image_base EGL_EXT_image_gl_colorspace EGL_KHR_gl_colorspace EGL_KHR_gl_texture_2D_image EGL_KHR_gl_texture_cubemap_image EGL_KHR_gl_renderbuffer_image EGL_KHR_get_all_proc_addresses EGL_KHR_fence_sync EGL_KHR_wait_sync EGL_ANGLE_create_context_webgl_compatibility EGL_CHROMIUM_create_context_bind_generates_resource EGL_KHR_swap_buffers_with_damage EGL_EXT_pixel_format_float EGL_KHR_surfaceless_context EGL_ANGLE_display_texture_share_group EGL_ANGLE_display_semaphore_share_group EGL_ANGLE_create_context_client_arrays EGL_ANGLE_program_cache_control EGL_ANGLE_robust_resource_initialization EGL_ANGLE_create_context_extensions_enabled EGL_ANDROID_blob_cache EGL_ANDROID_recordable EGL_ANGLE_create_context_backwards_compatible EGL_KHR_no_config_context EGL_IMG_context_priority EGL_KHR_create_context_no_error EGL_KHR_reusable_sync EGL_EXT_buffer_age EGL_ANGLE_create_surface_swap_interval EGL_ANGLE_vulkan_image EGL_KHR_partial_update EGL_ANGLE_global_fence_sync EGL_ANGLE_memory_usage_report ",
+      "glWsVendor": "Google Inc. (Google)",
+      "glWsVersion": "1.5 (ANGLE 2.1.28234 git hash: a17d6c8e9269)",
+      "hardwareSupportsVulkan": false,
+      "inProcessGpu": false,
+      "initializationTime": 0.031597,
+      "isAsan": false,
+      "isClangCoverage": false,
+      "jpegDecodeAcceleratorSupported": false,
+      "maxMsaaSamples": "4",
+      "optimus": false,
+      "passthroughCmdDecoder": true,
+      "pixelShaderVersion": "3.00",
+      "processCrashCount": 0,
+      "sandboxed": false,
+      "skiaBackendType": "None",
+      "subpixelFontRendering": true,
+      "targetCpuBits": 64,
+      "vertexShaderVersion": "3.00",
+      "visibilityCallbackCallCount": 0
+    },
+    "featureStatus": {
+      "2d_canvas": "unavailable_software",
+      "direct_rendering_display_compositor": "disabled_off_ok",
+      "gpu_compositing": "disabled_software",
+      "multiple_raster_threads": "enabled_on",
+      "opengl": "disabled_off",
+      "rasterization": "disabled_software",
+      "raw_draw": "disabled_off_ok",
+      "skia_graphite": "disabled_off",
+      "trees_in_viz": "disabled_off",
+      "video_decode": "disabled_software",
+      "video_encode": "disabled_software",
+      "vulkan": "disabled_off",
+      "webgl": "unavailable_software",
+      "webgpu": "unavailable_software",
+      "webgpu_on_vk_via_gl_interop": "disabled_off",
+      "webnn": "unavailable_software"
+    },
+    "driverBugWorkarounds": [],
+    "videoDecoding": [],
+    "videoEncoding": []
+  },
+  "completed": true,
+  "finishedAt": "2026-09-19T13:08:20.290Z"
+}

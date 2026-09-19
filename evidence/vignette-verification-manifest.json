@@ -1,0 +1,21 @@
+{
+  "sourceCommit": "c68e8fbca1c21baf75cb728e73c57243d68a5115",
+  "builtAt": "2026-09-19T13:13:50.173859+00:00",
+  "description": "Candidate B only: opaque canvas, removed redundant clear, static vignette reuse; original zone drawing restored.",
+  "files": {
+    "FONT-LICENSE.txt": "18aabf190848725e2576eefb5c29ba06aac1029d02132252a7f312eac2e50cf3",
+    "assets/boss-preview-CPkKz6Ro.js": "3b5e953074ae53e4245f808dade473e58ab04a50524e595efe72dffb5baace35",
+    "assets/character-preview-zqc-7cQ-.js": "349a75b0d6a6c9778e752a713277b6b71027686d7e078e73d8a0f0570617ce87",
+    "assets/noto-sans-kr-korean-400-normal-CmjJz_gz.woff2": "3aa0d1d63f3b5b2a33053a41a34512eac63abfb1dc2112aeda04733656a1a6d9",
+    "assets/noto-sans-kr-korean-700-normal-DvnDzSjd.woff2": "dab3d492daa687386292cff1499225db580f931f800ee0d124eb0636378c6020",
+    "assets/performance-DtF4bxqQ.css": "c3fc9350af71ad6b3a11c6f7f5c912f31c935e60f8de9fcd2bf0221dee922ea8",
+    "assets/performance-OmBzUY6c.js": "9987cefa53af7706d5e5ae27ad6db3cc61bf7ac3de4a8475ff88c471cf0cd36f",
+    "assets/renderer-C14Fn879.js": "b85dd7277eed95c8e0ee6e07154718bf258cc9775a686f2bee383198023a06df",
+    "assets/sprites-CuJdHU_Z.js": "295298b2c6619026ff86caf9eece8b2ddde295ec9d5380cee56d5cf6c7841a03",
+    "assets/sprites-DQp1HXjK.css": "50e5811210daf9e635c70140da2e51d9c05b0676efe2e3383a6a7d2c5ef321b0",
+    "favicon.svg": "5cb530e04b91a1240082f1b6a7a9cd26c26ff54dc77e8580c75760f5a14becb2",
+    "tests/boss-preview.html": "88c6f2b79ee7852c688e19a0a023e6cc9b923158777127332729940c66860f11",
+    "tests/character-preview.html": "16c5d15585c479f7a1bd92df639314c7409d6f688ed9c83a3893ea572ce589ff",
+    "tests/performance.html": "339fa5323dc34e8060ee0939700ce15dd2025f01f735fbb0bf1dea73835a2291"
+  }
+}

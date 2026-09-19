@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>리틀 룬 가디언즈 · 작업 관제</title>
+  <link rel="stylesheet" href="/assets/style.css">
+</head>
+<body>
+  <header class="hero">
+    <div><p class="eyebrow">LOCAL BUILD OBSERVATORY</p><h1 id="project">리틀 룬 가디언즈</h1><p id="phase">상태 불러오는 중</p></div>
+    <div class="connection"><span id="connection-dot" class="dot unknown"></span><span id="connection">수집기 확인 중</span></div>
+  </header>
+  <main>
+    <section id="summary" class="summary" aria-label="실행 요약"></section>
+    <section class="toolbar panel">
+      <label>역할<select id="role-filter"><option value="">전체</option></select></label>
+      <label>상태<select id="status-filter"><option value="">전체</option></select></label>
+      <label>검색<input id="search-filter" type="search" placeholder="에이전트·작업 검색"></label>
+      <button id="reset-filter" type="button">필터 초기화</button>
+      <span class="refresh">화면 갱신 <b id="rendered-at">-</b></span>
+    </section>
+    <section class="grid operations">
+      <article class="panel"><div class="section-title"><h2>현재 확인 실행 분포</h2><span>fresh running · 역할 · 요청 모델 · 추론</span></div><div id="distributions" class="distribution empty">관측 데이터가 없습니다.</div></article>
+      <article class="panel"><div class="section-title"><h2>즉시 배정 가능</h2><span id="ready-unassigned-count">ready · 담당 없음 · 0</span></div><div id="ready-unassigned" class="stack empty">미배정 ready 작업이 없습니다.</div></article>
+      <article class="panel"><div class="section-title"><h2>통합 대기열</h2><span>review 작업</span></div><div id="integration-queue" class="stack empty">통합 대기 작업이 없습니다.</div></article>
+      <article class="panel"><div class="section-title"><h2>최근 운영</h2><span>완료 · 실패 · 제한</span></div><div id="operations" class="stack empty">운영 이벤트가 없습니다.</div></article>
+    </section>
+    <section class="grid primary">
+      <article class="panel"><div class="section-title"><h2>에이전트</h2><span id="agent-count" class="badge">0</span></div><div id="agents" class="stack empty">관측 데이터가 없습니다.</div></article>
+      <article class="panel"><div class="section-title"><h2>관계도</h2><span>부모 → 자식</span></div><div id="tree" class="tree empty">관측 데이터가 없습니다.</div></article>
+    </section>
+    <section class="grid secondary">
+      <article class="panel"><div class="section-title"><h2>작업</h2><span id="task-progress">측정 가능한 작업 없음</span></div><div id="tasks" class="scrollbox empty">작업 정보가 없습니다.</div></article>
+      <article class="panel"><div class="section-title"><h2>이벤트</h2><span>최근 200건</span></div><div id="events" class="scrollbox empty" aria-live="polite">이벤트가 없습니다.</div></article>
+    </section>
+    <section class="grid tertiary">
+      <article class="panel"><div class="section-title"><h2>장애물과 다음 행동</h2></div><div id="blockers" class="stack empty">등록된 장애물이 없습니다.</div></article>
+      <article class="panel"><div class="section-title"><h2>확인된 링크</h2></div><div id="links" class="stack empty">등록된 링크가 없습니다.</div></article>
+    </section>
+    <p class="footnote">화면은 2초마다 갱신합니다. 상태가 180초 넘게 관측되지 않으면 원래 상태를 유지한 채 ‘오래된 정보’로 표시합니다. 완료 상태는 열린·닫힌 스레드를 뜻하지 않습니다.</p>
+  </main>
+  <script src="/assets/app.js" defer></script>
+</body>
+</html>

@@ -1,0 +1,81 @@
+Little Rune Guardians final-source build on preserved clean install
+===================================================================
+
+Result: PASS
+Final source commit: 4c3419109ad8dce9649c9fe26d19197731e12105
+Final source subject: Clarify dash reuse delay separately from charge recovery
+Final source commit time: 2026-09-19 21:46:13 +0900
+RC2 clean-install commit: e7bb3acdf8a1059c628e83c0eae392113cb361b7
+Preserved clean directory: /tmp/lrg-clean-1kzRiA
+Build window: 2026-09-19T12:49:06Z
+
+Method
+------
+1. Reused the preserved RC2 clean-install directory. Its node_modules came
+   from the previously successful `npm ci`; npm ci was not repeated.
+2. Compared package.json and package-lock.json between RC2 and the final
+   source commit with Git. The comparison exit code was 0 and produced no
+   differences.
+3. Compared the preserved clean directory's dependency files with the final
+   commit by SHA-256. Both pairs were identical.
+4. Extracted only final source paths from commit 4c34191 over the clean
+   directory:
+     git archive 4c3419109ad8dce9649c9fe26d19197731e12105 \
+       src public index.html tsconfig.json | \
+       tar -x -C /tmp/lrg-clean-1kzRiA
+5. Ran `npm run build` exactly once in /tmp/lrg-clean-1kzRiA.
+6. Compared every isolated dist file's SHA-256 with the existing workspace
+   dist file of the same relative path.
+
+Dependency identity
+-------------------
+Git comparison:
+  git diff --exit-code e7bb3ac 4c34191 -- package.json package-lock.json
+  exit code 0; no differences
+
+package.json:
+  preserved clean directory  88b638a5409e4cb873adb09ff846d6b066df402fd5cd78583e1a147fdfaae59e
+  final commit               88b638a5409e4cb873adb09ff846d6b066df402fd5cd78583e1a147fdfaae59e
+
+package-lock.json:
+  preserved clean directory  99943d54d758a41508aaf74a8676691bf8e97014819191de8dfa6955e10b747a
+  final commit               99943d54d758a41508aaf74a8676691bf8e97014819191de8dfa6955e10b747a
+
+Final production build
+----------------------
+Command:
+  cd /tmp/lrg-clean-1kzRiA
+  npm run build
+
+Script:
+  tsc --noEmit && vite build
+
+Output summary:
+  vite v8.3.0
+  32 modules transformed
+  built in 75ms
+  exit code 0
+
+Final isolated dist SHA-256
+--------------------------
+18aabf190848725e2576eefb5c29ba06aac1029d02132252a7f312eac2e50cf3  FONT-LICENSE.txt
+2bcce5c1b855e48e0dc5884881160902173e8e1e09c567dac6fd9b237108f3a6  assets/index-ibxWOD-d.css
+2bfd9ff944ec4be07c90251a5c7ecc807d7c535aef3a2c3eec987e5eb1ccda17  assets/index-qLwRGcuQ.js
+3aa0d1d63f3b5b2a33053a41a34512eac63abfb1dc2112aeda04733656a1a6d9  assets/noto-sans-kr-korean-400-normal-CmjJz_gz.woff2
+dab3d492daa687386292cff1499225db580f931f800ee0d124eb0636378c6020  assets/noto-sans-kr-korean-700-normal-DvnDzSjd.woff2
+5cb530e04b91a1240082f1b6a7a9cd26c26ff54dc77e8580c75760f5a14becb2  favicon.svg
+7718879f40f128ec4d1f21c08ab6aa19d8943b8cbd79eded0c02e7ec9ca1e67f  index.html
+
+Comparison with existing workspace dist
+---------------------------------------
+The existing workspace dist contained the same seven relative paths. Each
+corresponding SHA-256 value was identical.
+
+DIST_HASHES_MATCH=yes
+
+Isolation statement
+-------------------
+The build ran only in /tmp/lrg-clean-1kzRiA. The workspace src/, dist/, and
+node_modules/ were read only for the source-commit lookup and final hash
+comparison; this validation did not write to them. No browser or test suite was
+run. The updated temporary build remains available at /tmp/lrg-clean-1kzRiA.

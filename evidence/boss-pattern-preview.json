@@ -1,0 +1,169 @@
+{
+  "ready": true,
+  "fixture": true,
+  "normalPlayEvidence": false,
+  "description": "시각 검토용 고정 fixture, 정상 플레이 증거 아님. 실제 엔진 FSM·Zone·Renderer 사용.",
+  "scenes": [
+    {
+      "id": "mushroom-spores",
+      "bossKind": "mushroomKing",
+      "patternKind": "spore-burst",
+      "boss": {
+        "x": -110,
+        "y": 0,
+        "radius": 43,
+        "state": "windup",
+        "hp": 4200,
+        "maxHp": 4200
+      },
+      "player": {
+        "x": 110,
+        "y": 0,
+        "radius": 15
+      },
+      "bossPlayerDistance": 220,
+      "zone": {
+        "x": 110,
+        "y": 0,
+        "shape": "circle",
+        "radius": 88,
+        "angle": 0,
+        "telegraph": 0.741666666666668,
+        "duration": 0.35,
+        "damage": 24,
+        "owner": "enemy",
+        "kind": "spore-burst",
+        "id": 4,
+        "hitIds": []
+      },
+      "canvas": {
+        "width": 649,
+        "height": 400,
+        "dpr": 1
+      },
+      "engineSteps": 349
+    },
+    {
+      "id": "mushroom-stomp",
+      "bossKind": "mushroomKing",
+      "patternKind": "royal-stomp",
+      "boss": {
+        "x": -110,
+        "y": 0,
+        "radius": 43,
+        "state": "windup",
+        "hp": 4200,
+        "maxHp": 4200
+      },
+      "player": {
+        "x": 110,
+        "y": 0,
+        "radius": 15
+      },
+      "bossPlayerDistance": 220,
+      "zone": {
+        "x": -110,
+        "y": 0,
+        "shape": "ring",
+        "radius": 205,
+        "innerRadius": 82,
+        "angle": 0,
+        "telegraph": 0.7416666666666689,
+        "duration": 0.4,
+        "damage": 27,
+        "owner": "enemy",
+        "kind": "royal-stomp",
+        "id": 5,
+        "hitIds": []
+      },
+      "canvas": {
+        "width": 649,
+        "height": 400,
+        "dpr": 1
+      },
+      "engineSteps": 806
+    },
+    {
+      "id": "golem-shockwave",
+      "bossKind": "golem",
+      "patternKind": "golem-shockwave",
+      "boss": {
+        "x": -110,
+        "y": 0,
+        "radius": 47,
+        "state": "windup",
+        "hp": 5400,
+        "maxHp": 5400
+      },
+      "player": {
+        "x": 110,
+        "y": 0,
+        "radius": 15
+      },
+      "bossPlayerDistance": 220,
+      "zone": {
+        "x": -110,
+        "y": 0,
+        "shape": "ring",
+        "radius": 220,
+        "innerRadius": 100,
+        "angle": 0,
+        "telegraph": 0.7416666666666685,
+        "duration": 0.32,
+        "damage": 26,
+        "owner": "enemy",
+        "kind": "golem-shockwave",
+        "id": 4,
+        "hitIds": []
+      },
+      "canvas": {
+        "width": 649,
+        "height": 400,
+        "dpr": 1
+      },
+      "engineSteps": 361
+    },
+    {
+      "id": "golem-fissure",
+      "bossKind": "golem",
+      "patternKind": "golem-fissure",
+      "boss": {
+        "x": -110,
+        "y": 0,
+        "radius": 47,
+        "state": "windup",
+        "hp": 5400,
+        "maxHp": 5400
+      },
+      "player": {
+        "x": 110,
+        "y": 0,
+        "radius": 15
+      },
+      "bossPlayerDistance": 220,
+      "zone": {
+        "x": -110,
+        "y": 0,
+        "shape": "line",
+        "radius": 390,
+        "length": 390,
+        "width": 60,
+        "angle": 0,
+        "telegraph": 0.741666666666668,
+        "duration": 0.28,
+        "damage": 29,
+        "owner": "enemy",
+        "kind": "golem-fissure",
+        "id": 5,
+        "hitIds": []
+      },
+      "canvas": {
+        "width": 649,
+        "height": 400,
+        "dpr": 1
+      },
+      "engineSteps": 895
+    }
+  ],
+  "errors": []
+}
