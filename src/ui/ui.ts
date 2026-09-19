@@ -209,8 +209,39 @@ export function createUI(root: HTMLElement, handlers: UIHandlers): GameUI {
   weaponBar.setAttribute('aria-label', '보유 무기');
   const dash = document.createElement('div');
   dash.className = 'dash-indicator';
-  dash.innerHTML = '<span class="dash-indicator__key">Space</span><div><b>대시</b><small>준비 완료</small></div>';
-  const dashState = dash.querySelector('small') as HTMLElement;
+  dash.dataset.testid = 'dash-status';
+  const dashKey = document.createElement('span');
+  dashKey.className = 'dash-indicator__key';
+  dashKey.textContent = 'Space';
+  const dashInfo = document.createElement('div');
+  dashInfo.className = 'dash-indicator__info';
+  const dashHeading = document.createElement('div');
+  dashHeading.className = 'dash-indicator__heading';
+  const dashName = document.createElement('b');
+  dashName.textContent = '대시';
+  const dashCharges = document.createElement('strong');
+  dashCharges.dataset.testid = 'dash-charges';
+  dashCharges.textContent = '0 / 0';
+  dashHeading.append(dashName, dashCharges);
+  const dashSlots = document.createElement('div');
+  dashSlots.className = 'dash-indicator__slots';
+  dashSlots.setAttribute('aria-hidden', 'true');
+  const dashRecharge = document.createElement('div');
+  dashRecharge.className = 'dash-indicator__recharge';
+  dashRecharge.dataset.testid = 'dash-recharge';
+  dashRecharge.setAttribute('role', 'progressbar');
+  dashRecharge.setAttribute('aria-label', '다음 대시 충전');
+  dashRecharge.setAttribute('aria-valuemin', '0');
+  dashRecharge.setAttribute('aria-valuemax', '100');
+  const dashRechargeFill = document.createElement('span');
+  dashRecharge.append(dashRechargeFill);
+  const dashState = document.createElement('small');
+  dashState.className = 'dash-indicator__state';
+  dashState.textContent = '모두 충전';
+  const dashReuse = document.createElement('small');
+  dashReuse.className = 'dash-indicator__reuse';
+  dashInfo.append(dashHeading, dashSlots, dashRecharge, dashState, dashReuse);
+  dash.append(dashKey, dashInfo);
   hudBottom.append(weaponBar, dash);
   hud.append(hudTop, hudBottom);
 
@@ -246,9 +277,13 @@ export function createUI(root: HTMLElement, handlers: UIHandlers): GameUI {
   const levelupPanel = document.createElement('div');
   levelupPanel.className = 'levelup-panel';
   levelupPanel.innerHTML = '<p class="eyebrow">새로운 힘이 깨어납니다</p><h2 id="levelup-title">룬 축복 선택</h2><p class="levelup-help"><kbd>1</kbd> <kbd>2</kbd> <kbd>3</kbd> 키로도 선택할 수 있습니다</p>';
+  const levelMilestone = document.createElement('p');
+  levelMilestone.className = 'levelup-milestone';
+  levelMilestone.textContent = '레벨 8 보너스 · 대시 최대 충전 +1';
+  levelMilestone.hidden = true;
   const upgradeCards = document.createElement('div');
   upgradeCards.className = 'upgrade-cards';
-  levelupPanel.append(upgradeCards);
+  levelupPanel.append(levelMilestone, upgradeCards);
   levelup.append(levelupPanel);
 
   const result = document.createElement('section');
@@ -513,13 +548,43 @@ export function createUI(root: HTMLElement, handlers: UIHandlers): GameUI {
     timePanel.classList.toggle('time-panel--urgent', state.duration - state.elapsed <= 30);
     setText(killsValue, state.stats.kills.toLocaleString('ko-KR'));
     setText(scoreValue, state.stats.score.toLocaleString('ko-KR'));
+    const dashMax = Math.max(0, Math.min(4, Math.floor(state.player.dashMaxCharges)));
+    const availableDashes = Math.max(0, Math.min(dashMax, Math.floor(state.player.dashCharges)));
+    const rechargeDuration = Math.max(0, state.player.dashRechargeDuration);
+    const rechargeRemaining = availableDashes >= dashMax ? 0 : Math.max(0, state.player.dashRechargeRemaining);
+    const rechargeProgress = availableDashes >= dashMax || rechargeDuration <= 0
+      ? 1
+      : Math.max(0, Math.min(1, 1 - rechargeRemaining / rechargeDuration));
+    setText(dashCharges, `${availableDashes} / ${dashMax}`);
+    dashSlots.replaceChildren();
+    for (let index = 0; index < dashMax; index++) {
+      const slot = document.createElement('span');
+      slot.className = 'dash-indicator__slot';
+      if (index < availableDashes) slot.classList.add('dash-indicator__slot--filled');
+      else if (index === availableDashes) {
+        slot.classList.add('dash-indicator__slot--charging');
+        slot.style.setProperty('--dash-charge-progress', `${rechargeProgress * 100}%`);
+      }
+      dashSlots.append(slot);
+    }
+    dashRechargeFill.style.width = `${rechargeProgress * 100}%`;
+    dashRecharge.setAttribute('aria-valuenow', String(Math.round(rechargeProgress * 100)));
+    const rechargeText = availableDashes >= dashMax ? '모두 충전' : `다음 충전 ${rechargeRemaining.toFixed(1)}초`;
+    dashRecharge.setAttribute('aria-valuetext', rechargeText);
+    setText(dashState, rechargeText);
     const cooldown = Math.max(0, state.player.dashCooldown);
-    setText(dashState, cooldown > 0 ? `${cooldown.toFixed(1)}초` : '준비 완료');
-    dash.classList.toggle('dash-indicator--ready', cooldown <= 0);
+    dashReuse.hidden = cooldown <= 0;
+    setText(dashReuse, cooldown > 0 ? `연속 사용 대기 ${cooldown.toFixed(1)}초` : '');
+    dash.classList.toggle('dash-indicator--ready', availableDashes > 0 && cooldown <= 0);
+    dash.classList.toggle('dash-indicator--empty', availableDashes === 0);
+    dash.setAttribute('aria-label', `대시 ${availableDashes} / ${dashMax}. ${rechargeText}${cooldown > 0 ? `. 연속 사용 대기 ${cooldown.toFixed(1)}초` : ''}`);
     renderWeapons(state);
     renderSettings(profile);
     if (state.phase === 'title') renderCharacterSelection(handlers.getOptions().character);
-    if (state.phase === 'levelup') renderUpgradeChoices(state);
+    if (state.phase === 'levelup') {
+      levelMilestone.hidden = state.player.level !== 8;
+      renderUpgradeChoices(state);
+    }
     if (isResult) renderResult(state, profile);
 
     if (state.phase !== lastPhase) {

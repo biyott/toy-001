@@ -99,14 +99,15 @@ describe('P0 일반 적 차별 행동 계약', () => {
 
     attackGame.step(0.01, NO_INPUT);
 
-    const spores = attackState.zones.filter(({ kind }) => kind === 'spore');
+    const spores = attackState.zones.filter(({ kind }) => kind === 'spore-aim');
     assert.equal(spores.length, 1, '사거리 안의 버섯만 포자 공격을 만들어야 함');
     assert.equal(inRange.state, 'windup');
     assert.equal(boundary.state, 'chase', '정확히 450인 경계는 발사 범위 밖이어야 함');
     assert.deepEqual(
       { x: spores[0]!.x, y: spores[0]!.y, shape: spores[0]!.shape, telegraph: spores[0]!.telegraph, damage: spores[0]!.damage },
-      { x: attackState.player.x, y: attackState.player.y, shape: 'circle', telegraph: 1.04, damage: 13 },
+      { x: 449, y: attackState.player.y, shape: 'line', telegraph: 0.54, damage: 0 },
     );
+    assert.equal(attackState.projectiles.length, 0, '예고 시작 프레임에는 발사하지 않는다');
   });
 
   test('고블린은 선형 예고 뒤 돌진하고 회복 중에는 추적 속도가 낮다 [bounded-unit fixture]', () => {

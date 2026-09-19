@@ -9,9 +9,9 @@ export const WEAPONS: Record<WeaponId, WeaponDefinition> = {
   fireball: { id: 'fireball', name: '불씨 지팡이', description: '착탄 지점에서 폭발하는 불꽃을 발사합니다.', icon: '♨', color: '#ffaf75', tier: 1 },
 };
 export const CHARACTERS: Record<CharacterId, CharacterDefinition> = {
-  knight: { id: 'knight', name: '로완', title: '작은 새벽 기사', description: '튼튼한 갑옷과 넓은 검격. 최대 체력 120.', weapon: 'sword', color: '#8bbbc8' },
-  mage: { id: 'mage', name: '루미', title: '별빛 견습 마법사', description: '수호 정령과 함께 출발. 공격력 12% 증가.', weapon: 'spirit', color: '#b69bd8' },
-  ranger: { id: 'ranger', name: '페른', title: '숲길의 작은 궁수', description: '활과 함께 출발. 이동 속도 12% 증가.', weapon: 'arrow', color: '#8eba91' },
+  knight: { id: 'knight', name: '로완', title: '작은 새벽 기사', description: '튼튼한 검격과 체력 120. 대시 2회 저장, 한 칸 5초 충전. 8레벨에 최대 3회.', weapon: 'sword', color: '#8bbbc8' },
+  mage: { id: 'mage', name: '루미', title: '별빛 견습 마법사', description: '정령과 출발, 공격력 12% 증가. 대시 1회 저장, 한 칸 4초 충전. 8레벨에 최대 2회.', weapon: 'spirit', color: '#b69bd8' },
+  ranger: { id: 'ranger', name: '페른', title: '숲길의 작은 궁수', description: '활과 출발, 이동 속도 12% 증가. 대시 3회 저장, 한 칸 6초 충전. 8레벨에 최대 4회.', weapon: 'arrow', color: '#8eba91' },
 };
 export const UPGRADES: UpgradeDefinition[] = [
   { id: 'sword', name: '새벽의 검', description: '검을 획득하거나 강화합니다. 넓은 검격과 피해가 증가합니다.', icon: '⚔', category: 'weapon', maxLevel: 5, tier: 0, weapon: 'sword' },
@@ -20,7 +20,7 @@ export const UPGRADES: UpgradeDefinition[] = [
   { id: 'power', name: '용기의 문장', description: '모든 무기의 피해량이 18% 증가합니다.', icon: '◆', category: 'power', maxLevel: 5, tier: 0 },
   { id: 'haste', name: '재빠른 손', description: '모든 무기의 공격 간격이 10% 짧아집니다.', icon: '»', category: 'power', maxLevel: 4, tier: 0 },
   { id: 'vitality', name: '생명의 새싹', description: '최대 체력이 25 증가하고 체력을 40 회복합니다.', icon: '♥', category: 'defense', maxLevel: 4, tier: 0 },
-  { id: 'speed', name: '바람 장화', description: '이동 속도 10% 증가, 대시 대기시간 8% 감소.', icon: '➤', category: 'utility', maxLevel: 3, tier: 0 },
+  { id: 'speed', name: '바람 장화', description: '이동 속도 10% 증가, 대시 한 칸 충전시간 8% 감소. 최대 24% 감소, 최소 3초.', icon: '➤', category: 'utility', maxLevel: 3, tier: 0 },
   { id: 'magnet', name: '별빛 주머니', description: '경험치 수집 반경이 45 증가합니다.', icon: '✧', category: 'utility', maxLevel: 3, tier: 0 },
   { id: 'pierce', name: '바람 관통', description: '화살이 적 2명을 추가로 관통합니다. 분열 씨앗과 조합 가능.', icon: '↠', category: 'synergy', maxLevel: 2, tier: 0 },
   { id: 'split', name: '분열 씨앗', description: '화살 명중 시 작은 화살 2개로 분열합니다. 바람 관통과 만나 폭풍이 됩니다.', icon: '⋔', category: 'synergy', maxLevel: 2, tier: 0 },

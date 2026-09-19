@@ -92,9 +92,74 @@
 }
 
 .touch-controls__dash {
+  --dash-charge-progress: 0%;
+  --dash-ring-color: #8ce1bd;
   width: clamp(70px, 11vmin, 82px);
   height: clamp(70px, 11vmin, 82px);
-  font-size: 14px;
+  grid-template-rows: auto auto 4px auto;
+  align-content: center;
+  gap: 1px;
+  border-color: transparent !important;
+  background:
+    linear-gradient(155deg, rgb(116 75 140 / 96%), rgb(51 29 67 / 98%)) padding-box,
+    conic-gradient(from -90deg, var(--dash-ring-color) var(--dash-charge-progress), rgb(88 76 94 / 68%) 0) border-box !important;
+}
+
+.touch-controls__dash-label,
+.touch-controls__dash-status {
+  display: block;
+  line-height: 1;
+}
+
+.touch-controls__dash-label { font-size: 10px; }
+
+.touch-controls__dash-count {
+  display: block;
+  color: #fff6bd;
+  font-size: clamp(17px, 3vmin, 21px);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -.03em;
+  line-height: 1.05;
+}
+
+.touch-controls__dash-status {
+  min-height: 9px;
+  color: #e8dff0;
+  font-size: 8px;
+  font-variant-numeric: tabular-nums;
+}
+
+.touch-controls__dash-progress {
+  display: block;
+  width: 64%;
+  height: 4px;
+  margin-inline: auto;
+  overflow: hidden;
+  border-radius: 4px;
+  background: rgb(19 13 25 / 76%);
+  box-shadow: inset 0 0 0 1px rgb(255 255 255 / 18%);
+}
+
+.touch-controls__dash-progress-fill {
+  display: block;
+  width: var(--dash-charge-progress);
+  height: 100%;
+  border-radius: inherit;
+  background: var(--dash-ring-color);
+}
+
+.touch-controls__dash[data-state='reuse'] {
+  --dash-ring-color: #f2c15b;
+  filter: saturate(.62);
+}
+
+.touch-controls__dash[data-state='empty'] {
+  --dash-ring-color: #d68585;
+  filter: saturate(.55) brightness(.78);
+}
+
+.touch-controls__dash[data-state='empty'] .touch-controls__dash-count {
+  color: #ffd0c2;
 }
 
 @media (any-pointer: coarse) {
@@ -118,6 +183,8 @@
   .touch-controls__actions { gap: 6px; }
   .touch-controls__pause { width: 46px; height: 46px; margin-right: 5px; }
   .touch-controls__dash { width: 68px; height: 68px; }
+  .touch-controls__dash-count { font-size: 17px; }
+  .touch-controls__dash-status { font-size: 7px; }
 
   .touch-controls-host--enabled .hud-bottom {
     bottom: max(116px, calc(108px + env(safe-area-inset-bottom)));

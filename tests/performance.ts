@@ -15,7 +15,7 @@ interface BenchResult {
     synthetic: true;
     normalPlayEvidence: false;
     description: string;
-    targetCounts: { enemies: 180; projectiles: 300; pickups: 260; zones: 10 };
+    targetCounts: { enemies: 180; projectiles: 300; playerProjectiles: 220; enemyProjectiles: 80; pickups: 260; zones: 10 };
     hudIncluded: true;
     contentTier: 0 | 1;
     enemyKinds: EnemyKind[];
@@ -58,7 +58,7 @@ declare global {
   interface Window { __BENCH_RESULT__: Promise<BenchResult>; }
 }
 
-const TARGET = { enemies: 180, projectiles: 300, pickups: 260, zones: 10 } as const;
+const TARGET = { enemies: 180, projectiles: 300, playerProjectiles: 220, enemyProjectiles: 80, pickups: 260, zones: 10 } as const;
 const FIXTURE_ID = 1_000_000;
 const NO_INPUT = { moveX: 0, moveY: 0, dashPressed: false, pausePressed: false } as const;
 const query = new URLSearchParams(location.search);
@@ -138,8 +138,8 @@ function makeEnemy(index: number): Enemy {
   };
 }
 
-function makeProjectile(index: number): Projectile {
-  const angle = index / TARGET.projectiles * Math.PI * 2;
+function makePlayerProjectile(index: number): Projectile {
+  const angle = index / TARGET.playerProjectiles * Math.PI * 2;
   const ring = 130 + index % 13 * 38;
   const projectileWeapons: WeaponId[] = contentTier === 1 ? ['arrow', 'spirit', 'fireball'] : ['arrow', 'spirit'];
   const weapon = projectileWeapons[index % projectileWeapons.length]!;
@@ -159,6 +159,43 @@ function makeProjectile(index: number): Projectile {
     hitIds: [],
     generation: weapon === 'spirit' ? -(index + 1) : 1,
   };
+}
+
+function makeEnemyProjectile(index: number): Projectile {
+  const angle = index / TARGET.enemyProjectiles * Math.PI * 2;
+  // A few inner-ring shots make real swept player collisions every step; the
+  // rest move slowly on nearby tangents and keep the flight/update load alive.
+  const ring = index < 8 ? 18 : 44 + index % 8 * 25;
+  const kind: 'spore' | 'bone' = contentTier === 1 && index % 2 === 1 ? 'bone' : 'spore';
+  const speed = 28 + index % 5 * 4;
+  return {
+    id: FIXTURE_ID + 40_000 + index,
+    weapon: kind === 'bone' ? 'arrow' : 'spirit',
+    owner: 'enemy',
+    kind,
+    x: Math.cos(angle) * ring,
+    y: 30 + Math.sin(angle) * ring,
+    radius: kind === 'bone' ? 6 : 8,
+    facing: angle + Math.PI / 2,
+    vx: -Math.sin(angle) * speed,
+    vy: Math.cos(angle) * speed,
+    damage: 0.05,
+    life: 4,
+    pierce: 0,
+    hitIds: [],
+    generation: 0,
+  };
+}
+
+const ENEMY_PROJECTILE_TEMPLATES = Array.from({ length: TARGET.enemyProjectiles }, (_, index) => makeEnemyProjectile(index));
+function freshEnemyProjectile(index: number): Projectile {
+  return { ...ENEMY_PROJECTILE_TEMPLATES[index]!, hitIds: [] };
+}
+function resetEnemyProjectile(projectile: Projectile, index: number): void {
+  const hitIds = projectile.hitIds;
+  Object.assign(projectile, ENEMY_PROJECTILE_TEMPLATES[index]);
+  projectile.hitIds = hitIds;
+  hitIds.length = 0;
 }
 
 function makePickup(index: number): Pickup {
@@ -206,12 +243,21 @@ function maintainFixture(state: GameState, resetHits = false): void {
     enemy.maxHp = 1_000_000_000;
   }
 
-  while (state.projectiles.length < TARGET.projectiles) state.projectiles.push(makeProjectile(state.projectiles.length));
-  if (state.projectiles.length > TARGET.projectiles) state.projectiles.length = TARGET.projectiles;
-  for (const projectile of state.projectiles) {
+  const playerProjectiles = state.projectiles.filter((projectile) => projectile.owner === 'player').slice(0, TARGET.playerProjectiles);
+  const enemyProjectiles = state.projectiles.filter((projectile) => projectile.owner === 'enemy').slice(0, TARGET.enemyProjectiles);
+  while (playerProjectiles.length < TARGET.playerProjectiles) playerProjectiles.push(makePlayerProjectile(playerProjectiles.length));
+  while (enemyProjectiles.length < TARGET.enemyProjectiles) enemyProjectiles.push(freshEnemyProjectile(enemyProjectiles.length));
+  state.projectiles = [...playerProjectiles, ...enemyProjectiles];
+  for (const projectile of playerProjectiles) {
     projectile.life = Math.max(projectile.life, 120);
     projectile.pierce = Math.max(projectile.pierce, 999);
     if (resetHits) projectile.hitIds = [];
+  }
+  // This fixture-only reset keeps 80 real enemy-projectile flight/collision
+  // paths close to the player. It deliberately prevents natural TTL/escape and
+  // is an upper-bound workload, not a model of a normal 600-second run.
+  for (let index = 0; index < enemyProjectiles.length; index += 1) {
+    resetEnemyProjectile(enemyProjectiles[index]!, index);
   }
 
   while (state.pickups.length < TARGET.pickups) state.pickups.push(makePickup(state.pickups.length));
@@ -233,6 +279,7 @@ function maintainFixture(state: GameState, resetHits = false): void {
 function estimateCollisionCandidates(state: Readonly<GameState>): number {
   let candidates = state.enemies.length; // Enemy/player contact checks in the FSM.
   for (const projectile of state.projectiles) {
+    if (projectile.owner === 'enemy') { candidates += 1; continue; }
     for (const enemy of state.enemies) {
       const reach = projectile.radius + enemy.radius + 48;
       if (Math.abs(projectile.x - enemy.x) <= reach && Math.abs(projectile.y - enemy.y) <= reach) candidates += 1;
@@ -401,7 +448,7 @@ const benchPromise = new Promise<BenchResult>((resolve, reject) => {
           fixture: {
             synthetic: true,
             normalPlayEvidence: false,
-            description: '엔진 상태를 명시적으로 채우고 hit 등록을 주기적으로 초기화해 충돌 부하를 유지하는 합성 fixture. 정상 플레이·승패 증거가 아님.',
+            description: '엔진 상태를 명시적으로 채우고 hit 등록을 주기적으로 초기화해 충돌 부하를 유지하는 합성 fixture. 투사체 300개 중 플레이어 220개와 spore/bone 적 투사체 80개를 유지하며, 적 투사체는 TTL·화면 이탈 대신 플레이어 주변 저속 궤도로 매 프레임 되돌려 실제 flight/충돌 경로를 반복한다. 정상 600초 플레이·승패 증거가 아님.',
             targetCounts: TARGET,
             hudIncluded: true,
             contentTier,

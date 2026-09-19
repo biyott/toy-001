@@ -42,6 +42,10 @@ function zonePath(ctx: Ctx, zone: Zone): void {
 function drawZone(ctx: Ctx, zone: Zone, time: number, top = false): void {
   const enemy = zone.owner === 'enemy', waiting = zone.telegraph > 0;
   const pulse = .5 + Math.sin(time * 12) * .5;
+  if (enemy && zone.damage === 0 && zone.kind === 'royal-spore-target') {
+    if (!top) drawLandingMarker(ctx, zone.x, zone.y, zone.radius, time);
+    return;
+  }
   ctx.save(); zonePath(ctx, zone);
   if (enemy) {
     if (!top) {
@@ -75,7 +79,57 @@ function drawZone(ctx: Ctx, zone: Zone, time: number, top = false): void {
   ctx.restore();
 }
 
+function drawLandingMarker(ctx: Ctx, x: number, y: number, radius: number, time: number): void {
+  ctx.save();
+  ctx.strokeStyle = '#be6681'; ctx.lineWidth = 1.8; ctx.globalAlpha = .58 + Math.sin(time * 5) * .12;
+  ctx.setLineDash([5, 8]); ctx.beginPath(); ctx.arc(x, y, radius, 0, TAU); ctx.stroke(); ctx.setLineDash([]);
+  for (let i = 0; i < 4; i++) {
+    const angle = i * Math.PI / 2, cx = x + Math.cos(angle) * radius, cy = y + Math.sin(angle) * radius;
+    ctx.save(); ctx.translate(cx, cy); ctx.rotate(angle); line(ctx, [7, -4, 0, 0, 7, 4], '#b25276', 2); ctx.restore();
+  }
+  ellipse(ctx, x, y, 4, 4, 'rgba(244,221,180,.42)', '#be6681', 1.2);
+  ctx.restore();
+}
+
+function drawEnemyProjectile(ctx: Ctx, projectile: Projectile, time: number): void {
+  const angle = Math.atan2(projectile.vy, projectile.vx), royal = projectile.kind === 'royal-spore', bone = projectile.kind === 'bone';
+  const radius = Math.max(5, projectile.radius), altitude = royal ? 16 : 10;
+  shadow(ctx, projectile.x, projectile.y, radius * (royal ? 1.45 : 1.15), .2);
+  ctx.save(); ctx.translate(projectile.x, projectile.y - altitude); ctx.rotate(angle);
+  const trail = royal ? 44 : bone ? 32 : 27;
+  polygon(ctx, [-trail, -1, -radius * .6, -radius * .65, 1, 0, -radius * .6, radius * .65], 'rgba(183,55,108,.22)');
+  line(ctx, [-trail + 7, 0, -radius, 0], 'rgba(245,196,204,.68)', royal ? 5 : 2.5);
+  ellipse(ctx, -trail + 2, 0, royal ? 3 : 2, royal ? 3 : 1.5, 'rgba(174,61,101,.37)');
+  ellipse(ctx, -trail * .65, 3, royal ? 3.5 : 2, royal ? 2.5 : 1.5, 'rgba(222,135,172,.35)');
+  if (bone) {
+    // Two paired knuckles and a narrow shaft remain legible at actual play size.
+    line(ctx, [-9, 0, 9, 0], '#a43e64', 10); line(ctx, [-9, 0, 9, 0], '#fff0ce', 5);
+    for (const x of [-10, 10]) for (const y of [-3.4, 3.4]) ellipse(ctx, x, y, 4.1, 4.1, '#f8edcf', '#a43e64', 1.7);
+    line(ctx, [-6, -1, 6, -1], '#fff9e6', 1.4);
+  } else if (royal) {
+    const pulse = 1 + Math.sin(time * 9 + projectile.id) * .045;
+    ellipse(ctx, 0, 0, radius * 1.68, radius * 1.68, 'rgba(178,61,119,.14)');
+    ellipse(ctx, 0, 0, radius * pulse, radius * pulse, '#d7a4d1', '#a33670', 2.8);
+    ellipse(ctx, -2, -2, radius * .72, radius * .7, '#f0dfb2');
+    ctx.save(); ctx.rotate(time * 4 + projectile.id);
+    for (let i = 0; i < 2; i++) {
+      ctx.beginPath(); ctx.arc(0, 0, radius * (.4 + i * .23), i * Math.PI, i * Math.PI + Math.PI * 1.6); ctx.strokeStyle = i ? '#b95899' : '#fff4d8'; ctx.lineWidth = 2; ctx.stroke();
+    }
+    ellipse(ctx, radius + 4, 0, 2.5, 2.5, '#f8dcae', '#b25282', 1);
+    ellipse(ctx, -radius - 3, 1, 2, 2, '#d8dca3', '#b25282', 1); ctx.restore();
+    ellipse(ctx, -3, -4, 3, 2, '#fff6d7');
+  } else {
+    ellipse(ctx, 0, 0, radius + 4, radius + 4, 'rgba(180,58,99,.16)');
+    ellipse(ctx, 0, 0, radius, radius * .96, '#bddd93', '#aa3e69', 2.5);
+    ellipse(ctx, -1.5, -2, radius * .58, radius * .54, '#edf1b5');
+    for (let i = 0; i < 3; i++) { const a = time * 3 + i * TAU / 3; ellipse(ctx, Math.cos(a) * radius * .54, Math.sin(a) * radius * .54, 1.5, 1.5, '#91b47e'); }
+    ellipse(ctx, -3, -4, 2, 1.3, '#fff7d8');
+  }
+  ctx.restore();
+}
+
 function drawProjectile(ctx: Ctx, projectile: Projectile, time: number): void {
+  if (projectile.owner === 'enemy') { drawEnemyProjectile(ctx, projectile, time); return; }
   const angle = Math.atan2(projectile.vy, projectile.vx);
   if (projectile.weapon === 'spirit' && projectile.owner === 'player') {
     const y = projectile.y - 15 - Math.sin(time * 5 + projectile.id) * 3;
@@ -87,11 +141,7 @@ function drawProjectile(ctx: Ctx, projectile: Projectile, time: number): void {
     star(ctx, 7, -16, 3, '#f7df9b', 4, time); ctx.restore(); return;
   }
   ctx.save(); ctx.translate(projectile.x, projectile.y - 9); ctx.rotate(angle);
-  if (projectile.owner === 'enemy') {
-    ellipse(ctx, 0, 0, projectile.radius + 3, projectile.radius + 3, 'rgba(181,124,145,.16)');
-    ellipse(ctx, 0, 0, Math.max(4, projectile.radius), Math.max(4, projectile.radius) * .9, '#bb94a8', '#836c82', 1.5);
-    ellipse(ctx, -1, -2, 2.5, 1.6, '#ead3d8');
-  } else if (projectile.weapon === 'arrow') {
+  if (projectile.weapon === 'arrow') {
     line(ctx, [-20, 0, 3, 0], 'rgba(242,222,161,.25)', 5);
     line(ctx, [-14, 0, 8, 0], '#98734d', 2.5); polygon(ctx, [14, 0, 5, -4, 6, 4], '#e5e6c9', '#839382', 1);
     polygon(ctx, [-9, -1, -16, -5, -14, 0, -17, 4, -9, 1], '#c9dcc5');
@@ -116,15 +166,19 @@ function drawPickup(ctx: Ctx, x: number, y: number, kind: 'xp' | 'heal', value: 
   polygon(ctx, [x, y - r * 2 - bob, x + r, y - r - bob, x, y - r * .65 - bob], value >= 5 ? '#d3bfe2' : '#b8dfb9');
 }
 
-function drawEnemy(ctx: Ctx, enemy: Enemy, time: number): void {
+interface EnemyRecoil { remaining: number; angle: number; }
+
+function drawEnemy(ctx: Ctx, enemy: Enemy, time: number, recoil?: EnemyRecoil): void {
   const scale = actorScale(enemy.kind), moving = enemy.state === 'chase' || enemy.state === 'attack';
   const frame = moving ? Math.floor(time * (enemy.kind === 'bat' ? 10 : 7) + enemy.id) % 4 : 0;
   const bob = enemy.kind === 'bat' ? 16 + Math.sin(time * 6 + enemy.id) * 3 : moving ? Math.abs(Math.sin(time * 8 + enemy.id)) * 2 : Math.sin(time * 2 + enemy.id) * .8;
   const windup = enemy.state === 'windup';
   const squash = windup ? .94 : enemy.kind === 'slime' ? 1 + Math.sin(time * 5 + enemy.id) * .04 : 1;
+  const kick = recoil ? Math.sin(recoil.remaining / .24 * Math.PI) * (enemy.boss ? 9 : 5) : 0;
+  const kickX = Math.cos(recoil?.angle ?? 0) * kick, kickY = Math.sin(recoil?.angle ?? 0) * kick;
   ctx.save();
   if (enemy.hitFlash > 0) ctx.globalAlpha = .65 + .25 * Math.sin(time * 90);
-  drawSprite(ctx, actorSprite(enemy.kind, frame), enemy.x, enemy.y - bob, scale, Math.cos(enemy.facing) < -.2, windup ? Math.sin(time * 22) * .025 : 0, squash);
+  drawSprite(ctx, actorSprite(enemy.kind, frame), enemy.x - kickX, enemy.y - bob - kickY, scale, Math.cos(enemy.facing) < -.2, windup ? Math.sin(time * 22) * .025 : -kickX * .007, squash + (kick ? .035 : 0));
   if (enemy.hitFlash > 0) {
     star(ctx, enemy.x + 11 * scale, enemy.y - 38 * scale, 8, '#fff6cf', 4, time * 4);
   }
@@ -136,6 +190,11 @@ function drawEnemy(ctx: Ctx, enemy: Enemy, time: number): void {
   if (windup) {
     const y = enemy.y - (enemy.boss ? 157 : 75) * scale;
     ellipse(ctx, enemy.x, y, 7, 9, '#f0d2a4', '#bf8a70', 1.4); line(ctx, [enemy.x, y - 4, enemy.x, y], '#a86f5e', 2); ellipse(ctx, enemy.x, y + 4, 1, 1, '#a86f5e');
+    if (enemy.kind === 'mushroom' || enemy.kind === 'skeleton' || enemy.kind === 'mushroomKing') {
+      const chargeX = enemy.x + Math.cos(enemy.facing) * (enemy.boss ? 28 : 15);
+      const chargeY = enemy.y - (enemy.boss ? 43 : 23) + Math.sin(enemy.facing) * 6;
+      ellipse(ctx, chargeX, chargeY, 4 + Math.sin(time * 15) * .8, 4, enemy.kind === 'skeleton' ? '#fff0ce' : '#d7e6a8', '#b3537c', 1.8);
+    }
   }
 }
 
@@ -171,6 +230,8 @@ export function createRenderer(canvas: HTMLCanvasElement): Renderer {
   let previousPhase: GameState['phase'] = 'title';
   let camera: Vec2 = { x: 0, y: 0 };
   let disposed = false;
+  let observedEnemies: readonly Enemy[] = [];
+  const enemyRecoil = new Map<number, EnemyRecoil>();
   const isVisible = (x: number, y: number, margin = 160): boolean => Math.abs(x - camera.x) < width / zoom / 2 + margin && Math.abs(y - camera.y) < height / zoom / 2 + margin;
 
   function drawProp(prop: Prop, player?: Player): boolean {
@@ -208,8 +269,12 @@ export function createRenderer(canvas: HTMLCanvasElement): Renderer {
     if (disposed) return;
     dt = Math.max(0, Math.min(dt || 0, .05));
     const title = state.phase === 'title';
-    if (state.elapsed < lastElapsed || (previousPhase !== 'title' && title)) { effects.clear(); attackPose = 0; lastSpiritCooldown = undefined; }
-    if (title || state.phase === 'playing' || state.phase === 'victory' || state.phase === 'defeat') { time += dt; effects.step(dt); attackPose = Math.max(0, attackPose - dt); }
+    if (state.elapsed < lastElapsed || (previousPhase !== 'title' && title)) { effects.clear(); attackPose = 0; lastSpiritCooldown = undefined; enemyRecoil.clear(); }
+    if (title || state.phase === 'playing' || state.phase === 'victory' || state.phase === 'defeat') {
+      time += dt; effects.step(dt); attackPose = Math.max(0, attackPose - dt);
+      for (const [id, recoil] of enemyRecoil) { recoil.remaining -= dt; if (recoil.remaining <= 0) enemyRecoil.delete(id); }
+    }
+    observedEnemies = state.enemies;
     lastPlayerPosition = { x: state.player.x, y: state.player.y }; animationCharacter = state.player.character;
     if (title) camera = { x: 0, y: -5 };
     else if (previousPhase === 'title' || state.elapsed < lastElapsed) camera = { x: state.player.x, y: state.player.y };
@@ -233,11 +298,17 @@ export function createRenderer(canvas: HTMLCanvasElement): Renderer {
       ctx.strokeStyle = '#69866e'; ctx.lineWidth = 3.4; ctx.stroke();
       ctx.strokeStyle = '#f8dda0'; ctx.lineWidth = 1.6; ctx.stroke(); ctx.restore();
       for (const zone of state.zones) if (isVisible(zone.x, zone.y, zone.radius + (zone.length ?? 0))) drawZone(ctx, zone, time);
+      for (const projectile of state.projectiles) {
+        if (projectile.owner === 'enemy' && projectile.kind === 'royal-spore' && projectile.targetX !== undefined && projectile.targetY !== undefined && isVisible(projectile.targetX, projectile.targetY, projectile.splashRadius ?? 88)) {
+          const marked = state.zones.some(zone => zone.kind === 'royal-spore-target' && Math.hypot(zone.x - projectile.targetX!, zone.y - projectile.targetY!) < 2);
+          if (!marked) drawLandingMarker(ctx, projectile.targetX, projectile.targetY, projectile.splashRadius ?? 88, time);
+        }
+      }
       for (const pickup of state.pickups) if (isVisible(pickup.x, pickup.y, 30)) drawPickup(ctx, pickup.x, pickup.y, pickup.kind, pickup.value, time, pickup.id);
       const entries: { y: number; id: number; draw: () => void }[] = [];
       let occluded = false;
       for (const prop of visibleProps) entries.push({ y: prop.y, id: prop.id, draw: () => { occluded = drawProp(prop, state.player) || occluded; } });
-      for (const enemy of visibleEnemies) entries.push({ y: enemy.y, id: enemy.id, draw: () => drawEnemy(ctx, enemy, time) });
+      for (const enemy of visibleEnemies) entries.push({ y: enemy.y, id: enemy.id, draw: () => drawEnemy(ctx, enemy, time, enemyRecoil.get(enemy.id)) });
       const primaryWeapon = { knight: 'sword', mage: 'spirit', ranger: 'arrow' }[state.player.character];
       const primary = state.weapons.find(weapon => weapon.id === primaryWeapon);
       const range = state.player.character === 'knight' ? 160 : 680;
@@ -305,6 +376,14 @@ export function createRenderer(canvas: HTMLCanvasElement): Renderer {
         effects.consume(events);
         const primary = { knight: 'sword', mage: 'spirit', ranger: 'arrow' }[animationCharacter];
         for (const event of events) {
+          if (event.type === 'attack' && event.kind?.startsWith('enemy-') && event.kind.endsWith('-launch')) {
+            let shooter: Enemy | undefined, distance = 80 ** 2;
+            for (const enemy of observedEnemies) {
+              const d = (enemy.x - event.x) ** 2 + (enemy.y - event.y) ** 2;
+              if (d < distance) { shooter = enemy; distance = d; }
+            }
+            if (shooter) enemyRecoil.set(shooter.id, { remaining: .24, angle: event.angle ?? shooter.facing });
+          }
           const characterAttack = event.weapon === primary || animationCharacter === 'mage' && (event.weapon === 'fireball' || event.weapon === 'frost' || event.weapon === 'lightning');
           if (event.type === 'attack' && characterAttack && Math.hypot(event.x - lastPlayerPosition.x, event.y - lastPlayerPosition.y) < 40) {
             attackPose = .3; attackAngle = event.angle ?? 0;
@@ -313,6 +392,6 @@ export function createRenderer(canvas: HTMLCanvasElement): Renderer {
       }
     },
     render,
-    dispose() { disposed = true; ground.dispose(); effects.clear(); clearSpriteCache(); },
+    dispose() { disposed = true; ground.dispose(); effects.clear(); enemyRecoil.clear(); clearSpriteCache(); },
   };
 }

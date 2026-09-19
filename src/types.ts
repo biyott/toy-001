@@ -10,6 +10,8 @@ export interface Body extends Vec2 { id: number; radius: number; facing: number;
 export interface Player extends Body {
   character: CharacterId; hp: number; maxHp: number; xp: number; xpToNext: number; level: number;
   speed: number; invulnerable: number; dashCooldown: number; dashTime: number; hitFlash: number;
+  dashCharges: number; dashMaxCharges: number; dashRechargeRemaining: number;
+  dashRechargeDuration: number; dashReuseDelay: number;
   moving: boolean; upgrades: Record<string, number>;
 }
 export interface Enemy extends Body {
@@ -20,6 +22,8 @@ export interface Enemy extends Body {
 export interface Projectile extends Body {
   weapon: WeaponId; owner: 'player' | 'enemy'; vx: number; vy: number; damage: number;
   life: number; pierce: number; hitIds: number[]; generation: number;
+  kind?: 'spore' | 'bone' | 'royal-spore';
+  targetX?: number; targetY?: number; splashRadius?: number;
 }
 export interface Pickup extends Body { kind: 'xp' | 'heal'; value: number; life: number; }
 export interface Zone extends Vec2 {

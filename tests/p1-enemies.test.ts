@@ -4,13 +4,32 @@ import { describe, test } from 'node:test';
 import { createGame } from '../src/game/engine.ts';
 import { updateP1Enemy } from '../src/game/p1-enemies.ts';
 import type { P1Context } from '../src/game/p1-context.ts';
-import type { Enemy, GameOptions, GameState, Vec2, Zone } from '../src/types.ts';
+import type { Enemy, GameOptions, GameState, Projectile, Vec2, WeaponId, Zone } from '../src/types.ts';
 import { mutableStateFixture } from './fixtures.ts';
 
 const OPTIONS: GameOptions = { mode: 'normal', seed: 0x503145, character: 'knight', contentTier: 1 };
 
 type MoveCall = { dx: number; dy: number; ignoreProps: boolean };
-type Fixture = { state: GameState; ctx: P1Context; moves: MoveCall[]; zones: Zone[]; setSlowFactor(value: number): void };
+type ProjectileCall = {
+  weapon: WeaponId;
+  owner: Projectile['owner'];
+  position: Vec2;
+  angle: number;
+  speed: number;
+  damage: number;
+  partial: Partial<Projectile>;
+};
+type EmitCall = { type: string; kind?: string; angle?: number };
+type Fixture = {
+  state: GameState;
+  ctx: P1Context;
+  moves: MoveCall[];
+  zones: Zone[];
+  projectiles: ProjectileCall[];
+  emits: EmitCall[];
+  damageCalls: Enemy[];
+  setSlowFactor(value: number): void;
+};
 
 function fixture(): Fixture {
   const game = createGame(OPTIONS);
@@ -22,6 +41,9 @@ function fixture(): Fixture {
   state.zones = [];
   const moves: MoveCall[] = [];
   const zones: Zone[] = [];
+  const projectiles: ProjectileCall[] = [];
+  const emits: EmitCall[] = [];
+  const damageCalls: Enemy[] = [];
   let nextId = 9_200_000;
   let slowFactor = 1;
   const ctx: P1Context = {
@@ -32,15 +54,17 @@ function fixture(): Fixture {
     haste: () => 1,
     nearest: () => undefined,
     nearby: () => [],
-    damageEnemy: () => undefined,
-    emit: () => undefined,
+    damageEnemy: (target) => { damageCalls.push(target); },
+    emit: (type, _position, detail = {}) => { emits.push({ type, kind: detail.kind, angle: detail.angle }); },
     addZone: (partial) => {
       const zone: Zone = { ...partial, id: nextId++, hitIds: [] };
       zones.push(zone);
       state.zones.push(zone);
       return zone;
     },
-    addProjectile: () => undefined,
+    addProjectile: (weapon, owner, position, angle, speed, damage, partial = {}) => {
+      projectiles.push({ weapon, owner, position: { x: position.x, y: position.y }, angle, speed, damage, partial });
+    },
     moveBody: (body, dx, dy, ignoreProps = false) => {
       moves.push({ dx, dy, ignoreProps });
       body.x += dx;
@@ -49,7 +73,7 @@ function fixture(): Fixture {
     slowEnemy: () => undefined,
     effectiveSpeed: (enemy) => enemy.speed * slowFactor,
   };
-  return { state, ctx, moves, zones, setSlowFactor: value => { slowFactor = value; } };
+  return { state, ctx, moves, zones, projectiles, emits, damageCalls, setSlowFactor: value => { slowFactor = value; } };
 }
 
 function enemy(kind: Enemy['kind'], overrides: Partial<Enemy> = {}): Enemy {
@@ -107,7 +131,7 @@ describe('P1 일반 적 훅 경계', () => {
   });
 });
 
-describe('해골 거리 유지와 원거리 부채 예고', () => {
+describe('해골 거리 유지와 원거리 뼈 투사체', () => {
   test('근거리에서는 후퇴하고 유지 거리에서는 멈추며 원거리에서는 감속된 속도로 접근한다', () => {
     const nearFixture = fixture();
     const near = enemy('skeleton', { x: 150, speed: 80 });
@@ -128,22 +152,44 @@ describe('해골 거리 유지와 원거리 부채 예고', () => {
     assert.ok(far.x < 360);
   });
 
-  test('사거리 안에서 addZone으로 부채꼴 원거리 공격을 예고하고 준비·회복한다', () => {
-    const { ctx, zones } = fixture();
+  test('피해 없는 조준 예고 뒤 고정 방향으로 뼈 볼트 3발을 한 번만 발사한다', () => {
+    const { state, ctx, zones, projectiles, emits, damageCalls } = fixture();
     const skeleton = enemy('skeleton', { x: 350, attackCooldown: 0, damage: 17 });
 
     updateP1Enemy(skeleton, 0.1, ctx);
     assert.equal(skeleton.state, 'windup');
     assert.equal(skeleton.stateTime, 0);
     assert.equal(skeleton.attackCooldown, 3.25);
+    const lockedAngle = Math.atan2(skeleton.vy, skeleton.vx);
     assert.deepEqual(
       zones.map(({ shape, radius, width, telegraph, duration, damage, owner, kind }) => ({ shape, radius, width, telegraph, duration, damage, owner, kind })),
-      [{ shape: 'cone', radius: 420, width: 0.5, telegraph: 0.72, duration: 0.2, damage: 17, owner: 'enemy', kind: 'skeleton-volley' }],
+      [{ shape: 'cone', radius: 420, width: 0.5, telegraph: 0.72, duration: 0.2, damage: 0, owner: 'enemy', kind: 'skeleton-aim' }],
     );
+    assert.equal(projectiles.length, 0, '예고 시작과 동시에 투사체를 만들면 안 된다');
+    assert.equal(damageCalls.length, 0, '예고 zone은 즉시 피해를 주면 안 된다');
 
+    state.player.y = 200;
+    skeleton.stateTime = 0.71;
+    updateP1Enemy(skeleton, 0.1, ctx);
+    assert.equal(projectiles.length, 0);
     skeleton.stateTime = 0.72;
     updateP1Enemy(skeleton, 0.1, ctx);
     assert.equal(skeleton.state, 'recover');
+    assert.deepEqual(
+      projectiles.map(({ weapon, owner, speed, damage, partial }) => ({ weapon, owner, speed, damage, partial })),
+      [
+        { weapon: 'arrow', owner: 'enemy', speed: 240, damage: 17, partial: { kind: 'bone', radius: 6, life: 2.5 } },
+        { weapon: 'arrow', owner: 'enemy', speed: 240, damage: 17, partial: { kind: 'bone', radius: 6, life: 2.5 } },
+        { weapon: 'arrow', owner: 'enemy', speed: 240, damage: 17, partial: { kind: 'bone', radius: 6, life: 2.5 } },
+      ],
+    );
+    assert.deepEqual(projectiles.map(({ angle }) => angle), [lockedAngle - 0.1, lockedAngle, lockedAngle + 0.1]);
+    assert.notEqual(skeleton.facing, lockedAngle, '플레이어 이동으로 현재 facing은 바뀌어야 함');
+    assert.deepEqual(emits, [{ type: 'attack', kind: 'enemy-bone-launch', angle: lockedAngle }]);
+
+    updateP1Enemy(skeleton, 0.1, ctx);
+    assert.equal(projectiles.length, 3, '회복 상태에서 같은 발사를 반복하면 안 된다');
+    assert.equal(emits.length, 1);
     skeleton.stateTime = 0.38;
     updateP1Enemy(skeleton, 0.1, ctx);
     assert.equal(skeleton.state, 'chase');

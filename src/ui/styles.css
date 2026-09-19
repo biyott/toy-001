@@ -345,13 +345,24 @@ kbd {
 .weapon-chip small { display: block; }
 .weapon-chip b { font-size: 10px; }
 .weapon-chip small { color: #d6bdf0; font-size: 9px; }
-.dash-indicator { display: flex; min-width: 128px; padding: 7px 10px; gap: 9px; align-items: center; color: #d5cab8; border: 2px solid #665544; border-radius: 10px; background: rgb(31 25 31 / 88%); }
-.dash-indicator__key { display: grid; min-width: 52px; height: 30px; place-items: center; border: 1px solid #746878; border-bottom-width: 3px; border-radius: 6px; font-size: 10px; }
-.dash-indicator b,
-.dash-indicator small { display: block; }
-.dash-indicator b { font-size: 11px; }
-.dash-indicator small { font-size: 9px; }
+.dash-indicator { display: flex; width: 224px; min-width: 224px; min-height: 76px; padding: 8px 10px; gap: 10px; align-items: center; color: #d5cab8; border: 2px solid #665544; border-radius: 10px; background: rgb(31 25 31 / 91%); box-shadow: 0 4px 12px rgb(10 6 13 / 30%); }
+.dash-indicator__key { display: grid; min-width: 54px; height: 34px; place-items: center; color: #fff0bd; border: 1px solid #8d788e; border-bottom-width: 3px; border-radius: 6px; font-size: 11px; font-weight: 700; }
+.dash-indicator__info { min-width: 0; flex: 1; }
+.dash-indicator__heading { display: flex; margin-bottom: 4px; align-items: baseline; justify-content: space-between; gap: 7px; }
+.dash-indicator__heading b { color: #f4e5c6; font-size: 12px; }
+.dash-indicator__heading strong { color: #ffe69a; font-size: 14px; font-variant-numeric: tabular-nums; }
+.dash-indicator__slots { display: flex; height: 10px; margin-bottom: 4px; gap: 4px; }
+.dash-indicator__slot { width: 22px; height: 9px; overflow: hidden; border: 1px solid #776678; border-radius: 3px; background: #19131c; box-shadow: inset 0 1px 2px #08060a; }
+.dash-indicator__slot--filled { border-color: #e1b857; background: linear-gradient(180deg, #ffe69a, #9b6bc0); box-shadow: inset 0 1px #fff2be, 0 0 5px rgb(218 173 88 / 34%); }
+.dash-indicator__slot--charging { background: linear-gradient(90deg, #a574c5 0 var(--dash-charge-progress), #19131c var(--dash-charge-progress) 100%); }
+.dash-indicator__recharge { height: 5px; overflow: hidden; border: 1px solid #5f505f; border-radius: 999px; background: #151017; }
+.dash-indicator__recharge > span { display: block; width: 0; height: 100%; border-radius: inherit; background: linear-gradient(90deg, #7b4f98, #ffe28a); transition: width .12s linear; }
+.dash-indicator__state,
+.dash-indicator__reuse { display: block; margin-top: 3px; font-size: 10px; line-height: 1.2; font-variant-numeric: tabular-nums; }
+.dash-indicator__state { color: #e8dbc4; }
+.dash-indicator__reuse { color: #ffbf9a; }
 .dash-indicator--ready { color: #fff3c4; border-color: #ddb75a; background: rgb(67 42 76 / 92%); }
+.dash-indicator--empty { border-color: #8e5864; }
 
 .modal-screen {
   display: grid;
@@ -410,6 +421,7 @@ kbd {
 .levelup-panel .eyebrow { color: #ffe394; text-shadow: 0 2px #28122e; }
 .levelup-panel h2 { margin-bottom: 5px; color: #fff2c2; text-shadow: 0 3px #3c204c; }
 .levelup-help { margin: 0 0 22px; color: #e4d8ed; font-size: 12px; }
+.levelup-milestone { width: fit-content; margin: -12px auto 16px; padding: 6px 13px; color: #362040; border: 2px solid #f0cb68; border-radius: 999px; background: #ffe9a5; box-shadow: 0 3px 10px rgb(19 10 27 / 28%); font-size: 11px; font-weight: 700; }
 .upgrade-cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: clamp(12px, 2vw, 24px); }
 .upgrade-card { position: relative; display: flex; min-width: 0; min-height: 290px; padding: 25px 20px 20px; flex-direction: column; align-items: center; color: #39283a; border: 4px solid #e7c369; border-radius: 14px 23px 14px 23px; background: linear-gradient(155deg, #fff4ca, #e7c77e); box-shadow: inset 0 0 0 3px #7d4e35, 0 13px 30px rgb(8 5 16 / 48%); transition: transform .14s ease, filter .14s ease; }
 .upgrade-card:hover,
@@ -494,8 +506,8 @@ kbd {
   .weapon-bar { gap: 4px; }
   .weapon-chip { min-width: 40px; padding: 4px; }
   .weapon-chip > span { width: 28px; height: 28px; }
-  .dash-indicator { min-width: 105px; padding: 5px; }
-  .dash-indicator__key { min-width: 42px; }
+  .dash-indicator { width: 205px; min-width: 205px; padding: 6px 7px; gap: 7px; }
+  .dash-indicator__key { min-width: 45px; }
   .upgrade-cards { grid-template-columns: 1fr; max-height: 68vh; overflow-y: auto; padding: 6px; }
   .upgrade-card { min-height: 150px; padding: 16px 16px 14px 92px; align-items: start; text-align: left; }
   .upgrade-card__icon { position: absolute; top: 46px; left: 15px; width: 62px; height: 62px; }

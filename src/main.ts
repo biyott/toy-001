@@ -23,6 +23,7 @@ function command(value:GameCommand){
   if(value.type==='start'){options={...value.options,contentTier:options.contentTier};value={...value,options};runSaved=false;}
   if(value.type==='restart')runSaved=false;
   game.dispatch(value);input.clear();gamepad.clear();touch.clear();
+  touch.setDashState(game.getState().player);
   touch.setEnabled(game.getState().phase==='playing');
   ui.render(game.getState(),profile);
 }
@@ -88,7 +89,7 @@ function frame(time:number){
     runSaved=true;
   }
   renderer.render(state,delta,profile.settings);
-  if(time-lastUI>=75 || lastPhase!==state.phase){ui.render(state,profile);touch.setEnabled(state.phase==='playing');lastUI=time;}
+  if(time-lastUI>=75 || lastPhase!==state.phase){ui.render(state,profile);touch.setDashState(state.player);touch.setEnabled(state.phase==='playing');lastUI=time;}
   if(lastPhase!==state.phase){input.clear();gamepad.clear();touch.clear();}
   lastPhase=state.phase;requestAnimationFrame(frame);
 }

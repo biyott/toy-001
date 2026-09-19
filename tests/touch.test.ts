@@ -132,7 +132,17 @@ const setup = () => {
     assert.ok(result, `Missing .${className}`);
     return result;
   };
-  return { document, root, controls, overlay: find('touch-controls'), joystick: find('touch-controls__joystick'), dash: find('touch-controls__dash'), pause: find('touch-controls__pause') };
+  return {
+    document,
+    root,
+    controls,
+    overlay: find('touch-controls'),
+    joystick: find('touch-controls__joystick'),
+    dash: find('touch-controls__dash'),
+    dashCount: find('touch-controls__dash-count'),
+    dashStatus: find('touch-controls__dash-status'),
+    pause: find('touch-controls__pause'),
+  };
 };
 
 const pointer = (pointerId: number, clientX = 60, clientY = 60, pointerType = 'touch') => {
@@ -150,10 +160,12 @@ const pointer = (pointerId: number, clientX = 60, clientY = 60, pointerType = 't
 
 describe('터치 입력', () => {
   test('disabled로 생성되고 playing 활성 상태만 입력을 받는다', () => {
-    const { root, controls, overlay, dash } = setup();
+    const { root, controls, overlay, dash, dashCount } = setup();
     assert.equal(overlay.hidden, true);
     assert.equal(overlay.getAttribute('aria-hidden'), 'true');
     assert.equal(dash.disabled, true);
+    assert.equal(dash.getAttribute('aria-label'), '대시');
+    assert.equal(dashCount.textContent, '—');
     dash.emit('pointerdown', pointer(1));
     assert.equal(controls.read().dashPressed, false);
 
@@ -169,6 +181,74 @@ describe('터치 입력', () => {
     controls.setEnabled(false);
     assert.equal(overlay.hidden, true);
     assert.deepEqual(controls.read(), { moveX: 0, moveY: 0, dashPressed: false, pausePressed: false });
+  });
+
+  test('충전 수와 다음 충전 진행도 및 재사용 대기를 구분해 표시한다', () => {
+    const { controls, dash, dashCount, dashStatus } = setup();
+    controls.setDashState({
+      dashCharges: 2,
+      dashMaxCharges: 3,
+      dashRechargeRemaining: 4.2,
+      dashRechargeDuration: 6,
+      dashReuseDelay: 0,
+      dashCooldown: 0,
+    });
+    assert.equal(dashCount.textContent, '2/3');
+    assert.equal(dashStatus.textContent, '4.2초');
+    assert.equal(dash.dataset.state, 'recharging');
+    assert.equal(dash.style.getPropertyValue('--dash-charge-progress'), '30.0%');
+    assert.equal(dash.getAttribute('aria-label'), '대시2회남음, 다음충전4.2초');
+
+    controls.setDashState({
+      dashCharges: 2,
+      dashMaxCharges: 3,
+      dashRechargeRemaining: 3.9,
+      dashRechargeDuration: 6,
+      dashReuseDelay: 0.45,
+      dashCooldown: 0.45,
+    });
+    assert.equal(dash.dataset.state, 'reuse');
+    assert.equal(dashStatus.textContent, '대기 0.5');
+    assert.equal(dash.getAttribute('aria-label'), '대시2회남음, 재사용대기0.5초');
+
+    controls.setDashState({
+      dashCharges: 3,
+      dashMaxCharges: 3,
+      dashRechargeRemaining: 0,
+      dashRechargeDuration: 6,
+      dashReuseDelay: 0,
+      dashCooldown: 0,
+    });
+    assert.equal(dash.dataset.state, 'ready');
+    assert.equal(dash.style.getPropertyValue('--dash-charge-progress'), '100.0%');
+    assert.equal(dash.getAttribute('aria-label'), '대시3회남음, 충전완료');
+  });
+
+  test('충전이 없어도 pointer 소유와 cancel 정리를 유지한다', () => {
+    const { controls, dash, dashCount } = setup();
+    controls.setEnabled(true);
+    controls.setDashState({
+      dashCharges: 0,
+      dashMaxCharges: 2,
+      dashRechargeRemaining: 4.2,
+      dashRechargeDuration: 5,
+      dashReuseDelay: 0.5,
+      dashCooldown: 4.2,
+    });
+    assert.equal(dash.disabled, false);
+    assert.equal(dashCount.textContent, '0/2');
+    assert.equal(dash.dataset.state, 'empty');
+    assert.equal(dash.getAttribute('aria-label'), '대시0회남음, 다음충전4.2초');
+
+    dash.emit('pointerdown', pointer(31));
+    assert.equal(dash.captures.has(31), true);
+    assert.equal(controls.read().dashPressed, true);
+    dash.emit('pointercancel', pointer(31));
+    assert.equal(dash.captures.has(31), false);
+
+    dash.emit('pointerdown', pointer(32));
+    assert.equal(dash.captures.has(32), true);
+    assert.equal(controls.read().dashPressed, true);
   });
 
   test('조이스틱 이동과 다른 포인터의 대시를 동시에 유지한다', () => {

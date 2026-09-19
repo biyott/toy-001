@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>보스 공격 예고 — 독립 시각 검토</title>
+    <style>
+      * { box-sizing: border-box; }
+      body { margin: 0; padding: 20px; background: #f1eddc; color: #354d42; font: 400 14px/1.55 'Noto Sans KR', sans-serif; }
+      main { max-width: 1320px; margin: 0 auto; }
+      h1 { margin: 0 0 8px; font-size: 25px; }
+      .notice { margin: 0 0 8px; padding: 10px 14px; border: 2px solid #ba8063; border-radius: 10px; background: #fff2d7; }
+      .description { margin: 8px 0 14px; }
+      #status { font-weight: 700; }
+      .scenes { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; }
+      article { min-width: 0; overflow: hidden; border: 1px solid #a6b396; border-radius: 12px; background: #fff9e9; }
+      header { padding: 12px 15px 10px; }
+      h2 { margin: 0 0 3px; font-size: 19px; }
+      .caption { margin: 0; color: #596d5e; font-size: 12px; }
+      canvas { display: block; width: 100%; height: 400px; background: #b5c9a4; }
+      .metrics { min-height: 66px; margin: 0; padding: 10px 15px; font-size: 12px; font-variant-numeric: tabular-nums; overflow-wrap: anywhere; }
+      @media (max-width: 760px) { body { padding: 12px; } .scenes { grid-template-columns: 1fr; } h1 { font-size: 21px; } }
+    </style>
+  </head>
+  <body>
+    <main>
+      <h1>보스 공격 예고 · 고정 장면 검토</h1>
+      <p class="notice"><strong>시각 검토용 고정 fixture, 정상 플레이 증거 아님.</strong><br />시각 검토를 위해 시간·배치·보스 격리를 설정했습니다. 실제 엔진 FSM이 생성한 공격 영역과 실제 게임 렌더러를 사용합니다.</p>
+      <p class="description">보스와 기사의 중심 거리는 약 220 월드 단위입니다. 각 장면은 예고가 약 0.75초 남았을 때 정지합니다. 피해·회피 성공을 보여 주는 화면이 아닙니다. <span id="status" role="status">준비 중</span></p>
+      <section class="scenes" aria-label="보스별 네 가지 공격 예고">
+        <article id="mushroom-spores"><header><h2>버섯 왕 · 포자 폭발</h2><p class="caption">기사의 위치에 고정되는 원형 예고</p></header><canvas aria-label="버섯 왕 포자 폭발 예고"></canvas><p class="metrics">장면 생성 중</p></article>
+        <article id="mushroom-stomp"><header><h2>버섯 왕 · 왕의 발구르기</h2><p class="caption">보스 중심 고리 · 중앙의 빈 영역 확인</p></header><canvas aria-label="버섯 왕 고리 공격 예고"></canvas><p class="metrics">장면 생성 중</p></article>
+        <article id="golem-shockwave"><header><h2>고성의 골렘 · 충격 고리</h2><p class="caption">보스 중심 고리 · 안쪽과 바깥쪽 회피 공간</p></header><canvas aria-label="골렘 충격 고리 예고"></canvas><p class="metrics">장면 생성 중</p></article>
+        <article id="golem-fissure"><header><h2>고성의 골렘 · 대지의 균열</h2><p class="caption">기사 방향으로 고정된 선 · 양옆 회피 공간</p></header><canvas aria-label="골렘 방향 균열 예고"></canvas><p class="metrics">장면 생성 중</p></article>
+      </section>
+    </main>
+    <script type="module" src="./boss-preview.ts"></script>
+  </body>
+</html>

@@ -35,16 +35,19 @@ function bossFixture() {
 
 type BossFixture = ReturnType<typeof bossFixture>;
 
-function attackFixture(shape: 'circle' | 'ring'): BossFixture & { zone: Zone } {
+function attackFixture(shape: 'ring'): BossFixture & { zone: Zone } {
   const fixture = bossFixture();
   const { game, state, boss } = fixture;
+  // Complete the first (now projectile-based) pattern before requesting the
+  // alternating ring. Its pending launch must not contaminate ring damage tests.
   game.step(DT, NO_INPUT);
-  if (shape === 'ring') {
-    state.zones = [];
-    boss.attackCooldown = 0;
-    state.player.x = 130;
-    game.step(DT, NO_INPUT);
-  }
+  state.player.x = 800;
+  for (let frame = 0; frame < 350; frame++) game.step(DT, NO_INPUT);
+  assert.equal(state.projectiles.length, 0);
+  assert.equal(state.zones.length, 0);
+  Object.assign(boss, { x: 0, y: 0, attackCooldown: 0 });
+  state.player.x = 130;
+  game.step(DT, NO_INPUT);
   const zone = state.zones.find(candidate => candidate.shape === shape && candidate.owner === 'enemy');
   assert.ok(zone, `real boss must create a ${shape} zone`);
   game.drainEvents();
@@ -69,13 +72,13 @@ function playerStrike(state: GameState, boss: Enemy, damage: number) {
 }
 
 describe('버섯 왕 예고·피해 경계 (Node unit fixtures)', () => {
-  for (const shape of ['circle', 'ring'] as const) {
+  for (const shape of ['ring'] as const) {
     test(`${shape}: 예고 중 피해가 없고 같은 고정 기하에서 한 번만 발동한다`, () => {
       const { game, state, zone } = attackFixture(shape);
       const original = snapshot(geometry(zone));
       const originalDuration = zone.duration;
       const hp = state.player.hp;
-      const expectedDamage = shape === 'circle' ? 24 : 27;
+      const expectedDamage = 27;
       assert.equal(zone.damage, expectedDamage);
       // Change the target's position after the warning appears, within the zone.
       state.player.y += 20;
@@ -130,7 +133,7 @@ describe('버섯 왕 예고·피해 경계 (Node unit fixtures)', () => {
     });
   }
 
-  for (const shape of ['circle', 'ring'] as const) {
+  for (const shape of ['ring'] as const) {
     test(`${shape}: 발동 순간의 대시 무적은 해당 공격 전체를 회피한다`, () => {
       const { game, state, zone } = attackFixture(shape);
       for (let frame = 0; zone.telegraph > DT && frame < 300; frame++) game.step(DT, NO_INPUT);
@@ -146,7 +149,7 @@ describe('버섯 왕 예고·피해 경계 (Node unit fixtures)', () => {
       // Return into the active zone and clear immunity to test whole-strike evasion.
       state.player.dashTime = 0;
       state.player.invulnerable = 0;
-      state.player.x = zone.x + (shape === 'ring' ? 130 : 0);
+      state.player.x = zone.x + 130;
       state.player.y = zone.y;
       game.step(DT, NO_INPUT);
       assert.equal(state.player.hp, hp);
@@ -154,20 +157,8 @@ describe('버섯 왕 예고·피해 경계 (Node unit fixtures)', () => {
     });
   }
 
-  test('예고 뒤 원 밖으로 이동하면 발동 때 피해를 받지 않는다', () => {
-    const { game, state, zone } = attackFixture('circle');
-    const original = snapshot(geometry(zone));
-    const hp = state.player.hp;
-    for (let frame = 0; frame < 100; frame++) game.step(DT, { ...NO_INPUT, moveX: 1 });
-    assert.ok(!zoneContains(zone, state.player, state.player.radius));
-    activate(game, zone);
-    assert.deepEqual(geometry(zone), original);
-    assert.equal(state.player.hp, hp);
-    assert.equal(state.player.invulnerable, 0);
-  });
-
   test('보스는 예고 중 정지하고 회복 중 감속한 뒤 추적을 재개한다', () => {
-    const { game, state, boss } = attackFixture('circle');
+    const { game, state, boss } = attackFixture('ring');
     state.player.x = 700;
     const origin = { x: boss.x, y: boss.y };
     for (let frame = 0; boss.state === 'windup' && frame < 300; frame++) {
@@ -189,24 +180,7 @@ describe('버섯 왕 예고·피해 경계 (Node unit fixtures)', () => {
     assert.ok(Math.abs(boss.x - before - boss.speed * DT) < 1e-9);
   });
 
-  test('절반 체력 미만의 추가 포자는 더 긴 예고 후 각각 독립적으로 발동한다', () => {
-    const { game, state, boss } = bossFixture();
-    boss.hp = boss.maxHp * .49;
-    game.step(DT, NO_INPUT);
-    const zones = state.zones.filter(zone => zone.kind === 'spore-burst');
-    assert.equal(zones.length, 3);
-    const primary = zones.find(zone => zone.radius === 88)!;
-    const extras = zones.filter(zone => zone.radius === 64);
-    assert.equal(extras.length, 2);
-    assert.ok(extras.every(zone => zone.telegraph > primary.telegraph && zone.damage === 20));
-    assert.deepEqual(extras.map(zone => [zone.x - primary.x, zone.y - primary.y]), [[-110, 70], [110, 70]]);
-    state.player.x = 800;
-    activate(game, primary);
-    assert.ok(extras.every(zone => zone.telegraph > 0));
-    activate(game, extras[0]!);
-    assert.ok(extras.every(zone => zone.telegraph === 0));
-    assert.equal(game.drainEvents().filter(event => event.type === 'attack' && event.kind === 'spore-burst').length, 3);
-  });
+
 });
 
 describe('버섯 왕 피격·처치·연장전 (Node unit fixtures)', () => {

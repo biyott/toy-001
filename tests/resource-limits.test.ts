@@ -177,6 +177,10 @@ describe('처치와 이벤트 수명', () => {
     const drained = game.drainEvents();
     assert.equal(drained.filter(({ type }) => type === 'dash').length, 1);
 
+    // This fixture intentionally permits another dash to verify event-array isolation.
+    // The charge model requires all legacy/readiness fields to agree.
+    oldState.player.dashCharges = Math.max(1, oldState.player.dashCharges);
+    oldState.player.dashReuseDelay = 0;
     oldState.player.dashCooldown = 0;
     game.step(0.01, { ...NO_INPUT, dashPressed: true });
     assert.equal(game.drainEvents().filter(({ type }) => type === 'dash').length, 1);

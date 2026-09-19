@@ -40,6 +40,13 @@ function updateSkeleton(enemy: Enemy, dt: number, ctx: P1Context): void {
 
   if (enemy.state === 'windup') {
     if (enemy.stateTime >= 0.72) {
+      const angle = Math.atan2(enemy.vy, enemy.vx);
+      for (const offset of [-0.1, 0, 0.1]) {
+        ctx.addProjectile('arrow', 'enemy', enemy, angle + offset, 240, enemy.damage, {
+          kind: 'bone', radius: 6, life: 2.5,
+        });
+      }
+      ctx.emit('attack', enemy, { kind: 'enemy-bone-launch', angle });
       enemy.state = 'recover';
       enemy.stateTime = 0;
     }
@@ -58,6 +65,8 @@ function updateSkeleton(enemy: Enemy, dt: number, ctx: P1Context): void {
     enemy.attackCooldown = 3.25;
     enemy.state = 'windup';
     enemy.stateTime = 0;
+    enemy.vx = target.nx;
+    enemy.vy = target.ny;
     ctx.addZone({
       x: enemy.x,
       y: enemy.y,
@@ -67,9 +76,9 @@ function updateSkeleton(enemy: Enemy, dt: number, ctx: P1Context): void {
       width: 0.5,
       telegraph: 0.72,
       duration: 0.2,
-      damage: enemy.damage,
+      damage: 0,
       owner: 'enemy',
-      kind: 'skeleton-volley',
+      kind: 'skeleton-aim',
     });
     return;
   }

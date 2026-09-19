@@ -1,9 +1,26 @@
-import type { InputFrame } from '../types';
+import type { InputFrame, Player } from '../types';
+
+type DashDisplayState = Pick<Player,
+  | 'dashCharges'
+  | 'dashMaxCharges'
+  | 'dashRechargeRemaining'
+  | 'dashRechargeDuration'
+  | 'dashReuseDelay'
+  | 'dashCooldown'
+>;
 
 export interface TouchControls {
   read(): InputFrame;
   clear(): void;
   setEnabled(enabled: boolean): void;
+  setDashState(player: Pick<Player,
+    | 'dashCharges'
+    | 'dashMaxCharges'
+    | 'dashRechargeRemaining'
+    | 'dashRechargeDuration'
+    | 'dashReuseDelay'
+    | 'dashCooldown'
+  >): void;
   dispose(): void;
 }
 
@@ -51,8 +68,24 @@ export function createTouchControls(root: HTMLElement): TouchControls {
   dashButton.className = 'touch-controls__dash';
   dashButton.setAttribute('aria-label', '대시');
   dashButton.dataset.testid = 'touch-dash';
-  dashButton.textContent = '대시';
   dashButton.disabled = true;
+
+  const dashLabel = document.createElement('span');
+  dashLabel.className = 'touch-controls__dash-label';
+  dashLabel.textContent = '대시';
+  const dashCount = document.createElement('strong');
+  dashCount.className = 'touch-controls__dash-count';
+  dashCount.textContent = '—';
+  const dashProgress = document.createElement('span');
+  dashProgress.className = 'touch-controls__dash-progress';
+  dashProgress.setAttribute('aria-hidden', 'true');
+  const dashProgressFill = document.createElement('span');
+  dashProgressFill.className = 'touch-controls__dash-progress-fill';
+  dashProgress.append(dashProgressFill);
+  const dashStatus = document.createElement('span');
+  dashStatus.className = 'touch-controls__dash-status';
+  dashStatus.textContent = '준비';
+  dashButton.append(dashLabel, dashCount, dashProgress, dashStatus);
 
   actions.append(pauseButton, dashButton);
   controls.append(joystick, actions);
@@ -264,6 +297,52 @@ export function createTouchControls(root: HTMLElement): TouchControls {
         (document.activeElement as HTMLElement | null)?.blur();
       }
       if (enabled) syncVisualViewport();
+    },
+    setDashState(player: DashDisplayState): void {
+      if (disposed) return;
+      const maximum = Number.isFinite(player.dashMaxCharges)
+        ? Math.max(0, Math.floor(player.dashMaxCharges)) : 0;
+      const charges = Number.isFinite(player.dashCharges)
+        ? Math.max(0, Math.min(maximum, Math.floor(player.dashCharges))) : 0;
+      const duration = Number.isFinite(player.dashRechargeDuration)
+        ? Math.max(0, player.dashRechargeDuration) : 0;
+      const remaining = charges < maximum && Number.isFinite(player.dashRechargeRemaining)
+        ? Math.max(0, player.dashRechargeRemaining) : 0;
+      const reuse = Number.isFinite(player.dashReuseDelay)
+        ? Math.max(0, player.dashReuseDelay) : 0;
+      const fallbackCooldown = Number.isFinite(player.dashCooldown)
+        ? Math.max(0, player.dashCooldown) : 0;
+      const nextCharge = remaining > 0 ? remaining : charges < maximum ? fallbackCooldown : 0;
+      const progress = charges >= maximum
+        ? 1
+        : duration > 0
+          ? Math.max(0, Math.min(1, 1 - nextCharge / duration))
+          : 0;
+
+      dashCount.textContent = `${charges}/${maximum}`;
+      dashButton.style.setProperty('--dash-charge-progress', `${(progress * 100).toFixed(1)}%`);
+
+      if (charges <= 0) {
+        dashButton.dataset.state = 'empty';
+        dashStatus.textContent = nextCharge > 0 ? `${nextCharge.toFixed(1)}초` : '충전 중';
+        dashButton.setAttribute('aria-label', nextCharge > 0
+          ? `대시0회남음, 다음충전${nextCharge.toFixed(1)}초`
+          : '대시0회남음, 충전중');
+      } else if (reuse > 0) {
+        dashButton.dataset.state = 'reuse';
+        dashStatus.textContent = `대기 ${reuse.toFixed(1)}`;
+        dashButton.setAttribute('aria-label', `대시${charges}회남음, 재사용대기${reuse.toFixed(1)}초`);
+      } else if (charges < maximum) {
+        dashButton.dataset.state = 'recharging';
+        dashStatus.textContent = nextCharge > 0 ? `${nextCharge.toFixed(1)}초` : '충전 중';
+        dashButton.setAttribute('aria-label', nextCharge > 0
+          ? `대시${charges}회남음, 다음충전${nextCharge.toFixed(1)}초`
+          : `대시${charges}회남음, 충전중`);
+      } else {
+        dashButton.dataset.state = 'ready';
+        dashStatus.textContent = '준비';
+        dashButton.setAttribute('aria-label', `대시${charges}회남음, 충전완료`);
+      }
     },
     dispose(): void {
       if (disposed) return;

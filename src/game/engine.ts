@@ -4,6 +4,8 @@ import type { P1Context } from './p1-context';
 import { onP1ProjectileHit, updateP1Weapon } from './p1-weapons';
 import { updateP1Enemy } from './p1-enemies';
 import { updateP1Boss } from './p1-boss';
+import { advanceDash, configureDash, consumeDash, initialDashState } from './dash';
+import { stepEnemyProjectile } from './enemy-projectiles';
 
 const TAU = Math.PI * 2;
 const MAX_ENEMIES = 180;
@@ -80,6 +82,7 @@ export function createGame(initialOptions: GameOptions): GameController {
   let golemSpawned = false;
   const defeatedBosses = new Set<EnemyKind>();
   const slows = new Map<number, { until: number; factor: number }>();
+  const pendingRoyalSpores = new Map<number, { due: number; targets: { x: number; y: number; radius: number; damage: number }[] }>();
   let dashDirection = { x: 1, y: 0 };
   const grid = new EnemyGrid();
   let state: GameState;
@@ -122,13 +125,14 @@ export function createGame(initialOptions: GameOptions): GameController {
     golemSpawned = false;
     defeatedBosses.clear();
     slows.clear();
+    pendingRoyalSpores.clear();
     dashDirection = { x: 1, y: 0 };
     const character = options.contentTier === 1 ? options.character : 'knight';
     const starter = CHARACTERS[character].weapon;
     state = {
       phase, mode: options.mode, seed: options.seed, contentTier: options.contentTier ?? 0,
       elapsed: 0, duration: options.mode === 'demo' ? 180 : 600,
-      player: { id: nextId++, x: 0, y: 30, radius: 15, facing: 0, character, hp: character === 'knight' ? 120 : 100, maxHp: character === 'knight' ? 120 : 100, xp: 0, xpToNext: 6, level: 1, speed: character === 'ranger' ? 190 : 170, invulnerable: 0, dashCooldown: 0, dashTime: 0, hitFlash: 0, moving: false, upgrades: { [starter]: 1 } },
+      player: { id: nextId++, x: 0, y: 30, radius: 15, facing: 0, character, hp: character === 'knight' ? 120 : 100, maxHp: character === 'knight' ? 120 : 100, xp: 0, xpToNext: 6, level: 1, speed: character === 'ranger' ? 190 : 170, invulnerable: 0, ...initialDashState(character), dashTime: 0, hitFlash: 0, moving: false, upgrades: { [starter]: 1 } },
       enemies: [], projectiles: [], pickups: [], zones: [], props: props(),
       weapons: [{ id: starter, level: 1, cooldown: .1, angle: 0 }], upgradeChoices: [],
       stats: { kills: 0, damageDealt: 0, damageTaken: 0, score: 0, gems: 0, bossesDefeated: 0, maxEnemies: 0 },
@@ -350,15 +354,29 @@ export function createGame(initialOptions: GameOptions): GameController {
       }
       let speed = effectiveSpeed(enemy);
       if (enemy.boss) {
+        const pending = pendingRoyalSpores.get(enemy.id);
+        if (pending && state.elapsed + 1e-9 >= pending.due) {
+          pendingRoyalSpores.delete(enemy.id);
+          for (const target of pending.targets) {
+            const angle = Math.atan2(target.y - enemy.y, target.x - enemy.x);
+            addProjectile('spirit', 'enemy', enemy, angle, 240, target.damage,
+              { kind: 'royal-spore', radius: 12, life: 3, targetX: target.x, targetY: target.y, splashRadius: target.radius });
+            emit('attack', enemy, { kind: 'enemy-royal-spore-launch', angle, radius: 12, targetX: target.x, targetY: target.y });
+          }
+        }
         if (enemy.attackCooldown <= 0) {
           enemy.attackCooldown = enemy.hp < enemy.maxHp * .4 ? 2.7 : 3.6;
           enemy.state = 'windup';
           enemy.stateTime = 0;
           if (bossPattern++ % 2 === 0) {
-            addZone({ x: player.x, y: player.y, shape: 'circle', radius: 88, angle: 0, telegraph: 1.15, duration: .35, damage: 24, owner: 'enemy', kind: 'spore-burst' });
+            const targets = [{ x: player.x, y: player.y, radius: 88, damage: 24 }];
             if (enemy.hp < enemy.maxHp * .5) {
-              for (const offset of [-110, 110]) addZone({ x: clamp(player.x + offset, -940, 940), y: player.y + 70, shape: 'circle', radius: 64, angle: 0, telegraph: 1.55, duration: .3, damage: 20, owner: 'enemy', kind: 'spore-burst' });
+              for (const offset of [-110, 110]) targets.push({ x: clamp(player.x + offset, -940, 940), y: clamp(player.y + 70, -620, 620), radius: 64, damage: 20 });
             }
+            pendingRoyalSpores.set(enemy.id, { due: state.elapsed + .65, targets });
+            for (const target of targets) addZone({ x: target.x, y: target.y, shape: 'circle', radius: target.radius, angle: 0,
+              telegraph: .65 + Math.hypot(target.x - enemy.x, target.y - enemy.y) / 240,
+              duration: .1, damage: 0, owner: 'enemy', kind: 'royal-spore-target' });
           } else {
             addZone({ x: enemy.x, y: enemy.y, shape: 'ring', radius: 205, innerRadius: 82, angle: 0, telegraph: 1.35, duration: .4, damage: 27, owner: 'enemy', kind: 'royal-stomp' });
           }
@@ -375,14 +393,26 @@ export function createGame(initialOptions: GameOptions): GameController {
         speed *= Math.sin(enemy.stateTime * 3.6) > 0 ? 1.65 : .25;
       } else if (enemy.kind === 'mushroom') {
         speed *= distance < 230 ? (distance < 145 ? -.45 : 0) : 1;
-        if (enemy.attackCooldown <= 0 && distance < 450) {
-          enemy.attackCooldown = 3.8;
-          enemy.state = 'windup'; enemy.stateTime = 0;
-          addZone({ x: player.x, y: player.y, shape: 'circle', radius: 45, angle: 0, telegraph: 1.05, duration: .22, damage: enemy.damage, owner: 'enemy', kind: 'spore' });
-        }
         if (enemy.state === 'windup') {
           speed = 0;
-          if (enemy.stateTime > 1.05) enemy.state = 'chase';
+          enemy.facing = Math.atan2(enemy.vy - enemy.y, enemy.vx - enemy.x);
+          if (enemy.stateTime + 1e-9 >= .55) {
+            addProjectile('spirit', 'enemy', enemy, enemy.facing, 210, enemy.damage,
+              { kind: 'spore', radius: 8, life: 3, targetX: enemy.vx, targetY: enemy.vy });
+            emit('attack', enemy, { kind: 'enemy-spore-launch', angle: enemy.facing, radius: 8, targetX: enemy.vx, targetY: enemy.vy });
+            enemy.state = 'recover'; enemy.stateTime = 0;
+          }
+        } else if (enemy.state === 'recover') {
+          speed *= .3;
+          if (enemy.stateTime >= .35) { enemy.state = 'chase'; enemy.stateTime = 0; }
+        } else if (enemy.attackCooldown <= 0 && distance < 450) {
+          enemy.attackCooldown = 3.8;
+          enemy.state = 'windup'; enemy.stateTime = 0;
+          enemy.vx = player.x; enemy.vy = player.y;
+          speed = 0;
+          addZone({ x: enemy.x, y: enemy.y, shape: 'line', radius: distance, length: distance,
+            width: 16, angle: enemy.facing, telegraph: .55, duration: .05,
+            damage: 0, owner: 'enemy', kind: 'spore-aim' });
         }
       } else if (enemy.kind === 'goblin') {
         if (enemy.state === 'windup') {
@@ -460,7 +490,19 @@ export function createGame(initialOptions: GameOptions): GameController {
     for (let i = 0; i < count; i++) {
       const projectile = state.projectiles[i];
       if (projectile.life <= 0) continue;
-      const spirit = projectile.weapon === 'spirit' && projectile.owner === 'player';
+      if (projectile.owner === 'enemy') {
+        const impact = stepEnemyProjectile(projectile, dt, state.player);
+        if (impact?.type === 'direct') {
+          damagePlayer(impact.damage, impact);
+          emit('attack', impact, { kind: projectile.kind === 'bone' ? 'enemy-bone-impact' : 'enemy-spore-impact', radius: projectile.radius });
+        } else if (impact?.type === 'splash') {
+          addZone({ x: impact.x, y: impact.y, shape: 'circle', radius: impact.radius, angle: 0,
+            telegraph: 0, duration: .2, damage: impact.damage, owner: 'enemy', kind: 'spore-burst' });
+          emit('attack', impact, { kind: 'spore-burst', radius: impact.radius });
+        }
+        continue;
+      }
+      const spirit = projectile.weapon === 'spirit';
       if (spirit && spiritWeapon) {
         const count = 2 + Math.floor(spiritWeapon.level / 2);
         const angle = spiritWeapon.angle + (-projectile.generation - 1) / count * TAU;
@@ -473,10 +515,6 @@ export function createGame(initialOptions: GameOptions): GameController {
         projectile.life -= dt;
         projectile.x += projectile.vx * dt;
         projectile.y += projectile.vy * dt;
-      }
-      if (projectile.owner === 'enemy') {
-        if (dist2(projectile, state.player) <= (projectile.radius + state.player.radius) ** 2) { damagePlayer(projectile.damage, projectile); projectile.life = 0; }
-        continue;
       }
       for (const enemy of grid.around(projectile.x, projectile.y, projectile.radius + 48)) {
         if (enemy.hp <= 0 || projectile.hitIds.includes(enemy.id) || dist2(projectile, enemy) > (projectile.radius + enemy.radius) ** 2) continue;
@@ -537,6 +575,7 @@ export function createGame(initialOptions: GameOptions): GameController {
       if (enemy.hp > 0) continue;
       state.stats.kills++;
       slows.delete(enemy.id);
+      pendingRoyalSpores.delete(enemy.id);
       addPickup('xp', enemy, enemy.xp);
       if (rng() < .085) addPickup('heal', enemy, 12);
       emit('kill', enemy, { kind: enemy.kind });
@@ -560,6 +599,7 @@ export function createGame(initialOptions: GameOptions): GameController {
     if (state.phase !== 'playing' || state.player.xp < state.player.xpToNext) return;
     state.player.xp -= state.player.xpToNext;
     state.player.level++;
+    Object.assign(state.player, configureDash(state.player, state.player.character, state.player.level, upgrade('speed')));
     state.player.xpToNext = Math.round(9 + state.player.level * 4.4);
     const available = eligibleUpgrades();
     for (let i = available.length - 1; i > 0; i--) {
@@ -620,7 +660,10 @@ export function createGame(initialOptions: GameOptions): GameController {
       if (weapon) weapon.level++;
       else state.weapons.push({ id: selected.weapon, level: 1, cooldown: .1, angle: 0 });
     } else if (id === 'vitality') { player.maxHp += 25; player.hp = Math.min(player.maxHp, player.hp + 40); }
-    else if (id === 'speed') player.speed = (player.character === 'ranger' ? 190 : 170) * (1 + .1 * upgrade('speed'));
+    else if (id === 'speed') {
+      player.speed = (player.character === 'ranger' ? 190 : 170) * (1 + .1 * upgrade('speed'));
+      Object.assign(player, configureDash(player, player.character, player.level, upgrade('speed')));
+    }
     else if (id === 'restoration') player.hp = Math.min(player.maxHp, player.hp + 45);
     else if (id === 'resolve') player.upgrades.power = upgrade('power') + 1;
     else if (id === 'heartwood') { player.maxHp += 10; player.hp = Math.min(player.maxHp, player.hp + 10); }
@@ -638,7 +681,7 @@ export function createGame(initialOptions: GameOptions): GameController {
     for (const [id, slow] of slows) if (slow.until <= state.elapsed) slows.delete(id);
     player.invulnerable = Math.max(0, player.invulnerable - dt);
     player.hitFlash = Math.max(0, player.hitFlash - dt);
-    player.dashCooldown = Math.max(0, player.dashCooldown - dt);
+    Object.assign(player, advanceDash(player, dt));
     player.dashTime = Math.max(0, player.dashTime - dt);
     player.hp = Math.min(player.maxHp, player.hp + upgrade('regen') * .6 * dt);
     let mx = Number.isFinite(input.moveX) ? clamp(input.moveX, -1, 1) : 0;
@@ -647,10 +690,11 @@ export function createGame(initialOptions: GameOptions): GameController {
     if (magnitude > 1) { mx /= magnitude; my /= magnitude; }
     player.moving = magnitude > .05 || player.dashTime > 0;
     if (magnitude > .05) player.facing = Math.atan2(my, mx);
-    if (input.dashPressed && player.dashCooldown <= 0) {
+    const dash = input.dashPressed ? consumeDash(player) : undefined;
+    if (dash) {
+      Object.assign(player, dash);
       dashDirection = magnitude > .05 ? { x: mx / Math.hypot(mx, my), y: my / Math.hypot(mx, my) } : { x: Math.cos(player.facing), y: Math.sin(player.facing) };
       player.dashTime = .2;
-      player.dashCooldown = 2.2 * (1 - .08 * upgrade('speed'));
       player.invulnerable = Math.max(player.invulnerable, .32);
       emit('dash', player, { angle: player.facing });
     }

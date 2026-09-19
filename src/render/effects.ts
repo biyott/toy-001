@@ -3,7 +3,7 @@ import { ellipse, line, polygon, star, type Ctx } from './art';
 
 interface Particle extends Vec2 { vx: number; vy: number; life: number; total: number; size: number; color: string; shape: 'star' | 'dot' | 'stone'; }
 interface FloatText extends Vec2 { life: number; total: number; text: string; color: string; size: number; }
-type Element = 'fire' | 'frost' | 'lightning' | 'stone' | 'spore';
+type Element = 'fire' | 'frost' | 'lightning' | 'stone' | 'spore' | 'enemy-spore' | 'enemy-bone' | 'royal-spore';
 interface Flash extends Vec2 { life: number; total: number; radius: number; type: string; angle: number; targetX?: number; targetY?: number; element?: Element; }
 const ELEMENT_COLORS: Record<Element, { light: string; dark: string; particle: string }> = {
   fire: { light: '#ffe0a0', dark: '#d58b61', particle: '#edb071' },
@@ -11,9 +11,15 @@ const ELEMENT_COLORS: Record<Element, { light: string; dark: string; particle: s
   lightning: { light: '#fff1b1', dark: '#c5a24e', particle: '#efd476' },
   stone: { light: '#d8dbc5', dark: '#82998f', particle: '#a7b6ac' },
   spore: { light: '#f7dab1', dark: '#b88d9e', particle: '#c9afc2' },
+  'enemy-spore': { light: '#f5f1bb', dark: '#aa3e69', particle: '#bbd993' },
+  'enemy-bone': { light: '#fff1d0', dark: '#a43e64', particle: '#dfd6b5' },
+  'royal-spore': { light: '#fbe6c3', dark: '#a33670', particle: '#d7a4d1' },
 };
 function eventElement(event: GameEvent): Element {
   const kind = event.kind ?? '';
+  if (kind.startsWith('enemy-royal-spore') || kind === 'spore-burst') return 'royal-spore';
+  if (kind.startsWith('enemy-bone')) return 'enemy-bone';
+  if (kind.startsWith('enemy-spore')) return 'enemy-spore';
   if (event.weapon === 'fireball' || kind.includes('fire')) return 'fire';
   if (event.weapon === 'frost' || kind.includes('frost')) return 'frost';
   if (event.weapon === 'lightning' || kind.includes('lightning')) return 'lightning';
@@ -34,10 +40,22 @@ export class Effects {
       const hit = event.type === 'hit', kill = event.type === 'kill';
       const element = eventElement(event), colors = ELEMENT_COLORS[element];
       if (event.type === 'attack') {
+        const enemyLaunch = !!event.kind?.startsWith('enemy-') && event.kind.endsWith('-launch');
+        const aimOnly = !!event.kind && (event.kind.endsWith('-aim') || event.kind.endsWith('-target'));
+        if (enemyLaunch) {
+          const angle = event.angle ?? 0, royal = element === 'royal-spore';
+          const x = event.x + Math.cos(angle) * (royal ? 27 : 14);
+          const y = event.y - (royal ? 32 : 17) + Math.sin(angle) * 8;
+          this.flashes.push({ x, y, life: .19, total: .19, radius: royal ? 18 : 11, type: 'enemy-muzzle', angle, element });
+          for (let i = 0; i < 4; i++) {
+            const a = angle + (i - 1.5) * .27;
+            this.particles.push({ x, y, vx: Math.cos(a) * (45 + i * 8), vy: Math.sin(a) * 35 - 8, life: .23, total: .23, size: 2.2 + i * .35, color: i % 2 ? colors.light : colors.particle, shape: element === 'enemy-bone' ? 'stone' : 'dot' });
+          }
+        }
         const type = event.weapon === 'lightning' ? 'lightning' : event.weapon === 'sword' ? 'sword' : 'spark';
         if (type !== 'spark') this.flashes.push({ x: event.x, y: event.y - 12, life: .23, total: .23, radius: event.radius ?? 56, type, angle: event.angle ?? 0, targetX: event.targetX, targetY: event.targetY, element });
         if (event.weapon === 'fireball' || event.weapon === 'frost') this.flashes.push({ x: event.x, y: event.y - 28, life: .24, total: .24, radius: 19, type: 'cast', angle: event.angle ?? 0, element });
-        if (event.kind && event.kind !== 'goblin-charge') {
+        if (event.kind && event.kind !== 'goblin-charge' && !enemyLaunch && !aimOnly) {
           const fissure = event.kind === 'golem-fissure';
           this.flashes.push({ x: event.x, y: event.y, life: .4, total: .4, radius: event.radius ?? 60, type: fissure ? 'fissure' : 'impact', angle: event.angle ?? 0, element });
           for (let i = 0; i < 8; i++) {
@@ -45,7 +63,7 @@ export class Effects {
             const direction = event.angle ?? 0, spread = (this.rng() - .5) * 30;
             const x = fissure ? event.x + Math.cos(direction) * (event.radius ?? 60) * (i + .5) / 8 - Math.sin(direction) * spread : event.x + Math.cos(a) * (event.radius ?? 60) * .6;
             const y = fissure ? event.y + Math.sin(direction) * (event.radius ?? 60) * (i + .5) / 8 + Math.cos(direction) * spread : event.y + Math.sin(a) * (event.radius ?? 60) * .6;
-            this.particles.push({ x, y, vx: Math.cos(a) * 28, vy: Math.sin(a) * 20 - 18, life: .45, total: .45, size: 3 + this.rng() * 3, color: i % 2 ? colors.light : colors.particle, shape: element === 'stone' ? 'stone' : element === 'fire' ? 'dot' : 'star' });
+            this.particles.push({ x, y, vx: Math.cos(a) * 28, vy: Math.sin(a) * 20 - 18, life: .45, total: .45, size: 3 + this.rng() * 3, color: i % 2 ? colors.light : colors.particle, shape: element === 'stone' || element === 'enemy-bone' ? 'stone' : element === 'fire' || element === 'enemy-spore' || element === 'royal-spore' ? 'dot' : 'star' });
           }
         }
       }
@@ -108,6 +126,10 @@ export class Effects {
         ctx.beginPath(); ctx.ellipse(f.x, f.y, f.radius * (.35 + p * .6), f.radius * (.35 + p * .6), 0, 0, Math.PI * 2); ctx.strokeStyle = colors.dark; ctx.lineWidth = 1.5; ctx.stroke();
       } else if (f.type === 'cast') {
         star(ctx, f.x + Math.cos(f.angle) * 24, f.y + Math.sin(f.angle) * 13, f.radius * (1 - p * .65), colors.light, f.element === 'frost' ? 6 : 4, f.angle + p * .5);
+      } else if (f.type === 'enemy-muzzle') {
+        ctx.translate(f.x, f.y); ctx.rotate(f.angle);
+        polygon(ctx, [f.radius * (1 - p * .5), 0, 2, -f.radius * .38, -4, 0, 2, f.radius * .38], colors.light, colors.dark, 1.7);
+        ctx.beginPath(); ctx.arc(0, 0, f.radius * (.4 + p * .5), -.8, .8); ctx.strokeStyle = colors.dark; ctx.lineWidth = 2 * (1 - p) + .5; ctx.stroke();
       } else if (f.type === 'fissure') {
         const points = [f.x, f.y];
         for (let i = 1; i <= 12; i++) {
