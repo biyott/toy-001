@@ -506,6 +506,11 @@ kbd {
   .challenge-controls__error { grid-column: 1; }
 }
 
+/* Keep the two right HUD plaques separate on short landscape touch screens. */
+@media (min-width: 681px) and (max-width: 900px) and (max-height: 500px) {
+  .run-stats { top: 126px; }
+}
+
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
 }

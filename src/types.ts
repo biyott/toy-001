@@ -58,7 +58,8 @@ export interface GameEvent extends Vec2 {
 }
 export interface GameController { getState(): Readonly<GameState>; step(dt: number, input: InputFrame): void; dispatch(command: GameCommand): void; drainEvents(): GameEvent[]; }
 export interface Settings { muted: boolean; reducedMotion: boolean; }
-export interface Profile { version: 1; bestScore: number; bestTime: number; wins: number; settings: Settings; }
+export interface RunRecord { bestScore: number; bestTime: number; wins: number; }
+export interface Profile extends RunRecord { version: 1; settings: Settings; demoRecord?: RunRecord; }
 export interface Renderer {
   resize(width: number, height: number, dpr: number): void;
   consumeEvents(events: readonly GameEvent[]): void;

@@ -4,7 +4,7 @@ import { createRenderer } from './render/renderer';
 import { createUI } from './ui/ui';
 import { createInput } from './input';
 import { createAudio } from './audio';
-import { loadProfile, saveProfile } from './storage';
+import { loadProfile, recordRunResult, saveProfile } from './storage';
 import { createGamepadReader, mergeInputFrames, type MenuAction } from './controls/gamepad';
 import { createTouchControls } from './controls/touch';
 import './controls/touch.css';
@@ -83,9 +83,8 @@ function frame(time:number){
   const state=game.getState();
   const events=game.drainEvents();renderer.consumeEvents(events);audio.consume(events,profile.settings);
   if((state.phase==='victory'||state.phase==='defeat')&&!runSaved){
-    if(state.mode!=='challenge'){
-      profile.bestScore=Math.max(profile.bestScore,state.stats.score);profile.bestTime=Math.max(profile.bestTime,state.elapsed);if(state.phase==='victory')profile.wins++;saveProfile(profile);
-    }
+    const updated=recordRunResult(profile,state);
+    if(updated!==profile){profile=updated;saveProfile(profile);}
     runSaved=true;
   }
   renderer.render(state,delta,profile.settings);

@@ -419,11 +419,13 @@ export function createUI(root: HTMLElement, handlers: UIHandlers): GameUI {
     resultSeed.hidden = state.mode !== 'challenge';
     setText(resultSeed, state.mode === 'challenge' ? `도전 시드 ${state.seed}` : '');
     resultStats.replaceChildren();
+    const recordLabel = state.mode === 'demo' ? '시연 최고' : '일반 최고';
+    const recordScore = state.mode === 'demo' ? profile.demoRecord?.bestScore ?? 0 : profile.bestScore;
     const stats: Array<[string, string]> = [
       ['생존 시간', formatSeconds(state.elapsed)],
       ['처치한 적', state.stats.kills.toLocaleString('ko-KR')],
       ['최종 점수', state.stats.score.toLocaleString('ko-KR')],
-      [state.mode === 'challenge' ? '일반 최고' : '최고 점수', (state.mode === 'challenge' ? profile.bestScore : Math.max(profile.bestScore, state.stats.score)).toLocaleString('ko-KR')],
+      [recordLabel, recordScore.toLocaleString('ko-KR')],
     ];
     stats.forEach(([label, value]) => {
       const item = document.createElement('div');
