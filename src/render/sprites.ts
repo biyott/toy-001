@@ -1,3 +1,7 @@
+import { paintKnight } from './characters/knight';
+import { paintMage } from './characters/mage';
+import { paintRanger } from './characters/ranger';
+import { boots, type CharacterPose } from './characters/shared';
 import { ellipse, eye, INK, line, polygon, rounded, star, type Ctx } from './art';
 import type { CharacterId, EnemyKind, Prop } from '../types';
 
@@ -11,94 +15,12 @@ function sprite(width: number, height: number, anchorX: number, anchorY: number,
   paint(ctx); return { canvas, width, height, anchorX, anchorY };
 }
 
-function boots(ctx: Ctx, frame: number, color = '#66564b'): void {
-  const stride = [0, -3, 0, 3][frame % 4];
-  rounded(ctx, 44, 119 + stride, 17, 13, 6, color, INK, 2.5);
-  rounded(ctx, 67, 119 - stride, 17, 13, 6, color, INK, 2.5);
-  line(ctx, [48, 122 + stride, 56, 122 + stride], '#b29370', 2);
-  line(ctx, [71, 122 - stride, 79, 122 - stride], '#b29370', 2);
-}
-
-function knight(ctx: Ctx, frame: number): void {
-  polygon(ctx, [40, 88, 80, 88, 92, 126, 65, 121, 38, 128], '#517d94', INK, 2.5);
-  polygon(ctx, [47, 90, 64, 94, 65, 121, 38, 128], '#78aebb');
-  boots(ctx, frame);
-  rounded(ctx, 43, 92, 42, 33, 13, '#bfcccb', INK, 2.8);
-  rounded(ctx, 49, 94, 29, 19, 8, '#e3e8d9');
-  line(ctx, [45, 115, 83, 115], '#827b64', 6);
-  rounded(ctx, 59, 111, 10, 9, 2, '#e7be62', '#7a705a', 1.5);
-  ellipse(ctx, 36, 99, 11, 13, '#c2cfce', INK, 2.5);
-  ellipse(ctx, 89, 101, 10, 12, '#b0c1c4', INK, 2.5);
-  // Friendly open-face helmet, with a large face and visible expression.
-  ellipse(ctx, 63, 71, 33, 30, '#9eb7be', INK, 3);
-  ellipse(ctx, 61, 66, 28, 23, '#d6e2df');
-  ellipse(ctx, 63, 77, 25, 21, '#f5d9ad', '#5e6760', 2.2);
-  ellipse(ctx, 48, 83, 6, 3, '#e5ac95'); ellipse(ctx, 80, 83, 6, 3, '#e5ac95');
-  eye(ctx, 53, 75, 5.5); eye(ctx, 74, 75, 5.5);
-  line(ctx, [60, 88, 64, 90, 68, 88], '#8e725e', 1.8);
-  polygon(ctx, [34, 66, 36, 48, 55, 40, 74, 41, 92, 52, 94, 69, 81, 58, 49, 59], '#cbdcdb', INK, 2.7);
-  polygon(ctx, [44, 47, 59, 42, 77, 47, 70, 52, 48, 54], '#eff0d9');
-  rounded(ctx, 59, 37, 10, 26, 4, '#e4bb60', '#777158', 2);
-  polygon(ctx, [64, 39, 66, 23, 81, 15, 96, 20, 88, 27, 74, 29, 72, 40], '#dba46e', INK, 2.2);
-  polygon(ctx, [70, 27, 81, 20, 91, 20, 85, 24], '#f2ca87');
-  ellipse(ctx, 34, 71, 7, 16, '#a1bac1', INK, 2.3);
-  ellipse(ctx, 93, 71, 6, 16, '#a1bac1', INK, 2.3);
-  ellipse(ctx, 34, 67, 2, 6, '#dbe8e3');
-  // Small toy shield and overlarge sword.
-  polygon(ctx, [21, 99, 35, 91, 49, 99, 46, 116, 35, 125, 24, 116], '#769ba8', INK, 2.5);
-  polygon(ctx, [26, 101, 35, 97, 44, 101, 42, 113, 35, 119, 28, 113], '#a6c6cd', '#d5cc8d', 2);
-  star(ctx, 35, 107, 6, '#f9e4a2');
-  ctx.save(); ctx.translate(98, 107); ctx.rotate(-.35);
-  polygon(ctx, [-4, -10, -5, -35, 0, -46, 5, -35, 4, -10], '#d8e8e3', INK, 2);
-  polygon(ctx, [0, -42, 4, -34, 3, -12, 0, -12], '#a3c2cc');
-  line(ctx, [-10, -8, 10, -8], '#e2bc66', 5); line(ctx, [0, -5, 0, 5], '#6f604f', 5);
-  ellipse(ctx, 0, 6, 3.5, 3.5, '#e0b662', INK, 1.3); ctx.restore();
-}
-
-function mage(ctx: Ctx, frame: number): void {
-  boots(ctx, frame, '#70617f');
-  polygon(ctx, [47, 83, 79, 83, 91, 127, 65, 132, 37, 127], '#8c79b5', INK, 2.5);
-  polygon(ctx, [49, 93, 58, 97, 54, 128, 40, 126], '#b59bd0');
-  line(ctx, [47, 113, 81, 113], '#dfbd71', 4); star(ctx, 67, 116, 5, '#ffe1a0');
-  ellipse(ctx, 62, 76, 27, 24, '#f2d9b5', INK, 2.5);
-  ellipse(ctx, 45, 84, 5, 3, '#e4ae9c'); ellipse(ctx, 80, 84, 5, 3, '#e4ae9c');
-  eye(ctx, 52, 76, 5.5); eye(ctx, 73, 76, 5.5); line(ctx, [58, 88, 63, 90, 67, 87], '#876b61', 2);
-  polygon(ctx, [33, 68, 40, 39, 60, 43, 77, 64, 66, 62, 56, 56, 47, 62, 41, 71], '#ddd0bb', INK, 2);
-  ellipse(ctx, 62, 57, 44, 12, '#8976b0', INK, 2.5);
-  polygon(ctx, [30, 54, 51, 15, 67, 24, 80, 21, 76, 40, 95, 55], '#927bbb', INK, 2.8);
-  polygon(ctx, [39, 49, 52, 20, 60, 28, 55, 47], '#b2a0d2');
-  line(ctx, [37, 50, 88, 50], '#e4bd71', 5); star(ctx, 76, 39, 6, '#f5d494');
-  ellipse(ctx, 36, 104, 9, 9, '#f2d9b5', INK, 2);
-  ellipse(ctx, 91, 104, 9, 9, '#f2d9b5', INK, 2);
-  line(ctx, [98, 125, 101, 69], '#866754', 6); line(ctx, [99, 92, 100, 76], '#c4a274', 2);
-  ellipse(ctx, 101, 62, 10, 12, '#a896d7', INK, 2); star(ctx, 99, 59, 6, '#f9efd0');
-}
-
-function ranger(ctx: Ctx, frame: number): void {
-  boots(ctx, frame);
-  polygon(ctx, [43, 90, 80, 90, 90, 125, 64, 131, 38, 127], '#618c71', INK, 2.5);
-  rounded(ctx, 48, 94, 29, 28, 9, '#95ad80', INK, 2);
-  line(ctx, [44, 114, 80, 114], '#866448', 5);
-  ellipse(ctx, 63, 72, 31, 28, '#648c70', INK, 2.8);
-  ellipse(ctx, 63, 78, 25, 22, '#f4d3aa', INK, 2);
-  polygon(ctx, [38, 75, 41, 54, 61, 46, 87, 57, 92, 75, 78, 67, 69, 67, 51, 74, 48, 65], '#aa7048', INK, 2);
-  polygon(ctx, [31, 62, 38, 45, 78, 34, 95, 60, 75, 54, 50, 57], '#6f9877', INK, 2.5);
-  line(ctx, [43, 52, 77, 43], '#a6be88', 3);
-  polygon(ctx, [83, 45, 88, 27, 102, 17, 104, 29, 88, 48], '#f1d29b', INK, 1.7);
-  eye(ctx, 53, 79, 5); eye(ctx, 74, 79, 5); ellipse(ctx, 44, 86, 5, 3, '#e4a88c'); ellipse(ctx, 83, 86, 5, 3, '#e4a88c');
-  line(ctx, [59, 91, 64, 93, 68, 91], '#8b705d', 2);
-  ellipse(ctx, 37, 101, 9, 9, '#f4d3aa', INK, 2); ellipse(ctx, 89, 101, 9, 9, '#f4d3aa', INK, 2);
-  ctx.beginPath(); ctx.moveTo(101, 76); ctx.quadraticCurveTo(125, 101, 101, 127); ctx.strokeStyle = '#a87e4b'; ctx.lineWidth = 5; ctx.stroke();
-  line(ctx, [101, 77, 104, 125], '#f6e0b8', 1.5); line(ctx, [87, 101, 122, 101], '#835f47', 2);
-  polygon(ctx, [125, 101, 117, 96, 117, 106], '#dce2d4', INK, 1.2);
-}
-
 function slime(ctx: Ctx, frame: number): void {
   const d = frame % 2 ? 3 : 0;
   ctx.beginPath(); ctx.moveTo(25, 125); ctx.bezierCurveTo(19, 112, 30, 100 - d, 33, 90 - d); ctx.bezierCurveTo(41, 64 - d, 84, 60 - d, 94, 91 - d); ctx.bezierCurveTo(98, 103, 113, 120, 100, 129); ctx.bezierCurveTo(80, 139, 44, 135, 25, 125);
-  ctx.fillStyle = '#8abbaa'; ctx.fill(); ctx.strokeStyle = '#456b63'; ctx.lineWidth = 3; ctx.stroke();
-  ellipse(ctx, 67, 101, 31, 23, '#b6d8b4'); ellipse(ctx, 50, 87 - d, 12, 5, '#e7edc9');
-  ellipse(ctx, 37, 120, 9, 5, '#a9d1b0'); ellipse(ctx, 94, 123, 8, 4, '#78ae9b');
+  ctx.fillStyle = '#78b49e'; ctx.fill(); ctx.strokeStyle = '#3e6559'; ctx.lineWidth = 3; ctx.stroke();
+  ellipse(ctx, 67, 101, 31, 23, '#b4dbaf'); ellipse(ctx, 50, 87 - d, 12, 5, '#eef2d2');
+  ellipse(ctx, 37, 120, 9, 5, '#a7d6ad'); ellipse(ctx, 94, 123, 8, 4, '#68a48e');
   eye(ctx, 52, 104, 5.5); eye(ctx, 80, 104, 5.5); ellipse(ctx, 40, 115, 6, 3, '#d6bca5'); ellipse(ctx, 92, 115, 6, 3, '#d6bca5');
   line(ctx, [62, 116, 67, 119, 73, 116], '#638776', 2);
   polygon(ctx, [65, 75, 60, 62, 68, 60, 78, 69], '#9fb881', '#638776', 1.5);
@@ -194,12 +116,14 @@ function golem(ctx: Ctx, frame: number): void {
   line(ctx, [93, 45, 87, 55, 94, 58], '#8e9c89', 2); line(ctx, [45, 110, 53, 101, 48, 93], '#849985', 2);
 }
 
-export function actorSprite(kind: CharacterId | EnemyKind, frame: number): Sprite {
-  frame = frame % 4; const key = `${kind}:${frame}`; const found = actors.get(key); if (found) return found;
+export function actorSprite(kind: CharacterId | EnemyKind, frame: number, pose: CharacterPose = 'idle'): Sprite {
+  frame = Math.max(0, Math.floor(frame)) % 4;
+  const character = kind === 'knight' || kind === 'mage' || kind === 'ranger';
+  const key = `${kind}:${frame}:${character ? pose : 'enemy'}`; const found = actors.get(key); if (found) return found;
   const result = sprite(128, 144, 64, 132, ctx => {
-    if (kind === 'knight') knight(ctx, frame);
-    else if (kind === 'mage') mage(ctx, frame);
-    else if (kind === 'ranger') ranger(ctx, frame);
+    if (kind === 'knight') paintKnight(ctx, frame, pose);
+    else if (kind === 'mage') paintMage(ctx, frame, pose);
+    else if (kind === 'ranger') paintRanger(ctx, frame, pose);
     else if (kind === 'slime') slime(ctx, frame);
     else if (kind === 'mushroom' || kind === 'mushroomKing') mushroom(ctx, frame, kind === 'mushroomKing');
     else if (kind === 'goblin') goblin(ctx, frame);
@@ -207,7 +131,18 @@ export function actorSprite(kind: CharacterId | EnemyKind, frame: number): Sprit
     else if (kind === 'bat') bat(ctx, frame);
     else if (kind === 'beetle') beetle(ctx, frame);
     else golem(ctx, frame);
-  }); actors.set(key, result); return result;
+  });
+  // Cache a sub-pixel dark perimeter once. It separates pastel actors from the
+  // meadow without changing the ground palette or adding a per-frame filter.
+  const source = result.canvas;
+  const outlined = document.createElement('canvas'); outlined.width = source.width; outlined.height = source.height;
+  const outline = outlined.getContext('2d')!;
+  const weight = 1.6;
+  for (const [ox, oy] of [[-1, 0], [1, 0], [0, -1], [0, 1], [-.7, -.7], [.7, -.7], [-.7, .7], [.7, .7]]) outline.drawImage(source, ox * weight, oy * weight);
+  outline.globalCompositeOperation = 'source-in'; outline.fillStyle = '#415d4f'; outline.fillRect(0, 0, outlined.width, outlined.height);
+  outline.globalCompositeOperation = 'source-over'; outline.drawImage(source, 0, 0);
+  result.canvas = outlined;
+  actors.set(key, result); return result;
 }
 
 function tree(ctx: Ctx, variant: number): void {

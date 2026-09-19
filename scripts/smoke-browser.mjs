@@ -3,7 +3,7 @@ const url=process.env.GAME_URL||'http://127.0.0.1:4173';
 const b=await chromium.launch({executablePath:'/usr/bin/google-chrome',args:['--no-sandbox']});
 const context=await b.newContext({viewport:{width:1280,height:720}});const p=await context.newPage();const errors=[],checks=[];
 p.on('pageerror',e=>errors.push(e.message));p.on('console',e=>{if(e.type()==='error')errors.push(e.text());});
-const check=(name,ok,details)=>{checks.push({name,ok,details});console.log(JSON.stringify(checks.at(-1)));if(!ok)throw Error(name);};
+const check=(name,ok,details)=>{checks.push({name,ok,details});fs.writeFileSync('evidence/browser-functional-progress.json',JSON.stringify({url,checks,errors},null,2));console.log(JSON.stringify(checks.at(-1)));if(!ok)throw Error(name);};
 const state=()=>p.evaluate(()=>window.__LRG__.getState());
 await p.goto(url);await p.waitForFunction(()=>window.__LRG__);await p.evaluate(()=>document.fonts.ready);
 for(const [width,height]of[[1280,720],[1920,1080]]){
@@ -24,15 +24,18 @@ await p.getByRole('button',{name:'계속하기',exact:true}).click();
 // Deliberate normal-input defeat: walk towards enemies. No game state changes.
 let held=new Set();async function keys(next){for(const k of held)if(!next.has(k))await p.keyboard.up(k);for(const k of next)if(!held.has(k))await p.keyboard.down(k);held=next;}
 const restarts=[];
-for(let run=0;run<4;run++){
+for(let run=0;run<3;run++){
  const start=Date.now();
  while((Date.now()-start)<100000){const s=await state();if(s.phase==='defeat')break;if(s.phase==='levelup'){await keys(new Set());await p.keyboard.press('3');continue;}if(s.phase==='paused'){await p.keyboard.press('Escape');continue;}
  const enemy=[...s.enemies].sort((a,b)=>Math.hypot(a.x-s.player.x,a.y-s.player.y)-Math.hypot(b.x-s.player.x,b.y-s.player.y))[0];const next=new Set();
  if(enemy){const dx=enemy.x-s.player.x,dy=enemy.y-s.player.y;if(dx>8)next.add('d');if(dx<-8)next.add('a');if(dy>8)next.add('s');if(dy<-8)next.add('w');}await keys(next);await p.waitForTimeout(130);}
  await keys(new Set());const ended=await state();check(`defeat-${run+1}`,ended.phase==='defeat',{elapsed:ended.elapsed,hp:ended.player.hp});
  if(run===0)await p.screenshot({path:'evidence/defeat.png'});
- if(run<3){await p.getByTestId('restart').click();await p.waitForTimeout(100);const restarted=await state(),d=await p.evaluate(()=>window.__LRG__.getDiagnostics());const item={run:run+1,elapsed:restarted.elapsed,enemies:restarted.enemies.length,projectiles:restarted.projectiles.length,kills:restarted.stats.kills,level:restarted.player.level,listeners:d.input.listenerCount,raf:d.rafLoopCount};restarts.push(item);check(`restart-clean-${run+1}`,item.elapsed<1&&item.enemies<=1&&item.projectiles===0&&item.kills===0&&item.level===1&&item.listeners===3&&item.raf===1,item);}
+ {await p.getByTestId('restart').click();await p.waitForTimeout(100);const restarted=await state(),d=await p.evaluate(()=>window.__LRG__.getDiagnostics());const item={run:run+1,elapsed:restarted.elapsed,enemies:restarted.enemies.length,projectiles:restarted.projectiles.length,kills:restarted.stats.kills,level:restarted.player.level,listeners:d.input.listenerCount,raf:d.rafLoopCount};restarts.push(item);check(`restart-clean-${run+1}`,item.elapsed<1&&item.enemies<=1&&item.projectiles===0&&item.kills===0&&item.level===1&&item.listeners===3&&item.raf===1,item);}
 }
+// Three completed defeats followed by three real restarts; no redundant fourth defeat.
+await p.waitForTimeout(1500);
+check('third-restart-continues',(await state()).phase==='playing');
 const recorded=await p.evaluate(()=>JSON.parse(localStorage.getItem('little-rune-guardians.v1')));check('best-record-saved',recorded.bestTime>0&&recorded.bestScore>0,recorded);
 await p.evaluate(()=>localStorage.setItem('little-rune-guardians.v1','{broken'));await p.reload();await p.waitForFunction(()=>window.__LRG__);await p.getByTestId('start-normal').click();check('corrupt-storage-starts',(await state()).phase==='playing');
 check('no-runtime-errors',errors.length===0,errors);

@@ -1,5 +1,8 @@
 import type {
+  CharacterId,
+  EnemyKind,
   GameMode,
+  GameOptions,
   GameState,
   GameUI,
   Phase,
@@ -9,6 +12,8 @@ import type {
   UpgradeDefinition,
 } from '../types';
 import { CHARACTERS, WEAPONS } from '../game/content';
+import { createChallengeControls } from './challenge';
+import { createCodex } from './codex';
 import './styles.css';
 
 const CATEGORY_NAMES: Record<UpgradeDefinition['category'], string> = {
@@ -19,8 +24,18 @@ const CATEGORY_NAMES: Record<UpgradeDefinition['category'], string> = {
   synergy: '룬 조합',
 };
 
-const formatTime = (seconds: number): string => {
-  const safe = Math.max(0, Math.ceil(seconds));
+const BOSS_NAMES: Partial<Record<EnemyKind, string>> = {
+  mushroomKing: '버섯 왕',
+  golem: '돌 골렘',
+};
+
+const formatSeconds = (seconds: number): string => {
+  const safe = Math.max(0, Math.floor(seconds + 0.000_001));
+  return `${Math.floor(safe / 60)}:${String(safe % 60).padStart(2, '0')}`;
+};
+
+const formatCountdown = (seconds: number): string => {
+  const safe = Math.max(0, Math.ceil(seconds - 0.000_001));
   return `${Math.floor(safe / 60)}:${String(safe % 60).padStart(2, '0')}`;
 };
 
@@ -86,18 +101,38 @@ export function createUI(root: HTMLElement, handlers: UIHandlers): GameUI {
   subtitle.className = 'title-subtitle';
   subtitle.textContent = '새벽이 오기 전, 흩어진 룬의 힘을 깨워 마을을 지키세요.';
 
-  const heroCard = document.createElement('div');
-  heroCard.className = 'hero-card';
-  const crest = document.createElement('div');
-  crest.className = 'hero-crest';
-  crest.setAttribute('aria-hidden', 'true');
-  const heroCopy = document.createElement('div');
-  const heroName = document.createElement('b');
-  heroName.textContent = `${CHARACTERS.knight.name} · ${CHARACTERS.knight.title}`;
-  const heroDescription = document.createElement('span');
-  heroDescription.textContent = CHARACTERS.knight.description;
-  heroCopy.append(heroName, heroDescription);
-  heroCard.append(crest, heroCopy);
+  const characterPicker = document.createElement('div');
+  characterPicker.className = 'character-picker';
+  const characterLabel = document.createElement('p');
+  characterLabel.className = 'character-picker__label';
+  characterLabel.textContent = '수호자 선택';
+  const characterOptions = document.createElement('div');
+  characterOptions.className = 'character-picker__options';
+  characterOptions.setAttribute('role', 'group');
+  characterOptions.setAttribute('aria-label', '수호자 선택');
+  const characterDescription = document.createElement('p');
+  characterDescription.className = 'character-picker__description';
+  const characterButtons = new Map<CharacterId, HTMLButtonElement>();
+  (Object.keys(CHARACTERS) as CharacterId[]).forEach((id) => {
+    const character = CHARACTERS[id];
+    const choice = button('character-choice', '', () => selectCharacter(id));
+    choice.dataset.testid = `character-${id}`;
+    choice.style.setProperty('--character-color', character.color);
+    const portrait = document.createElement('span');
+    portrait.className = 'character-choice__portrait';
+    portrait.setAttribute('aria-hidden', 'true');
+    portrait.textContent = character.name.slice(0, 1);
+    const copy = document.createElement('span');
+    const name = document.createElement('strong');
+    name.textContent = character.name;
+    const role = document.createElement('small');
+    role.textContent = character.title;
+    copy.append(name, role);
+    choice.append(portrait, copy);
+    characterButtons.set(id, choice);
+    characterOptions.append(choice);
+  });
+  characterPicker.append(characterLabel, characterOptions, characterDescription);
 
   const startNormal = button('primary-button', '수호 임무 시작 · 10분', () => start('normal'));
   startNormal.dataset.focus = 'title';
@@ -108,19 +143,25 @@ export function createUI(root: HTMLElement, handlers: UIHandlers): GameUI {
   startActions.className = 'title-actions';
   startActions.append(startNormal, startDemo);
 
+  const challengeControls = createChallengeControls(handlers.getOptions(), (patch) => startChallenge(patch));
+
+  const openCodexButton = button('text-button codex-open-button', '룬 조합 도감', () => openCodex());
+  openCodexButton.dataset.testid = 'open-codex';
+
   const controls = document.createElement('div');
   controls.className = 'controls-card';
   controls.innerHTML = `
     <p class="controls-card__title">조작법</p>
     <div><kbd>WASD</kbd><span>또는</span><kbd>방향키</kbd><b>이동</b></div>
     <div><kbd>Space</kbd><b>대시</b><kbd>ESC</kbd><b>일시정지</b></div>
-    <p>공격은 가장 가까운 적에게 자동으로 발동됩니다.</p>
+    <p>공격은 자동입니다. 제한시간을 버티고 우두머리 2명을 모두 처치하면 승리합니다.</p>
+    <p class="controls-card__alternate">게임패드와 터치 조작도 지원됩니다.</p>
   `;
 
   const titleFoot = document.createElement('p');
   titleFoot.className = 'title-foot';
   titleFoot.textContent = '한 번의 선택이 새로운 룬 조합을 엽니다';
-  titlePanel.append(eyebrow, heading, subtitle, heroCard, startActions, controls, titleFoot);
+  titlePanel.append(eyebrow, heading, subtitle, characterPicker, startActions, challengeControls, openCodexButton, controls, titleFoot);
   title.append(titlePanel);
 
   // HUD never captures combat pointer input.
@@ -143,9 +184,16 @@ export function createUI(root: HTMLElement, handlers: UIHandlers): GameUI {
 
   const timePanel = document.createElement('div');
   timePanel.className = 'time-panel wood-panel';
-  timePanel.innerHTML = '<span>남은 시간</span><strong>10:00</strong><small>밤이 끝날 때까지 버티세요</small>';
-  const timeValue = timePanel.querySelector('strong') as HTMLElement;
-  const timeHint = timePanel.querySelector('small') as HTMLElement;
+  const timeLabel = document.createElement('span');
+  timeLabel.textContent = '남은 시간';
+  const timeValue = document.createElement('strong');
+  timeValue.textContent = '10:00';
+  const timeHint = document.createElement('small');
+  timeHint.textContent = '밤이 끝날 때까지 버티세요';
+  const bossProgress = document.createElement('small');
+  bossProgress.className = 'boss-progress';
+  bossProgress.textContent = '우두머리 0 / 2';
+  timePanel.append(timeLabel, timeValue, timeHint, bossProgress);
 
   const runStats = document.createElement('div');
   runStats.className = 'run-stats wood-panel';
@@ -219,6 +267,8 @@ export function createUI(root: HTMLElement, handlers: UIHandlers): GameUI {
   resultTitle.id = 'result-title';
   const resultMessage = document.createElement('p');
   resultMessage.className = 'result-message';
+  const resultSeed = document.createElement('p');
+  resultSeed.className = 'result-seed';
   const resultStats = document.createElement('div');
   resultStats.className = 'result-stats';
   const retry = button('primary-button', '다시 도전', () => handlers.command({ type: 'restart' }));
@@ -229,23 +279,68 @@ export function createUI(root: HTMLElement, handlers: UIHandlers): GameUI {
   const resultActions = document.createElement('div');
   resultActions.className = 'result-actions';
   resultActions.append(retry, toTitle);
-  resultPanel.append(resultRune, resultEyebrow, resultTitle, resultMessage, resultStats, resultActions);
+  resultPanel.append(resultRune, resultEyebrow, resultTitle, resultMessage, resultSeed, resultStats, resultActions);
   result.append(resultPanel);
+
+  let codexOpen = false;
+  const codexScreen = document.createElement('section');
+  codexScreen.className = 'screen modal-screen codex-screen';
+  codexScreen.hidden = true;
+  codexScreen.append(createCodex(closeCodex));
 
   const announcement = document.createElement('div');
   announcement.className = 'sr-only';
   announcement.setAttribute('aria-live', 'polite');
-  shell.append(title, hud, pause, levelup, result, announcement);
+  shell.append(title, hud, pause, levelup, result, codexScreen, announcement);
 
   let currentProfile: Profile | undefined;
   let lastPhase: Phase | undefined;
   let lastChoiceSignature = '';
 
+  function selectCharacter(character: CharacterId): void {
+    handlers.setOptions({ character });
+    renderCharacterSelection(character);
+  }
+
+  function renderCharacterSelection(selected: CharacterId): void {
+    characterButtons.forEach((choice, id) => {
+      const active = id === selected;
+      choice.classList.toggle('character-choice--selected', active);
+      choice.setAttribute('aria-pressed', String(active));
+    });
+    const character = CHARACTERS[selected];
+    characterDescription.textContent = `${character.description} 시작 무기: ${WEAPONS[character.weapon].name}`;
+  }
+
   function start(mode: GameMode): void {
-    const options = { ...handlers.getOptions(), mode, character: 'knight' as const };
-    handlers.setOptions({ mode, character: 'knight' });
+    const options = { ...handlers.getOptions(), mode };
+    handlers.setOptions({ mode });
     handlers.command({ type: 'start', options });
   }
+
+  function startChallenge(patch: Partial<GameOptions>): void {
+    const options = { ...handlers.getOptions(), ...patch, mode: 'challenge' as const };
+    handlers.setOptions(options);
+    handlers.command({ type: 'start', options });
+  }
+
+  function openCodex(): void {
+    codexOpen = true;
+    codexScreen.hidden = false;
+    title.hidden = true;
+    title.setAttribute('aria-hidden', 'true');
+    requestAnimationFrame(() => codexScreen.querySelector<HTMLElement>('button, [href], [tabindex="0"]')?.focus({ preventScroll: true }));
+  }
+
+  function closeCodex(): void {
+    codexOpen = false;
+    codexScreen.hidden = true;
+    title.hidden = false;
+    title.removeAttribute('aria-hidden');
+    openCodexButton.focus({ preventScroll: true });
+  }
+
+  renderCharacterSelection(handlers.getOptions().character);
 
   function toggleSetting(key: keyof Settings): void {
     if (!currentProfile) return;
@@ -321,12 +416,14 @@ export function createUI(root: HTMLElement, handlers: UIHandlers): GameUI {
     setText(resultEyebrow, won ? '마을에 새벽이 밝았습니다' : '룬 불빛이 희미해졌습니다');
     setText(resultTitle, won ? '임무 성공' : '다시 일어설 시간');
     setText(resultMessage, state.message || (won ? '작은 수호자가 긴 밤을 지켜냈습니다.' : '다음 도전에는 더 강한 룬이 함께할 거예요.'));
+    resultSeed.hidden = state.mode !== 'challenge';
+    setText(resultSeed, state.mode === 'challenge' ? `도전 시드 ${state.seed}` : '');
     resultStats.replaceChildren();
     const stats: Array<[string, string]> = [
-      ['생존 시간', formatTime(state.elapsed)],
+      ['생존 시간', formatSeconds(state.elapsed)],
       ['처치한 적', state.stats.kills.toLocaleString('ko-KR')],
       ['최종 점수', state.stats.score.toLocaleString('ko-KR')],
-      ['최고 점수', Math.max(profile.bestScore, state.stats.score).toLocaleString('ko-KR')],
+      [state.mode === 'challenge' ? '일반 최고' : '최고 점수', (state.mode === 'challenge' ? profile.bestScore : Math.max(profile.bestScore, state.stats.score)).toLocaleString('ko-KR')],
     ];
     stats.forEach(([label, value]) => {
       const item = document.createElement('div');
@@ -346,10 +443,15 @@ export function createUI(root: HTMLElement, handlers: UIHandlers): GameUI {
   }
 
   function trapModalFocus(event: KeyboardEvent): void {
+    if (event.key === 'Escape' && codexOpen) {
+      event.preventDefault();
+      closeCodex();
+      return;
+    }
     if (event.key !== 'Tab') return;
-    const modal = !pause.hidden ? pause : !levelup.hidden ? levelup : !result.hidden ? result : undefined;
+    const modal = !codexScreen.hidden ? codexScreen : !pause.hidden ? pause : !levelup.hidden ? levelup : !result.hidden ? result : undefined;
     if (!modal) return;
-    const focusable = [...modal.querySelectorAll<HTMLButtonElement>('button:not(:disabled)')];
+    const focusable = [...modal.querySelectorAll<HTMLElement>('button:not(:disabled), a[href], input:not(:disabled), [tabindex]:not([tabindex="-1"])')];
     if (focusable.length === 0) return;
     const first = focusable[0];
     const last = focusable[focusable.length - 1];
@@ -369,7 +471,12 @@ export function createUI(root: HTMLElement, handlers: UIHandlers): GameUI {
     currentProfile = profile;
     root.classList.toggle('reduced-motion', profile.settings.reducedMotion);
     const isResult = state.phase === 'victory' || state.phase === 'defeat';
-    setHidden(title, state.phase !== 'title');
+    if (state.phase !== 'title' && codexOpen) {
+      codexOpen = false;
+      codexScreen.hidden = true;
+      title.removeAttribute('aria-hidden');
+    }
+    setHidden(title, state.phase !== 'title' || codexOpen);
     setHidden(hud, state.phase === 'title' || isResult);
     setHidden(pause, state.phase !== 'paused');
     setHidden(levelup, state.phase !== 'levelup');
@@ -383,8 +490,24 @@ export function createUI(root: HTMLElement, handlers: UIHandlers): GameUI {
     setText(hpMeter.value, `${Math.ceil(Math.max(0, state.player.hp))} / ${Math.ceil(state.player.maxHp)}`);
     setText(xpMeter.value, `${Math.floor(state.player.xp)} / ${Math.ceil(state.player.xpToNext)}`);
     setText(levelBadge.querySelector('strong') as HTMLElement, state.player.level);
-    setText(timeValue, formatTime(state.duration - state.elapsed));
-    setText(timeHint, state.bossSpawned && !state.bossDefeated ? '우두머리가 나타났습니다!' : state.mode === 'demo' ? '빠른 시연 임무' : '밤이 끝날 때까지 버티세요');
+    setText(timeValue, formatCountdown(state.duration - state.elapsed));
+    const remaining = state.duration - state.elapsed;
+    const requiredBosses = state.contentTier === 1 ? 2 : 1;
+    const defeatedBosses = Math.min(requiredBosses, state.stats.bossesDefeated);
+    const activeBosses = [...new Set(state.enemies.filter((enemy) => enemy.boss).map((enemy) => BOSS_NAMES[enemy.kind] ?? '우두머리'))];
+    setText(bossProgress, `우두머리 ${defeatedBosses} / ${requiredBosses}`);
+    bossProgress.classList.toggle('boss-progress--complete', defeatedBosses >= requiredBosses);
+    const activeBossLabel = activeBosses.join(' · ');
+    const timerHint = activeBosses.length > 0
+      ? remaining <= 0
+        ? `마지막 보스전 · ${activeBossLabel} 처치`
+        : `${activeBossLabel}을 물리치세요`
+      : state.bossSpawned && defeatedBosses < requiredBosses
+        ? '다음 우두머리를 준비하세요'
+      : state.mode === 'demo'
+        ? `3분 생존 + 우두머리 ${requiredBosses}명`
+        : `10분 생존 + 우두머리 ${requiredBosses}명`;
+    setText(timeHint, timerHint);
     timePanel.classList.toggle('time-panel--urgent', state.duration - state.elapsed <= 30);
     setText(killsValue, state.stats.kills.toLocaleString('ko-KR'));
     setText(scoreValue, state.stats.score.toLocaleString('ko-KR'));
@@ -393,6 +516,7 @@ export function createUI(root: HTMLElement, handlers: UIHandlers): GameUI {
     dash.classList.toggle('dash-indicator--ready', cooldown <= 0);
     renderWeapons(state);
     renderSettings(profile);
+    if (state.phase === 'title') renderCharacterSelection(handlers.getOptions().character);
     if (state.phase === 'levelup') renderUpgradeChoices(state);
     if (isResult) renderResult(state, profile);
 

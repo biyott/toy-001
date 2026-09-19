@@ -3,6 +3,7 @@ import { ellipse, eye, line, polygon, rounded, star, type Ctx } from './art';
 import { actorSprite, clearSpriteCache, drawSprite, propSprite } from './sprites';
 import { Ground, titleProps, worldEdge } from './world';
 import { Effects } from './effects';
+import type { CharacterPose } from './characters/shared';
 
 const TAU = Math.PI * 2;
 const tallProps = new Set<Prop['kind']>(['tree', 'wall', 'gate', 'house', 'well', 'banner']);
@@ -26,12 +27,12 @@ function shadow(ctx: Ctx, x: number, y: number, radius: number, alpha = .16): vo
 function zonePath(ctx: Ctx, zone: Zone): void {
   ctx.beginPath();
   if (zone.shape === 'line') {
-    const length = zone.length ?? zone.radius * 2, width = zone.width ?? 18;
+    const length = zone.length ?? zone.radius, width = zone.width ?? 24;
     const nx = -Math.sin(zone.angle) * width / 2, ny = Math.cos(zone.angle) * width / 2;
     const endX = zone.x + Math.cos(zone.angle) * length, endY = zone.y + Math.sin(zone.angle) * length;
     ctx.moveTo(zone.x + nx, zone.y + ny); ctx.lineTo(endX + nx, endY + ny); ctx.lineTo(endX - nx, endY - ny); ctx.lineTo(zone.x - nx, zone.y - ny); ctx.closePath();
   } else if (zone.shape === 'cone') {
-    const width = zone.width ?? 2.5; ctx.moveTo(zone.x, zone.y); ctx.arc(zone.x, zone.y, zone.radius, zone.angle - width / 2, zone.angle + width / 2); ctx.closePath();
+    const width = zone.width ?? 1.6; ctx.moveTo(zone.x, zone.y); ctx.arc(zone.x, zone.y, zone.radius, zone.angle - width / 2, zone.angle + width / 2); ctx.closePath();
   } else {
     ctx.arc(zone.x, zone.y, zone.radius, 0, TAU);
     if (zone.shape === 'ring' && zone.innerRadius) { ctx.moveTo(zone.x + zone.innerRadius, zone.y); ctx.arc(zone.x, zone.y, zone.innerRadius, 0, TAU, true); }
@@ -58,17 +59,18 @@ function drawZone(ctx: Ctx, zone: Zone, time: number, top = false): void {
       line(ctx, [zone.x, y - 4, zone.x, y + 1], '#a26955', 2); ellipse(ctx, zone.x, y + 4, 1, 1, '#a26955');
     }
     if (!top && waiting && zone.shape === 'line') {
-      const length = zone.length ?? zone.radius * 2;
+      const length = zone.length ?? zone.radius;
       for (let t = 24; t < length; t += 37) {
         ctx.save(); ctx.translate(zone.x + Math.cos(zone.angle) * t, zone.y + Math.sin(zone.angle) * t); ctx.rotate(zone.angle);
         line(ctx, [-4, -5, 3, 0, -4, 5], '#b8785f', 2); ctx.restore();
       }
     }
   } else if (!top) {
-    const frost = zone.kind.includes('frost'), sword = zone.kind.includes('sword');
-    ctx.fillStyle = frost ? 'rgba(166,213,225,.25)' : sword ? 'rgba(255,231,161,.15)' : 'rgba(190,168,218,.15)'; ctx.fill('evenodd');
-    ctx.strokeStyle = frost ? '#b9e0e3' : sword ? '#f9e5b0' : '#ccb5df'; ctx.lineWidth = sword ? 3 : 2; ctx.stroke();
+    const frost = zone.kind.includes('frost'), sword = zone.kind.includes('sword'), fire = zone.kind.includes('fire'), lightning = zone.kind.includes('lightning');
+    ctx.fillStyle = frost ? 'rgba(133,204,219,.24)' : fire ? 'rgba(239,164,95,.24)' : lightning ? 'rgba(247,224,125,.20)' : sword ? 'rgba(255,231,161,.15)' : 'rgba(190,168,218,.15)'; ctx.fill('evenodd');
+    ctx.strokeStyle = frost ? '#a0dfe7' : fire ? '#e6a66f' : lightning ? '#f4d775' : sword ? '#f9e5b0' : '#ccb5df'; ctx.lineWidth = sword ? 3 : 2; ctx.stroke();
     if (frost) for (let i = 0; i < 6; i++) { const a = i / 6 * TAU + time * .15; star(ctx, zone.x + Math.cos(a) * zone.radius * .66, zone.y + Math.sin(a) * zone.radius * .66, 5, '#e4f1e5', 6, a); }
+    if (fire) for (let i = 0; i < 7; i++) { const a = i / 7 * TAU + time * .25; ellipse(ctx, zone.x + Math.cos(a) * zone.radius * .68, zone.y + Math.sin(a) * zone.radius * .68 - Math.sin(time * 7 + i) * 3, 3, 5, '#f5ce85'); }
   }
   ctx.restore();
 }
@@ -137,8 +139,8 @@ function drawEnemy(ctx: Ctx, enemy: Enemy, time: number): void {
   }
 }
 
-function drawPlayer(ctx: Ctx, player: Player, time: number, silhouette = false, swing = 0): void {
-  const frame = player.moving ? Math.floor(time * (player.dashTime > 0 ? 19 : 9)) % 4 : 0;
+function drawPlayer(ctx: Ctx, player: Player, time: number, silhouette = false, swing = 0, pose: CharacterPose = 'idle', poseFrame?: number): void {
+  const frame = poseFrame ?? Math.floor(time * (player.moving ? player.dashTime > 0 ? 19 : 9 : 2)) % 4;
   const bob = player.moving ? Math.abs(Math.sin(time * 10)) * 2.3 : Math.sin(time * 2) * .7;
   const scale = .76;
   if (silhouette) {
@@ -150,11 +152,11 @@ function drawPlayer(ctx: Ctx, player: Player, time: number, silhouette = false, 
   if (player.dashTime > 0) {
     for (let i = 3; i >= 1; i--) {
       ctx.globalAlpha = .10 + (3 - i) * .035;
-      drawSprite(ctx, actorSprite(player.character, frame), player.x - Math.cos(player.facing) * i * 12, player.y - Math.sin(player.facing) * i * 12 - 5, scale, Math.cos(player.facing) < -.1, Math.cos(player.facing) * .08);
+      drawSprite(ctx, actorSprite(player.character, frame, 'dash'), player.x - Math.cos(player.facing) * i * 12, player.y - Math.sin(player.facing) * i * 12 - 5, scale, Math.cos(player.facing) < -.1, Math.cos(player.facing) * .08);
     }
     ctx.globalAlpha = 1;
   }
-  drawSprite(ctx, actorSprite(player.character, frame), player.x, player.y - bob - (player.dashTime > 0 ? 4 : 0), scale, Math.cos(player.facing) < -.1, (player.moving ? Math.sin(time * 10) * .015 : 0) + swing);
+  drawSprite(ctx, actorSprite(player.character, frame, pose), player.x, player.y - bob - (player.dashTime > 0 ? 4 : 0), scale, Math.cos(player.facing) < -.1, (player.moving ? Math.sin(time * 10) * .015 : 0) + swing);
   if (player.hitFlash > 0) { star(ctx, player.x - 14, player.y - 40, 10, '#ffdfbd', 4, time * 6); }
   ctx.restore();
 }
@@ -163,7 +165,9 @@ export function createRenderer(canvas: HTMLCanvasElement): Renderer {
   const context = canvas.getContext('2d'); if (!context) throw new Error('Canvas2D를 시작할 수 없습니다.');
   const ctx = context, ground = new Ground(), effects = new Effects();
   let width = 1280, height = 720, dpr = 1, zoom = 1, time = 0, lastElapsed = 0;
-  let swordPose = 0, swordAngle = 0;
+  let attackPose = 0, attackAngle = 0;
+  let lastPlayerPosition: Vec2 = { x: 0, y: 0 }, animationCharacter: Player['character'] = 'knight';
+  let lastSpiritCooldown: number | undefined;
   let previousPhase: GameState['phase'] = 'title';
   let camera: Vec2 = { x: 0, y: 0 };
   let disposed = false;
@@ -204,8 +208,9 @@ export function createRenderer(canvas: HTMLCanvasElement): Renderer {
     if (disposed) return;
     dt = Math.max(0, Math.min(dt || 0, .05));
     const title = state.phase === 'title';
-    if (state.elapsed < lastElapsed || (previousPhase !== 'title' && title)) { effects.clear(); swordPose = 0; }
-    if (title || state.phase === 'playing' || state.phase === 'victory' || state.phase === 'defeat') { time += dt; effects.step(dt); swordPose = Math.max(0, swordPose - dt); }
+    if (state.elapsed < lastElapsed || (previousPhase !== 'title' && title)) { effects.clear(); attackPose = 0; lastSpiritCooldown = undefined; }
+    if (title || state.phase === 'playing' || state.phase === 'victory' || state.phase === 'defeat') { time += dt; effects.step(dt); attackPose = Math.max(0, attackPose - dt); }
+    lastPlayerPosition = { x: state.player.x, y: state.player.y }; animationCharacter = state.player.character;
     if (title) camera = { x: 0, y: -5 };
     else if (previousPhase === 'title' || state.elapsed < lastElapsed) camera = { x: state.player.x, y: state.player.y };
     else { const follow = 1 - Math.exp(-dt * 11); camera.x += (state.player.x - camera.x) * follow; camera.y += (state.player.y - camera.y) * follow; }
@@ -221,20 +226,50 @@ export function createRenderer(canvas: HTMLCanvasElement): Renderer {
       const visibleProps = state.props.filter(prop => isVisible(prop.x, prop.y, 240));
       const visibleEnemies = state.enemies.filter(enemy => isVisible(enemy.x, enemy.y));
       for (const prop of visibleProps) if (prop.kind !== 'flower' && prop.kind !== 'mushroom') shadow(ctx, prop.x, prop.y, Math.max(12, prop.radius * .85), .12);
-      for (const enemy of visibleEnemies) shadow(ctx, enemy.x, enemy.y, enemy.radius * (enemy.boss ? 1.1 : .95), enemy.kind === 'bat' ? .07 : .13);
-      shadow(ctx, state.player.x, state.player.y, 21, .19);
-      ctx.save(); ctx.strokeStyle = '#f0d797'; ctx.lineWidth = 1.6; ctx.globalAlpha = .75;
-      ctx.beginPath(); ctx.ellipse(state.player.x, state.player.y + 1, 25, 12, 0, 0, TAU); ctx.stroke(); ctx.restore();
+      for (const enemy of visibleEnemies) shadow(ctx, enemy.x, enemy.y, enemy.radius * (enemy.boss ? 1.1 : .95), enemy.kind === 'bat' ? .08 : .16);
+      shadow(ctx, state.player.x, state.player.y, 21, .23);
+      ctx.save(); ctx.globalAlpha = .78;
+      ctx.beginPath(); ctx.ellipse(state.player.x, state.player.y + 1, 25, 12, 0, 0, TAU);
+      ctx.strokeStyle = '#69866e'; ctx.lineWidth = 3.4; ctx.stroke();
+      ctx.strokeStyle = '#f8dda0'; ctx.lineWidth = 1.6; ctx.stroke(); ctx.restore();
       for (const zone of state.zones) if (isVisible(zone.x, zone.y, zone.radius + (zone.length ?? 0))) drawZone(ctx, zone, time);
       for (const pickup of state.pickups) if (isVisible(pickup.x, pickup.y, 30)) drawPickup(ctx, pickup.x, pickup.y, pickup.kind, pickup.value, time, pickup.id);
       const entries: { y: number; id: number; draw: () => void }[] = [];
       let occluded = false;
       for (const prop of visibleProps) entries.push({ y: prop.y, id: prop.id, draw: () => { occluded = drawProp(prop, state.player) || occluded; } });
       for (const enemy of visibleEnemies) entries.push({ y: enemy.y, id: enemy.id, draw: () => drawEnemy(ctx, enemy, time) });
-      const sword = state.weapons.find(weapon => weapon.id === 'sword');
-      const preparation = sword && sword.cooldown > 0 && sword.cooldown < .12 ? -(1 - sword.cooldown / .12) * .055 * Math.cos(state.player.facing) : 0;
-      const swing = swordPose > 0 ? Math.sin((1 - swordPose / .28) * Math.PI) * .105 * Math.cos(swordAngle) : preparation;
-      entries.push({ y: state.player.y, id: state.player.id, draw: () => drawPlayer(ctx, state.player, time, false, swing) });
+      const primaryWeapon = { knight: 'sword', mage: 'spirit', ranger: 'arrow' }[state.player.character];
+      const primary = state.weapons.find(weapon => weapon.id === primaryWeapon);
+      const range = state.player.character === 'knight' ? 160 : 680;
+      let target: Enemy | undefined, targetDistance = range ** 2;
+      for (const enemy of state.enemies) {
+        const distance = (enemy.x - state.player.x) ** 2 + (enemy.y - state.player.y) ** 2;
+        if (enemy.hp > 0 && distance < targetDistance) { target = enemy; targetDistance = distance; }
+      }
+      const hasTarget = !!target;
+      // Spirits re-arm on their real weapon cooldown instead of emitting a
+      // projectile event. Use that edge for the mage's recurring staff pulse.
+      if (state.player.character === 'mage' && primary && state.phase === 'playing' && hasTarget && lastSpiritCooldown !== undefined && primary.cooldown > lastSpiritCooldown + .12) {
+        attackPose = .3; attackAngle = state.player.facing;
+      }
+      lastSpiritCooldown = state.player.character === 'mage' ? primary?.cooldown : undefined;
+      let pose: CharacterPose = state.player.moving ? 'walk' : 'idle';
+      let poseFrame = Math.floor(time * (state.player.moving ? 9 : 2)) % 4;
+      let swing = 0;
+      if (attackPose > 0) {
+        const elapsed = .3 - attackPose;
+        pose = elapsed < .14 ? 'attack' : 'recover';
+        poseFrame = Math.min(3, Math.floor((pose === 'attack' ? elapsed / .14 : (elapsed - .14) / .16) * 4));
+        swing = Math.sin(elapsed / .3 * Math.PI) * .06 * Math.cos(attackAngle);
+      } else if (primary && primary.cooldown > 0 && primary.cooldown < .12 && hasTarget) {
+        pose = 'windup'; poseFrame = Math.min(3, Math.floor((1 - primary.cooldown / .12) * 4));
+        swing = -(1 - primary.cooldown / .12) * .04 * Math.cos(state.player.facing);
+      }
+      if (state.player.hitFlash > 0) { pose = 'hit'; poseFrame = Math.max(0, Math.min(3, Math.floor((1 - state.player.hitFlash / .2) * 4))); }
+      if (state.player.dashTime > 0) { pose = 'dash'; poseFrame = Math.max(0, Math.min(3, Math.floor((1 - state.player.dashTime / .2) * 4))); }
+      const visualFacing = pose === 'attack' || pose === 'recover' ? attackAngle : pose === 'windup' && target ? Math.atan2(target.y - state.player.y, target.x - state.player.x) : state.player.facing;
+      const visualPlayer = { ...state.player, facing: visualFacing };
+      entries.push({ y: state.player.y, id: state.player.id, draw: () => drawPlayer(ctx, visualPlayer, time, false, swing, pose, poseFrame) });
       entries.sort((a, b) => a.y - b.y || a.id - b.id); for (const entry of entries) entry.draw();
       for (const projectile of state.projectiles) if (isVisible(projectile.x, projectile.y, 40)) drawProjectile(ctx, projectile, time);
       for (const zone of state.zones) if (zone.owner === 'enemy' && isVisible(zone.x, zone.y, zone.radius)) drawZone(ctx, zone, time, true);
@@ -268,7 +303,13 @@ export function createRenderer(canvas: HTMLCanvasElement): Renderer {
     consumeEvents(events: readonly GameEvent[]) {
       if (!disposed) {
         effects.consume(events);
-        for (const event of events) if (event.type === 'attack' && event.weapon === 'sword') { swordPose = .28; swordAngle = event.angle ?? 0; }
+        const primary = { knight: 'sword', mage: 'spirit', ranger: 'arrow' }[animationCharacter];
+        for (const event of events) {
+          const characterAttack = event.weapon === primary || animationCharacter === 'mage' && (event.weapon === 'fireball' || event.weapon === 'frost' || event.weapon === 'lightning');
+          if (event.type === 'attack' && characterAttack && Math.hypot(event.x - lastPlayerPosition.x, event.y - lastPlayerPosition.y) < 40) {
+            attackPose = .3; attackAngle = event.angle ?? 0;
+          }
+        }
       }
     },
     render,

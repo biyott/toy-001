@@ -1,5 +1,9 @@
 import type { Enemy, EnemyKind, GameController, GameEvent, GameOptions, GameState, InputFrame, Projectile, Prop, UpgradeDefinition, Vec2, WeaponId, Zone } from '../types';
 import { CHARACTERS, SYNERGIES, UPGRADES } from './content';
+import type { P1Context } from './p1-context';
+import { onP1ProjectileHit, updateP1Weapon } from './p1-weapons';
+import { updateP1Enemy } from './p1-enemies';
+import { updateP1Boss } from './p1-boss';
 
 const TAU = Math.PI * 2;
 const MAX_ENEMIES = 180;
@@ -59,7 +63,9 @@ export function zoneContains(zone: Zone, point: Vec2, radius = 0): boolean {
   }
   const along = dx * Math.cos(zone.angle) + dy * Math.sin(zone.angle);
   const across = -dx * Math.sin(zone.angle) + dy * Math.cos(zone.angle);
-  return along >= -radius && along <= (zone.length ?? zone.radius) + radius && Math.abs(across) <= (zone.width ?? 24) / 2 + radius;
+  const nearestAlong = clamp(along, 0, zone.length ?? zone.radius);
+  const nearestAcross = clamp(across, -(zone.width ?? 24) / 2, (zone.width ?? 24) / 2);
+  return (along - nearestAlong) ** 2 + (across - nearestAcross) ** 2 <= radius ** 2 + 1e-9;
 }
 
 export function createGame(initialOptions: GameOptions): GameController {
@@ -71,6 +77,9 @@ export function createGame(initialOptions: GameOptions): GameController {
   let spawnClock = 0;
   let healClock = 0;
   let bossPattern = 0;
+  let golemSpawned = false;
+  const defeatedBosses = new Set<EnemyKind>();
+  const slows = new Map<number, { until: number; factor: number }>();
   let dashDirection = { x: 1, y: 0 };
   const grid = new EnemyGrid();
   let state: GameState;
@@ -110,6 +119,9 @@ export function createGame(initialOptions: GameOptions): GameController {
     spawnClock = .15;
     healClock = 12;
     bossPattern = 0;
+    golemSpawned = false;
+    defeatedBosses.clear();
+    slows.clear();
     dashDirection = { x: 1, y: 0 };
     const character = options.contentTier === 1 ? options.character : 'knight';
     const starter = CHARACTERS[character].weapon;
@@ -129,27 +141,102 @@ export function createGame(initialOptions: GameOptions): GameController {
   const upgrade = (id: string) => state.player.upgrades[id] ?? 0;
   const power = () => (1 + .18 * upgrade('power')) * (state.player.character === 'mage' ? 1.12 : 1);
   const haste = () => Math.pow(.9, upgrade('haste'));
+  function slowEnemy(enemy: Enemy, seconds: number, factor: number) {
+    if (enemy.hp <= 0 || !Number.isFinite(seconds) || !Number.isFinite(factor) || seconds <= 0) return;
+    const previous = slows.get(enemy.id);
+    const current = previous && previous.until > state.elapsed ? previous : undefined;
+    slows.set(enemy.id, { until: Math.max(current?.until ?? 0, state.elapsed + Math.min(seconds, 10)), factor: Math.min(current?.factor ?? 1, clamp(factor, .1, 1)) });
+  }
+  function effectiveSpeed(enemy: Enemy) {
+    const slow = slows.get(enemy.id);
+    if (slow && slow.until <= state.elapsed) { slows.delete(enemy.id); return enemy.speed; }
+    return enemy.speed * (slow?.factor ?? 1);
+  }
+  const p1Context: P1Context = {
+    get state() { return state; }, random: () => rng(), upgrade, power, haste, nearest,
+    nearby: (position, range) => grid.around(position.x, position.y, range).filter(enemy => enemy.hp > 0 && dist2(position, enemy) <= range ** 2),
+    damageEnemy, emit, addZone, addProjectile, moveBody, slowEnemy, effectiveSpeed,
+  };
 
   function moveBody(body: Vec2 & { radius: number }, dx: number, dy: number, ignoreProps = false) {
-    // Small movement slices prevent a fast dash crossing a solid prop in one frame.
+    // Invalid external fixture/data must never create an unbounded movement loop.
+    dx = Number.isFinite(dx) ? dx : 0;
+    dy = Number.isFinite(dy) ? dy : 0;
+    const maxX = Math.max(0, state.world.halfWidth - body.radius);
+    const maxY = Math.max(0, state.world.halfHeight - body.radius);
+    const valid = (point: Vec2) => Number.isFinite(point.x) && Number.isFinite(point.y) &&
+      Math.abs(point.x) <= maxX && Math.abs(point.y) <= maxY &&
+      state.props.every(prop => !prop.solid || dist2(point, prop) + 1e-7 >= (prop.radius + body.radius) ** 2);
+    // Only malformed extreme speeds reach this cap; normal dashes retain <=10px slices.
+    const displacement = Math.hypot(dx, dy);
+    if (displacement > 1280) { dx = dx / displacement * 1280; dy = dy / displacement * 1280; }
     const slices = Math.max(1, Math.ceil(Math.hypot(dx, dy) / 10));
     for (let n = 0; n < slices; n++) {
-      body.x = clamp(body.x + dx / slices, -state.world.halfWidth + body.radius, state.world.halfWidth - body.radius);
-      body.y = clamp(body.y + dy / slices, -state.world.halfHeight + body.radius, state.world.halfHeight - body.radius);
+      const previous = { x: body.x, y: body.y };
+      body.x = clamp(body.x + dx / slices, -maxX, maxX);
+      body.y = clamp(body.y + dy / slices, -maxY, maxY);
       if (ignoreProps) continue;
-      for (const prop of state.props) {
-        if (!prop.solid) continue;
-        const min = prop.radius + body.radius;
-        const px = body.x - prop.x;
-        const py = body.y - prop.y;
-        const distance = Math.hypot(px, py);
-        if (distance < min) {
-          const nx = distance > .001 ? px / distance : 1;
-          const ny = distance > .001 ? py / distance : 0;
-          body.x = prop.x + nx * min;
-          body.y = prop.y + ny * min;
+      const desired = { x: body.x, y: body.y };
+      for (let pass = 0; pass < 4; pass++) {
+        for (const prop of state.props) {
+          if (!prop.solid) continue;
+          const min = prop.radius + body.radius;
+          const px = body.x - prop.x;
+          const py = body.y - prop.y;
+          const distance = Math.hypot(px, py);
+          if (distance < min) {
+            const nx = distance > .001 ? px / distance : 1;
+            const ny = distance > .001 ? py / distance : 0;
+            body.x = clamp(prop.x + nx * min, -maxX, maxX);
+            body.y = clamp(prop.y + ny * min, -maxY, maxY);
+          }
+        }
+        if (valid(body)) break;
+      }
+      if (valid(body)) continue;
+      // Alternating projections can stick between an obstacle and a world edge.
+      // Search finite boundary candidates and accept only positions satisfying BOTH
+      // constraints, rather than clamping a point back inside the same obstacle.
+      const candidates: Vec2[] = [previous, { x: 0, y: 0 },
+        { x: -maxX, y: -maxY }, { x: maxX, y: -maxY },
+        { x: -maxX, y: maxY }, { x: maxX, y: maxY }];
+      const solids = state.props.filter(prop => prop.solid);
+      for (let i = 0; i < solids.length; i++) {
+        const prop = solids[i];
+        const radius = prop.radius + body.radius;
+        const aim = Math.atan2(desired.y - prop.y, desired.x - prop.x);
+        candidates.push({ x: prop.x + Math.cos(aim) * radius, y: prop.y + Math.sin(aim) * radius });
+        for (let j = 0; j < 16; j++) candidates.push({ x: prop.x + Math.cos(j * TAU / 16) * radius, y: prop.y + Math.sin(j * TAU / 16) * radius });
+        for (const x of [-maxX, maxX]) {
+          const square = radius ** 2 - (x - prop.x) ** 2;
+          if (square >= 0) for (const sign of [-1, 1]) candidates.push({ x, y: prop.y + sign * Math.sqrt(square) });
+        }
+        for (const y of [-maxY, maxY]) {
+          const square = radius ** 2 - (y - prop.y) ** 2;
+          if (square >= 0) for (const sign of [-1, 1]) candidates.push({ x: prop.x + sign * Math.sqrt(square), y });
+        }
+        for (let j = i + 1; j < solids.length; j++) {
+          const other = solids[j];
+          const secondRadius = other.radius + body.radius;
+          const distance = Math.hypot(other.x - prop.x, other.y - prop.y);
+          if (distance < 1e-6 || distance > radius + secondRadius || distance < Math.abs(radius - secondRadius)) continue;
+          const along = (radius ** 2 - secondRadius ** 2 + distance ** 2) / (2 * distance);
+          const height = Math.sqrt(Math.max(0, radius ** 2 - along ** 2));
+          const nx = (other.x - prop.x) / distance;
+          const ny = (other.y - prop.y) / distance;
+          for (const sign of [-1, 1]) candidates.push({ x: prop.x + nx * along - ny * height * sign, y: prop.y + ny * along + nx * height * sign });
         }
       }
+      let best: Vec2 | undefined;
+      let bestDistance = Infinity;
+      for (const candidate of candidates) {
+        if (!valid(candidate)) continue;
+        const distance = dist2(candidate, desired);
+        if (distance < bestDistance) { best = candidate; bestDistance = distance; }
+      }
+      if (best) { body.x = best.x; body.y = best.y; }
+      // No feasible point can exist in a completely obstacle-filled synthetic world.
+      // The bounded search still terminates and preserves finite in-bounds coordinates.
     }
   }
   function addZone(partial: Omit<Zone, 'id' | 'hitIds'>) {
@@ -199,15 +286,23 @@ export function createGame(initialOptions: GameOptions): GameController {
     state.message = victory ? '새벽이 돌아왔어요. 숲을 지켜냈습니다!' : '괜찮아요. 다음 새벽에 다시 만나요.';
     emit(victory ? 'victory' : 'defeat', state.player);
   }
+  function makeRoomForBoss() {
+    if (state.enemies.length < MAX_ENEMIES) return;
+    // A second scheduled boss must never evict the first living required boss.
+    const index = state.enemies.findIndex(enemy => !enemy.boss);
+    if (index >= 0) { const [removed] = state.enemies.splice(index, 1); slows.delete(removed.id); }
+  }
   function spawnEnemy(kind?: EnemyKind) {
     if (state.enemies.length >= MAX_ENEMIES) return;
     const progress = state.elapsed / state.duration;
     const r = rng();
-    kind ??= state.elapsed < 12 ? 'slime' : r < .45 ? 'slime' : r < .72 ? 'mushroom' : 'goblin';
+    kind ??= state.contentTier === 1 && state.elapsed >= 24
+      ? r < .28 ? 'slime' : r < .44 ? 'mushroom' : r < .62 ? 'goblin' : r < .76 ? 'skeleton' : r < .90 ? 'bat' : 'beetle'
+      : state.elapsed < 12 ? 'slime' : r < .45 ? 'slime' : r < .72 ? 'mushroom' : 'goblin';
     const boss = kind === 'mushroomKing' || kind === 'golem';
     const angle = rng() * TAU;
     const range = boss ? 390 : 460 + rng() * 180;
-    const radius = boss ? 43 : kind === 'slime' ? 17 : kind === 'mushroom' ? 18 : 15;
+    const radius = kind === 'golem' ? 47 : boss ? 43 : kind === 'beetle' ? 22 : kind === 'bat' ? 12 : kind === 'slime' ? 17 : kind === 'mushroom' ? 18 : 15;
     let x = clamp(state.player.x + Math.cos(angle) * range, -945, 945);
     let y = clamp(state.player.y + Math.sin(angle) * range, -625, 625);
     // Avoid edge-camping spawning an enemy directly on the guardian.
@@ -215,11 +310,28 @@ export function createGame(initialOptions: GameOptions): GameController {
       x = clamp(state.player.x - Math.cos(angle) * range, -945, 945);
       y = clamp(state.player.y - Math.sin(angle) * range, -625, 625);
     }
-    const hp = boss ? (state.mode === 'demo' ? 1700 : 4200) : (kind === 'slime' ? 22 : kind === 'mushroom' ? 34 : 28) * (1 + progress * 2.5);
-    const enemy: Enemy = { id: nextId++, kind, x, y, radius, facing: 0, hp, maxHp: hp, speed: boss ? 31 : (kind === 'slime' ? 45 : kind === 'mushroom' ? 37 : 66) * (1 + progress * .45), damage: boss ? 19 : (kind === 'goblin' ? 12 : 9) + progress * 7, xp: boss ? 55 : kind === 'slime' ? 2 : 3, state: 'chase', stateTime: rng() * TAU, hitFlash: 0, boss, attackCooldown: boss ? 2.5 : 1.5 + rng() * 2, vx: 0, vy: 0 };
-    moveBody(enemy, 0, 0);
+    const p1Stats = kind === 'skeleton' ? { hp: 40, speed: 43, damage: 10, xp: 3, delay: 2.2 }
+      : kind === 'bat' ? { hp: 17, speed: 88, damage: 7, xp: 2, delay: 1.6 }
+      : kind === 'beetle' ? { hp: 58, speed: 48, damage: 14, xp: 4, delay: 2.8 } : undefined;
+    const hp = kind === 'golem' ? (state.mode === 'demo' ? 2100 : 5400)
+      : boss ? (state.mode === 'demo' ? 1700 : 4200)
+      : (p1Stats?.hp ?? (kind === 'slime' ? 22 : kind === 'mushroom' ? 34 : 28)) * (1 + progress * 2.5);
+    const enemy: Enemy = {
+      id: nextId++, kind, x, y, radius, facing: 0, hp, maxHp: hp,
+      speed: kind === 'golem' ? 25 : boss ? 31 : (p1Stats?.speed ?? (kind === 'slime' ? 45 : kind === 'mushroom' ? 37 : 66)) * (1 + progress * .45),
+      damage: kind === 'golem' ? 24 : boss ? 19 : (p1Stats?.damage ?? (kind === 'goblin' ? 12 : 9)) + progress * 7,
+      xp: kind === 'golem' ? 70 : boss ? 55 : p1Stats?.xp ?? (kind === 'slime' ? 2 : 3),
+      state: 'chase', stateTime: rng() * TAU, hitFlash: 0, boss,
+      attackCooldown: boss ? 2.5 : p1Stats ? p1Stats.delay + rng() : 1.5 + rng() * 2, vx: 0, vy: 0,
+    };
+    moveBody(enemy, 0, 0, kind === 'bat');
     state.enemies.push(enemy);
-    if (boss) { state.bossSpawned = true; state.message = '버섯 왕이 깨어났어요! 바닥의 공격 예고를 피하세요.'; emit('boss', enemy, { kind }); }
+    if (boss) {
+      state.bossSpawned = true;
+      if (kind === 'golem') golemSpawned = true;
+      state.message = kind === 'golem' ? '고성의 골렘이 깨어났어요! 균열과 충격 고리를 피하세요.' : '버섯 왕이 깨어났어요! 바닥의 공격 예고를 피하세요.';
+      emit('boss', enemy, { kind });
+    }
   }
   function updateEnemies(dt: number) {
     const player = state.player;
@@ -232,7 +344,11 @@ export function createGame(initialOptions: GameOptions): GameController {
       const dy = player.y - enemy.y;
       const distance = Math.max(1, Math.hypot(dx, dy));
       enemy.facing = Math.atan2(dy, dx);
-      let speed = enemy.speed;
+      if (state.contentTier === 1 && (updateP1Boss(enemy, dt, p1Context) || updateP1Enemy(enemy, dt, p1Context))) {
+        if (dist2(enemy, player) < (enemy.radius + player.radius) ** 2) damagePlayer(enemy.damage, enemy);
+        continue;
+      }
+      let speed = effectiveSpeed(enemy);
       if (enemy.boss) {
         if (enemy.attackCooldown <= 0) {
           enemy.attackCooldown = enemy.hp < enemy.maxHp * .4 ? 2.7 : 3.6;
@@ -273,7 +389,8 @@ export function createGame(initialOptions: GameOptions): GameController {
           speed = 0;
           if (enemy.stateTime > .65) { enemy.state = 'attack'; enemy.stateTime = 0; }
         } else if (enemy.state === 'attack') {
-          moveBody(enemy, enemy.vx * dt, enemy.vy * dt);
+          const slowFactor = enemy.speed > 0 ? effectiveSpeed(enemy) / enemy.speed : 1;
+          moveBody(enemy, enemy.vx * slowFactor * dt, enemy.vy * slowFactor * dt);
           speed = 0;
           if (enemy.stateTime > .52) { enemy.state = 'recover'; enemy.stateTime = 0; }
         } else if (enemy.state === 'recover') {
@@ -308,6 +425,7 @@ export function createGame(initialOptions: GameOptions): GameController {
     for (const weapon of state.weapons) {
       weapon.cooldown -= dt;
       weapon.angle += dt * (1.8 + weapon.level * .12);
+      if (state.contentTier === 1 && updateP1Weapon(weapon, dt, p1Context)) continue;
       if (weapon.id === 'spirit') {
         const count = 2 + Math.floor(weapon.level / 2);
         const existing = state.projectiles.filter(p => p.weapon === 'spirit' && p.owner === 'player');
@@ -364,6 +482,10 @@ export function createGame(initialOptions: GameOptions): GameController {
         if (enemy.hp <= 0 || projectile.hitIds.includes(enemy.id) || dist2(projectile, enemy) > (projectile.radius + enemy.radius) ** 2) continue;
         projectile.hitIds.push(enemy.id);
         damageEnemy(enemy, projectile.damage, projectile.weapon, projectile);
+        if (state.contentTier === 1) {
+          onP1ProjectileHit(projectile, enemy, p1Context);
+          if (projectile.life <= 0) break;
+        }
         if (spirit && upgrade('chain')) chainLightning(enemy, projectile.damage * .55);
         if (projectile.weapon === 'arrow' && projectile.generation === 0 && upgrade('split')) {
           for (const offset of [-.52, .52]) addProjectile('arrow', 'player', projectile, projectile.facing + offset, 360, projectile.damage * (.4 + upgrade('split') * .1), { generation: 1, life: .7, pierce: upgrade('pierce') ? 1 : 0, hitIds: [...projectile.hitIds], radius: 4 });
@@ -414,13 +536,16 @@ export function createGame(initialOptions: GameOptions): GameController {
     for (const enemy of state.enemies) {
       if (enemy.hp > 0) continue;
       state.stats.kills++;
+      slows.delete(enemy.id);
       addPickup('xp', enemy, enemy.xp);
       if (rng() < .085) addPickup('heal', enemy, 12);
       emit('kill', enemy, { kind: enemy.kind });
       if (enemy.boss) {
-        state.bossDefeated = true;
+        defeatedBosses.add(enemy.kind);
         state.stats.bossesDefeated++;
-        state.message = '버섯 왕을 물리쳤어요! 새벽까지 숲을 지켜 주세요.';
+        state.bossDefeated = state.contentTier === 0 || (defeatedBosses.has('mushroomKing') && defeatedBosses.has('golem'));
+        const name = enemy.kind === 'golem' ? '고성의 골렘' : '버섯 왕';
+        state.message = state.bossDefeated ? `${name}을 물리쳤어요! 새벽까지 숲을 지켜 주세요.` : `${name}을 물리쳤어요! 아직 남은 수호의 시련에 대비하세요.`;
         addPickup('heal', enemy, 50);
         emit('boss', enemy, { kind: enemy.kind, text: 'defeated' });
       }
@@ -510,6 +635,7 @@ export function createGame(initialOptions: GameOptions): GameController {
   function tick(dt: number, input: InputFrame) {
     const player = state.player;
     state.elapsed += dt;
+    for (const [id, slow] of slows) if (slow.until <= state.elapsed) slows.delete(id);
     player.invulnerable = Math.max(0, player.invulnerable - dt);
     player.hitFlash = Math.max(0, player.hitFlash - dt);
     player.dashCooldown = Math.max(0, player.dashCooldown - dt);
@@ -545,8 +671,12 @@ export function createGame(initialOptions: GameOptions): GameController {
     }
     const bossAt = state.mode === 'demo' ? 120 : 480;
     if (!state.bossSpawned && state.elapsed >= bossAt) {
-      if (state.enemies.length >= MAX_ENEMIES) state.enemies.pop();
+      makeRoomForBoss();
       spawnEnemy('mushroomKing');
+    }
+    if (state.contentTier === 1 && !golemSpawned && state.elapsed >= (state.mode === 'demo' ? 150 : 540)) {
+      makeRoomForBoss();
+      spawnEnemy('golem');
     }
     updateEnemies(dt);
     if (state.phase !== 'playing') return;
@@ -559,7 +689,7 @@ export function createGame(initialOptions: GameOptions): GameController {
     state.stats.maxEnemies = Math.max(state.stats.maxEnemies, state.enemies.length);
     state.stats.score = Math.floor(state.stats.kills * 10 + state.elapsed * 2 + player.level * 25 + state.stats.bossesDefeated * 1000);
     if (state.elapsed >= state.duration && state.bossDefeated) finish(true);
-    else if (state.elapsed >= state.duration) state.message = '마지막 시련! 버섯 왕을 물리치면 숲에 새벽이 돌아옵니다.';
+    else if (state.elapsed >= state.duration) state.message = state.contentTier === 1 ? '마지막 시련! 남은 보스를 모두 물리치면 숲에 새벽이 돌아옵니다.' : '마지막 시련! 버섯 왕을 물리치면 숲에 새벽이 돌아옵니다.';
   }
   return {
     getState: () => state,

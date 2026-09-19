@@ -1,0 +1,165 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Little Rune Guardians — 캐릭터 포즈 미리보기</title>
+    <style>
+      :root {
+        color: #354b43;
+        background: #e8edda;
+        font-family: 'Noto Sans KR', sans-serif;
+        font-synthesis: none;
+      }
+      * { box-sizing: border-box; }
+      body {
+        min-width: 320px;
+        margin: 0;
+        background:
+          radial-gradient(circle at 12% 2%, rgb(255 244 194 / 58%), transparent 25rem),
+          linear-gradient(180deg, #d7e2c7 0, #edf0df 28rem, #e6ead8 100%);
+      }
+      main { width: min(1240px, calc(100% - 32px)); margin: 0 auto; padding: 28px 0 48px; }
+      header {
+        display: grid;
+        grid-template-columns: 1fr auto;
+        gap: 20px;
+        align-items: end;
+        margin-bottom: 18px;
+      }
+      h1 { margin: 0 0 6px; color: #30473f; font-size: clamp(25px, 3vw, 38px); line-height: 1.18; }
+      h2 { margin: 0 0 5px; color: #3a5148; font-size: 19px; }
+      p { margin: 0; color: #65766d; font-size: 13px; line-height: 1.65; }
+      .meta { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 7px; }
+      .chip {
+        padding: 6px 9px;
+        border: 1px solid #9eb29f;
+        border-radius: 999px;
+        color: #536b5f;
+        background: rgb(255 255 242 / 68%);
+        font-size: 11px;
+        font-weight: 700;
+        white-space: nowrap;
+      }
+      .notice {
+        margin: 0 0 22px;
+        padding: 11px 14px;
+        border: 1px solid #c9986f;
+        border-radius: 10px;
+        color: #76533f;
+        background: rgb(255 240 211 / 74%);
+        font-size: 12px;
+        font-weight: 700;
+        text-align: center;
+      }
+      section {
+        margin-top: 16px;
+        padding: 16px;
+        border: 1px solid rgb(81 107 89 / 24%);
+        border-radius: 15px;
+        background: rgb(250 250 235 / 77%);
+        box-shadow: 0 10px 32px rgb(52 72 61 / 9%);
+      }
+      .section-heading { display: flex; justify-content: space-between; gap: 18px; align-items: baseline; margin-bottom: 12px; }
+      .section-heading p { text-align: right; }
+      .matrix-wrap { overflow-x: auto; padding-bottom: 3px; }
+      .matrix {
+        min-width: 1120px;
+        display: grid;
+        grid-template-columns: 116px repeat(7, minmax(136px, 1fr));
+        gap: 6px;
+      }
+      .matrix-head, .character-label, .preview-cell {
+        border: 1px solid rgb(75 100 84 / 17%);
+        border-radius: 9px;
+        background: rgb(255 255 245 / 64%);
+      }
+      .matrix-head {
+        display: grid;
+        min-height: 36px;
+        place-items: center;
+        color: #607368;
+        font-size: 11px;
+        font-weight: 700;
+      }
+      .matrix-corner { background: transparent; border-color: transparent; }
+      .character-label {
+        display: flex;
+        min-height: 144px;
+        flex-direction: column;
+        justify-content: center;
+        padding: 12px;
+      }
+      .character-label strong { color: #354d44; font-size: 15px; }
+      .character-label span { margin-top: 4px; color: #849187; font-size: 10px; }
+      .preview-cell { min-height: 144px; display: grid; place-items: center; overflow: hidden; }
+      canvas { display: block; }
+      .detail-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
+      .detail-card {
+        min-width: 0;
+        padding: 10px 10px 8px;
+        border: 1px solid rgb(77 101 85 / 19%);
+        border-radius: 11px;
+        background: rgb(255 255 246 / 71%);
+      }
+      .detail-card header { display: flex; align-items: baseline; justify-content: space-between; margin: 0 3px 4px; }
+      .detail-card strong { color: #40594f; font-size: 13px; }
+      .detail-card span { color: #87928a; font-size: 10px; font-weight: 700; }
+      .detail-card canvas { margin: 0 auto; max-width: 100%; }
+      footer { padding: 18px 4px 0; text-align: center; }
+      @media (max-width: 780px) {
+        main { width: min(100% - 20px, 1240px); padding-top: 18px; }
+        header { grid-template-columns: 1fr; }
+        .meta { justify-content: flex-start; }
+        .detail-grid { grid-template-columns: 1fr; }
+        .section-heading { display: block; }
+        .section-heading p { margin-top: 4px; text-align: left; }
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <header>
+        <div>
+          <h1>캐릭터 포즈 미리보기</h1>
+          <p>실제 <strong>actorSprite</strong> 출력으로 로완, 루미, 페른의 일곱 포즈를 한눈에 비교합니다.</p>
+        </div>
+        <div class="meta" aria-label="미리보기 조건">
+          <span class="chip">frame 1 고정</span>
+          <span class="chip">플레이 배율 0.76×</span>
+          <span class="chip">확대 배율 1.52×</span>
+          <span class="chip">기준 화면 1280×720</span>
+        </div>
+      </header>
+
+      <div class="notice">디자인과 포즈 검토를 위한 정적 미리보기입니다. 실제 플레이 및 브라우저 플레이스루 증거를 대체하지 않습니다.</div>
+
+      <section aria-labelledby="overview-title">
+        <div class="section-heading">
+          <div>
+            <h2 id="overview-title">실제 플레이 크기</h2>
+            <p>렌더러의 플레이어 배율 0.76을 그대로 적용했습니다.</p>
+          </div>
+          <p>같은 행에서 정체성 유지, 같은 열에서 포즈 구분을 확인하세요.</p>
+        </div>
+        <div class="matrix-wrap">
+          <div id="pose-matrix" class="matrix" aria-label="캐릭터별 포즈 비교표"></div>
+        </div>
+      </section>
+
+      <section aria-labelledby="detail-title">
+        <div class="section-heading">
+          <div>
+            <h2 id="detail-title">2배 확대 비교</h2>
+            <p>형태, 표정, 손과 무기의 위치를 확인하기 위한 1.52배 출력입니다.</p>
+          </div>
+          <p>각 행은 같은 포즈의 세 캐릭터입니다.</p>
+        </div>
+        <div id="detail-grid" class="detail-grid"></div>
+      </section>
+
+      <footer><p>정적 조건: frame 1 · 좌우 반전 없음 · bob/회전 없음 · 로컬 Noto Sans KR</p></footer>
+    </main>
+    <script type="module" src="./character-preview.ts"></script>
+  </body>
+</html>

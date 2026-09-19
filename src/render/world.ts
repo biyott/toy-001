@@ -32,9 +32,20 @@ export class Ground {
     const ctx = canvas.getContext('2d')!; ctx.lineCap = 'round'; ctx.lineJoin = 'round';
     const rng = seeded((seed ^ Math.imul(cx, 374761393) ^ Math.imul(cy, 668265263)) | 0);
     ctx.fillStyle = '#b5c9a4'; ctx.fillRect(0, 0, SIZE, SIZE);
-    for (let i = 0; i < 36; i++) {
-      const x = rng() * SIZE, y = rng() * SIZE, r = 25 + rng() * 70;
-      ellipse(ctx, x, y, r, r * .55, i % 3 ? 'rgba(139,171,127,.10)' : 'rgba(233,230,175,.16)');
+    // Every broad patch belongs to a world-space cell. Neighbouring chunks paint
+    // the same cells in the same order, including patches crossing their edge.
+    // The small per-chunk texture below has no large shapes that expose seams.
+    const patchCell = SIZE / 2;
+    for (let py = cy * 2 - 1; py <= cy * 2 + 2; py++) {
+      for (let px = cx * 2 - 1; px <= cx * 2 + 2; px++) {
+        const patchRng = seeded((seed ^ Math.imul(px, 1597334677) ^ Math.imul(py, 3812015801)) | 0);
+        for (let i = 0; i < 7; i++) {
+          const x = px * patchCell + patchRng() * patchCell - cx * SIZE;
+          const y = py * patchCell + patchRng() * patchCell - cy * SIZE;
+          const r = 25 + patchRng() * 70;
+          ellipse(ctx, x, y, r, r * .55, i % 3 ? 'rgba(139,171,127,.10)' : 'rgba(233,230,175,.16)');
+        }
+      }
     }
     for (let i = 0; i < 320; i++) {
       const x = rng() * SIZE, y = rng() * SIZE;
