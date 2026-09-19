@@ -4,7 +4,6 @@ import { actorSprite, clearSpriteCache, drawSprite, propSprite } from './sprites
 import { Ground, titleProps, worldEdge } from './world';
 import { Effects } from './effects';
 import type { CharacterPose } from './characters/shared';
-import { ZoneCache } from './zone-cache';
 
 const TAU = Math.PI * 2;
 const tallProps = new Set<Prop['kind']>(['tree', 'wall', 'gate', 'house', 'well', 'banner']);
@@ -40,7 +39,7 @@ function zonePath(ctx: Ctx, zone: Zone): void {
   }
 }
 
-function drawZone(ctx: Ctx, zone: Zone, time: number, top = false, cache?: ZoneCache, qualityScale = 1): void {
+function drawZone(ctx: Ctx, zone: Zone, time: number, top = false): void {
   const enemy = zone.owner === 'enemy', waiting = zone.telegraph > 0;
   const pulse = .5 + Math.sin(time * 12) * .5;
   if (enemy && zone.damage === 0 && zone.kind === 'royal-spore-target') {
@@ -50,14 +49,11 @@ function drawZone(ctx: Ctx, zone: Zone, time: number, top = false, cache?: ZoneC
   ctx.save(); zonePath(ctx, zone);
   if (enemy) {
     if (!top) {
-      const fillAlpha = waiting ? .10 + pulse * .06 : .27;
-      if (!cache?.draw(ctx, zone, fillAlpha, qualityScale)) {
-        ctx.fillStyle = waiting ? `rgba(204,112,90,${fillAlpha})` : 'rgba(220,123,103,.27)'; ctx.fill('evenodd');
-        ctx.save(); ctx.clip('evenodd');
-        const r = Math.max(zone.radius, zone.length ?? 0) + 30;
-        ctx.beginPath(); for (let x = zone.x - r * 2; x < zone.x + r * 2; x += 17) { ctx.moveTo(x, zone.y - r); ctx.lineTo(x + r, zone.y + r); }
-        ctx.strokeStyle = 'rgba(183,91,73,.14)'; ctx.lineWidth = 3; ctx.stroke(); ctx.restore();
-      }
+      ctx.fillStyle = waiting ? `rgba(204,112,90,${.10 + pulse * .06})` : 'rgba(220,123,103,.27)'; ctx.fill('evenodd');
+      ctx.save(); ctx.clip('evenodd');
+      const r = Math.max(zone.radius, zone.length ?? 0) + 30;
+      ctx.beginPath(); for (let x = zone.x - r * 2; x < zone.x + r * 2; x += 17) { ctx.moveTo(x, zone.y - r); ctx.lineTo(x + r, zone.y + r); }
+      ctx.strokeStyle = 'rgba(183,91,73,.14)'; ctx.lineWidth = 3; ctx.stroke(); ctx.restore();
       zonePath(ctx, zone);
     }
     ctx.strokeStyle = waiting ? '#c98168' : '#f3d1a1'; ctx.lineWidth = waiting ? 2 : 3;
@@ -225,9 +221,10 @@ function drawPlayer(ctx: Ctx, player: Player, time: number, silhouette = false, 
 }
 
 export function createRenderer(canvas: HTMLCanvasElement): Renderer {
-  const context = canvas.getContext('2d'); if (!context) throw new Error('Canvas2D를 시작할 수 없습니다.');
-  const ctx = context, ground = new Ground(), effects = new Effects(), zoneCache = new ZoneCache();
+  const context = canvas.getContext('2d', { alpha: false }); if (!context) throw new Error('Canvas2D를 시작할 수 없습니다.');
+  const ctx = context, ground = new Ground(), effects = new Effects();
   let width = 1280, height = 720, dpr = 1, zoom = 1, time = 0, lastElapsed = 0;
+  let vignetteCache: HTMLCanvasElement | undefined;
   let attackPose = 0, attackAngle = 0;
   let lastPlayerPosition: Vec2 = { x: 0, y: 0 }, animationCharacter: Player['character'] = 'knight';
   let lastSpiritCooldown: number | undefined;
@@ -237,6 +234,20 @@ export function createRenderer(canvas: HTMLCanvasElement): Renderer {
   let observedEnemies: readonly Enemy[] = [];
   const enemyRecoil = new Map<number, EnemyRecoil>();
   const isVisible = (x: number, y: number, margin = 160): boolean => Math.abs(x - camera.x) < width / zoom / 2 + margin && Math.abs(y - camera.y) < height / zoom / 2 + margin;
+
+  function prepareVignette(): void {
+    const overlay = vignetteCache ?? document.createElement('canvas');
+    // Match the actual backing store, including its integer rounding. The
+    // initial preparation also keeps render-before-resize safe.
+    overlay.width = Math.max(1, canvas.width); overlay.height = Math.max(1, canvas.height);
+    const overlayCtx = overlay.getContext('2d')!;
+    overlayCtx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    const vignette = overlayCtx.createRadialGradient(width * .52, height * .43, height * .2, width * .5, height * .5, width * .72);
+    vignette.addColorStop(0, 'rgba(255,247,212,0)'); vignette.addColorStop(1, 'rgba(237,228,185,.19)');
+    overlayCtx.fillStyle = vignette; overlayCtx.fillRect(0, 0, width, height);
+    vignetteCache = overlay;
+  }
+  prepareVignette();
 
   function drawProp(prop: Prop, player?: Player): boolean {
     const scale = propScale(prop), tall = tallProps.has(prop.kind);
@@ -285,7 +296,7 @@ export function createRenderer(canvas: HTMLCanvasElement): Renderer {
     else { const follow = 1 - Math.exp(-dt * 11); camera.x += (state.player.x - camera.x) * follow; camera.y += (state.player.y - camera.y) * follow; }
     previousPhase = state.phase; lastElapsed = state.elapsed;
     const shake = state.phase === 'playing' ? effects.shakeOffset(settings) : { x: 0, y: 0 };
-    ctx.setTransform(dpr, 0, 0, dpr, 0, 0); ctx.clearRect(0, 0, width, height);
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     ctx.fillStyle = '#b5c9a4'; ctx.fillRect(0, 0, width, height);
     ctx.save(); ctx.translate(width / 2 + shake.x, height / 2 + shake.y); ctx.scale(zoom, zoom); ctx.translate(-camera.x, -camera.y);
     ground.draw(ctx, camera, width, height, zoom, title ? 73281 : state.seed, title);
@@ -301,7 +312,7 @@ export function createRenderer(canvas: HTMLCanvasElement): Renderer {
       ctx.beginPath(); ctx.ellipse(state.player.x, state.player.y + 1, 25, 12, 0, 0, TAU);
       ctx.strokeStyle = '#69866e'; ctx.lineWidth = 3.4; ctx.stroke();
       ctx.strokeStyle = '#f8dda0'; ctx.lineWidth = 1.6; ctx.stroke(); ctx.restore();
-      for (const zone of state.zones) if (isVisible(zone.x, zone.y, zone.radius + (zone.length ?? 0))) drawZone(ctx, zone, time, false, zoneCache, zoom * dpr);
+      for (const zone of state.zones) if (isVisible(zone.x, zone.y, zone.radius + (zone.length ?? 0))) drawZone(ctx, zone, time);
       for (const projectile of state.projectiles) {
         if (projectile.owner === 'enemy' && projectile.kind === 'royal-spore' && projectile.targetX !== undefined && projectile.targetY !== undefined && isVisible(projectile.targetX, projectile.targetY, projectile.splashRadius ?? 88)) {
           const marked = state.zones.some(zone => zone.kind === 'royal-spore-target' && Math.hypot(zone.x - projectile.targetX!, zone.y - projectile.targetY!) < 2);
@@ -360,9 +371,10 @@ export function createRenderer(canvas: HTMLCanvasElement): Renderer {
       }
     }
     ambient(); ctx.restore();
-    // A gentle cream vignette creates a sunlit tabletop rather than a flat green field.
-    const vignette = ctx.createRadialGradient(width * .52, height * .43, height * .2, width * .5, height * .5, width * .72);
-    vignette.addColorStop(0, 'rgba(255,247,212,0)'); vignette.addColorStop(1, 'rgba(237,228,185,.19)'); ctx.fillStyle = vignette; ctx.fillRect(0, 0, width, height);
+    // Same cream vignette, copied one backing pixel to one backing pixel.
+    if (vignetteCache) {
+      ctx.save(); ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.drawImage(vignetteCache, 0, 0); ctx.restore();
+    }
     if (title) {
       const veil = ctx.createLinearGradient(0, 0, width * .57, 0); veil.addColorStop(0, 'rgba(238,234,207,.24)'); veil.addColorStop(.7, 'rgba(238,234,207,.06)'); veil.addColorStop(1, 'rgba(238,234,207,0)'); ctx.fillStyle = veil; ctx.fillRect(0, 0, width * .57, height);
     }
@@ -374,7 +386,7 @@ export function createRenderer(canvas: HTMLCanvasElement): Renderer {
       canvas.width = Math.round(width * dpr); canvas.height = Math.round(height * dpr);
       canvas.style.width = `${width}px`; canvas.style.height = `${height}px`;
       zoom = Math.max(.55, Math.min(width / 1280, height / 720));
-      zoneCache.clear();
+      prepareVignette();
     },
     consumeEvents(events: readonly GameEvent[]) {
       if (!disposed) {
@@ -397,6 +409,9 @@ export function createRenderer(canvas: HTMLCanvasElement): Renderer {
       }
     },
     render,
-    dispose() { disposed = true; ground.dispose(); effects.clear(); zoneCache.clear(); enemyRecoil.clear(); clearSpriteCache(); },
+    dispose() {
+      disposed = true; ground.dispose(); effects.clear(); enemyRecoil.clear(); clearSpriteCache();
+      if (vignetteCache) { vignetteCache.width = 0; vignetteCache.height = 0; vignetteCache = undefined; }
+    },
   };
 }
