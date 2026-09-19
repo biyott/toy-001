@@ -573,11 +573,13 @@ export function createUI(root: HTMLElement, handlers: UIHandlers): GameUI {
     dashRecharge.setAttribute('aria-valuetext', rechargeText);
     setText(dashState, rechargeText);
     const cooldown = Math.max(0, state.player.dashCooldown);
-    dashReuse.hidden = cooldown <= 0;
-    setText(dashReuse, cooldown > 0 ? `연속 사용 대기 ${cooldown.toFixed(1)}초` : '');
+    const reuseDelay = Math.max(0, state.player.dashReuseDelay);
+    const reuseText = `${(Math.ceil(reuseDelay * 10) / 10).toFixed(1)}초`;
+    dashReuse.hidden = reuseDelay <= 0;
+    setText(dashReuse, reuseDelay > 0 ? `연속 사용 대기 ${reuseText}` : '');
     dash.classList.toggle('dash-indicator--ready', availableDashes > 0 && cooldown <= 0);
     dash.classList.toggle('dash-indicator--empty', availableDashes === 0);
-    dash.setAttribute('aria-label', `대시 ${availableDashes} / ${dashMax}. ${rechargeText}${cooldown > 0 ? `. 연속 사용 대기 ${cooldown.toFixed(1)}초` : ''}`);
+    dash.setAttribute('aria-label', `대시 ${availableDashes} / ${dashMax}. ${rechargeText}${reuseDelay > 0 ? `. 연속 사용 대기 ${reuseText}` : ''}`);
     renderWeapons(state);
     renderSettings(profile);
     if (state.phase === 'title') renderCharacterSelection(handlers.getOptions().character);
