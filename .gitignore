@@ -1,0 +1,6 @@
+node_modules/
+.codex/
+*.log
+.agent-monitor/data/*.pid
+playwright-report/
+test-results/

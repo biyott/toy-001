@@ -1,0 +1,3 @@
+/* Bundled SIL Open Font License font. No external network requests. */
+@font-face{font-family:'Noto Sans KR';font-style:normal;font-weight:400;font-display:swap;src:url('../node_modules/@fontsource/noto-sans-kr/files/noto-sans-kr-korean-400-normal.woff2') format('woff2')}
+@font-face{font-family:'Noto Sans KR';font-style:normal;font-weight:700;font-display:swap;src:url('../node_modules/@fontsource/noto-sans-kr/files/noto-sans-kr-korean-700-normal.woff2') format('woff2')}
