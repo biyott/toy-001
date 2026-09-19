@@ -4,6 +4,7 @@ import { actorSprite, clearSpriteCache, drawSprite, propSprite } from './sprites
 import { Ground, titleProps, worldEdge } from './world';
 import { Effects } from './effects';
 import type { CharacterPose } from './characters/shared';
+import { ZoneCache } from './zone-cache';
 
 const TAU = Math.PI * 2;
 const tallProps = new Set<Prop['kind']>(['tree', 'wall', 'gate', 'house', 'well', 'banner']);
@@ -39,7 +40,7 @@ function zonePath(ctx: Ctx, zone: Zone): void {
   }
 }
 
-function drawZone(ctx: Ctx, zone: Zone, time: number, top = false): void {
+function drawZone(ctx: Ctx, zone: Zone, time: number, top = false, cache?: ZoneCache, qualityScale = 1): void {
   const enemy = zone.owner === 'enemy', waiting = zone.telegraph > 0;
   const pulse = .5 + Math.sin(time * 12) * .5;
   if (enemy && zone.damage === 0 && zone.kind === 'royal-spore-target') {
@@ -49,11 +50,14 @@ function drawZone(ctx: Ctx, zone: Zone, time: number, top = false): void {
   ctx.save(); zonePath(ctx, zone);
   if (enemy) {
     if (!top) {
-      ctx.fillStyle = waiting ? `rgba(204,112,90,${.10 + pulse * .06})` : 'rgba(220,123,103,.27)'; ctx.fill('evenodd');
-      ctx.save(); ctx.clip('evenodd');
-      const r = Math.max(zone.radius, zone.length ?? 0) + 30;
-      ctx.beginPath(); for (let x = zone.x - r * 2; x < zone.x + r * 2; x += 17) { ctx.moveTo(x, zone.y - r); ctx.lineTo(x + r, zone.y + r); }
-      ctx.strokeStyle = 'rgba(183,91,73,.14)'; ctx.lineWidth = 3; ctx.stroke(); ctx.restore();
+      const fillAlpha = waiting ? .10 + pulse * .06 : .27;
+      if (!cache?.draw(ctx, zone, fillAlpha, qualityScale)) {
+        ctx.fillStyle = waiting ? `rgba(204,112,90,${fillAlpha})` : 'rgba(220,123,103,.27)'; ctx.fill('evenodd');
+        ctx.save(); ctx.clip('evenodd');
+        const r = Math.max(zone.radius, zone.length ?? 0) + 30;
+        ctx.beginPath(); for (let x = zone.x - r * 2; x < zone.x + r * 2; x += 17) { ctx.moveTo(x, zone.y - r); ctx.lineTo(x + r, zone.y + r); }
+        ctx.strokeStyle = 'rgba(183,91,73,.14)'; ctx.lineWidth = 3; ctx.stroke(); ctx.restore();
+      }
       zonePath(ctx, zone);
     }
     ctx.strokeStyle = waiting ? '#c98168' : '#f3d1a1'; ctx.lineWidth = waiting ? 2 : 3;
@@ -222,7 +226,7 @@ function drawPlayer(ctx: Ctx, player: Player, time: number, silhouette = false, 
 
 export function createRenderer(canvas: HTMLCanvasElement): Renderer {
   const context = canvas.getContext('2d'); if (!context) throw new Error('Canvas2D를 시작할 수 없습니다.');
-  const ctx = context, ground = new Ground(), effects = new Effects();
+  const ctx = context, ground = new Ground(), effects = new Effects(), zoneCache = new ZoneCache();
   let width = 1280, height = 720, dpr = 1, zoom = 1, time = 0, lastElapsed = 0;
   let attackPose = 0, attackAngle = 0;
   let lastPlayerPosition: Vec2 = { x: 0, y: 0 }, animationCharacter: Player['character'] = 'knight';
@@ -297,7 +301,7 @@ export function createRenderer(canvas: HTMLCanvasElement): Renderer {
       ctx.beginPath(); ctx.ellipse(state.player.x, state.player.y + 1, 25, 12, 0, 0, TAU);
       ctx.strokeStyle = '#69866e'; ctx.lineWidth = 3.4; ctx.stroke();
       ctx.strokeStyle = '#f8dda0'; ctx.lineWidth = 1.6; ctx.stroke(); ctx.restore();
-      for (const zone of state.zones) if (isVisible(zone.x, zone.y, zone.radius + (zone.length ?? 0))) drawZone(ctx, zone, time);
+      for (const zone of state.zones) if (isVisible(zone.x, zone.y, zone.radius + (zone.length ?? 0))) drawZone(ctx, zone, time, false, zoneCache, zoom * dpr);
       for (const projectile of state.projectiles) {
         if (projectile.owner === 'enemy' && projectile.kind === 'royal-spore' && projectile.targetX !== undefined && projectile.targetY !== undefined && isVisible(projectile.targetX, projectile.targetY, projectile.splashRadius ?? 88)) {
           const marked = state.zones.some(zone => zone.kind === 'royal-spore-target' && Math.hypot(zone.x - projectile.targetX!, zone.y - projectile.targetY!) < 2);
@@ -370,6 +374,7 @@ export function createRenderer(canvas: HTMLCanvasElement): Renderer {
       canvas.width = Math.round(width * dpr); canvas.height = Math.round(height * dpr);
       canvas.style.width = `${width}px`; canvas.style.height = `${height}px`;
       zoom = Math.max(.55, Math.min(width / 1280, height / 720));
+      zoneCache.clear();
     },
     consumeEvents(events: readonly GameEvent[]) {
       if (!disposed) {
@@ -392,6 +397,6 @@ export function createRenderer(canvas: HTMLCanvasElement): Renderer {
       }
     },
     render,
-    dispose() { disposed = true; ground.dispose(); effects.clear(); enemyRecoil.clear(); clearSpriteCache(); },
+    dispose() { disposed = true; ground.dispose(); effects.clear(); zoneCache.clear(); enemyRecoil.clear(); clearSpriteCache(); },
   };
 }
