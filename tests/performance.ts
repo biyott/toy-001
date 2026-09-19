@@ -8,6 +8,17 @@ import { createUI } from '../src/ui/ui.ts';
 type Range = { min: number; max: number };
 type EntityRanges = { enemies: Range; projectiles: Range; pickups: Range; zones: Range };
 type TimingSummary = { samples: number; meanMs: number; p95Ms: number; maxMs: number };
+type EntityCounts = { enemies: number; projectiles: number; pickups: number; zones: number };
+type IntervalWindow = {
+  fromSecond: number;
+  toSecond: number;
+  frameCount: number;
+  meanFps: number;
+  meanFrameMs: number;
+  p95FrameMs: number;
+  longFramesOver33Ms: number;
+  entities: EntityCounts;
+};
 
 interface BenchResult {
   status: 'complete';
@@ -47,9 +58,11 @@ interface BenchResult {
   };
   instrumentation: {
     collisionEstimateIntervalMs: 5000;
-    gpuReadbackIntervalMs: 5000;
+    gpuReadbackEnabled: boolean;
+    gpuReadbackIntervalMs: 0 | 5000;
     explanation: string;
   };
+  intervalWindows: IntervalWindow[];
   collisionCandidateEstimate: Range & { mean: number; samples: number };
   runtimeErrors: string[];
 }
@@ -63,6 +76,7 @@ const FIXTURE_ID = 1_000_000;
 const NO_INPUT = { moveX: 0, moveY: 0, dashPressed: false, pausePressed: false } as const;
 const query = new URLSearchParams(location.search);
 const contentTier: 0 | 1 = query.get('tier') === '1' ? 1 : 0;
+const readbackEnabled = query.get('readback') === '1';
 const enemyKinds: EnemyKind[] = contentTier === 1
   ? ['slime', 'mushroom', 'goblin', 'skeleton', 'bat', 'beetle']
   : ['slime', 'mushroom', 'goblin'];
@@ -332,6 +346,7 @@ const benchPromise = new Promise<BenchResult>((resolve, reject) => {
     const uiJsSamples: number[] = [];
     const totalJsSamples: number[] = [];
     const gpuReadbackSamples: number[] = [];
+    const intervalWindows: IntervalWindow[] = [];
     const readbackContext = canvas.getContext('2d');
     let previousFrame = performance.now();
     let sampleStart = 0;
@@ -344,6 +359,8 @@ const benchPromise = new Promise<BenchResult>((resolve, reject) => {
     let lastSample = 0;
     let lastCollisionSample = 0;
     let lastGpuProbe = 0;
+    let windowStart = 0;
+    let windowFrameIndex = 0;
     let sampling = false;
 
     const observeEntities = (state: Readonly<GameState>) => {
@@ -355,6 +372,23 @@ const benchPromise = new Promise<BenchResult>((resolve, reject) => {
     };
 
     const observeCollisionCandidates = (state: Readonly<GameState>) => collisionSamples.push(estimateCollisionCandidates(state));
+    const appendIntervalWindow = (now: number, state: Readonly<GameState>) => {
+      const values = frameIntervals.slice(windowFrameIndex);
+      if (values.length === 0) return;
+      const meanFrameMs = values.reduce((sum, value) => sum + value, 0) / values.length;
+      intervalWindows.push({
+        fromSecond: finite((windowStart - sampleStart) / 1000),
+        toSecond: finite((now - sampleStart) / 1000),
+        frameCount: values.length,
+        meanFps: finite(1000 / meanFrameMs),
+        meanFrameMs: finite(meanFrameMs),
+        p95FrameMs: finite(percentile(values, 0.95)),
+        longFramesOver33Ms: values.filter((value) => value > 33).length,
+        entities: { enemies: state.enemies.length, projectiles: state.projectiles.length, pickups: state.pickups.length, zones: state.zones.length },
+      });
+      windowFrameIndex = frameIntervals.length;
+      windowStart = now;
+    };
 
     const frame = (now: number) => {
       try {
@@ -367,6 +401,8 @@ const benchPromise = new Promise<BenchResult>((resolve, reject) => {
           lastSample = now;
           lastCollisionSample = now;
           lastGpuProbe = now;
+          windowStart = now;
+          windowFrameIndex = 0;
           sampleStartSimulationSteps = simulationSteps;
           sampleStartEngineElapsed = game.getState().elapsed;
           observeEntities(game.getState());
@@ -422,9 +458,11 @@ const benchPromise = new Promise<BenchResult>((resolve, reject) => {
           // Keep instrumentation out of the p95 population as much as possible:
           // this O(projectiles*enemies) estimate runs only every five seconds.
           observeCollisionCandidates(game.getState());
+          appendIntervalWindow(now, game.getState());
           lastCollisionSample = now;
         }
-        if (sampling && readbackContext && now - lastGpuProbe >= 5_000) {
+        if (sampling && readbackEnabled && readbackContext && now - lastGpuProbe >= 5_000
+          && now - sampleStart < durationSeconds * 1000) {
           // Canvas2D has no portable GPU timer. A one-pixel readback is a sparse
           // synchronization proxy; it can include driver/compositor queue time.
           const gpuProbeStart = performance.now();
@@ -440,6 +478,7 @@ const benchPromise = new Promise<BenchResult>((resolve, reject) => {
 
         observeEntities(game.getState());
         observeCollisionCandidates(game.getState());
+        appendIntervalWindow(now, game.getState());
         const meanFrameMs = frameIntervals.reduce((sum, value) => sum + value, 0) / Math.max(1, frameIntervals.length);
         const collisionMin = Math.min(...collisionSamples);
         const collisionMax = Math.max(...collisionSamples);
@@ -481,9 +520,13 @@ const benchPromise = new Promise<BenchResult>((resolve, reject) => {
           },
           instrumentation: {
             collisionEstimateIntervalMs: 5000,
-            gpuReadbackIntervalMs: 5000,
-            explanation: 'engine/render/UI는 performance.now 구간의 JS 실행시간이며 각 프레임의 시계 호출 오버헤드를 조금 포함한다. renderer는 Canvas2D 명령 생성·제출 시간이며 순수 GPU 시간은 아니다. GPU 값은 5초마다 1픽셀 getImageData로 강제 동기화한 근사치라 드라이버·합성 대기를 포함하고 해당 소수 프레임의 max/long-frame을 늘릴 수 있다. 충돌 후보 O(투사체×적) 추정도 5초마다만 실행해 p95 오염을 제한한다.',
+            gpuReadbackEnabled: readbackEnabled,
+            gpuReadbackIntervalMs: readbackEnabled ? 5000 : 0,
+            explanation: readbackEnabled
+              ? '진단 패스다. engine/render/UI는 performance.now 구간의 JS 실행시간이며 각 프레임의 시계 호출 오버헤드를 조금 포함한다. renderer는 Canvas2D 명령 생성·제출 시간이며 순수 GPU 시간이 아니다. 5초마다 1픽셀 getImageData로 동기화하므로 직접 flush 비용과 Chrome의 Canvas backend 선택 변화가 이후 FPS까지 왜곡할 수 있다. intervalWindows로 5초별 변화를 비교하며 이 실행의 FPS는 통과 판정에 쓰지 않는다.'
+              : '주 성능 측정 패스다. getImageData readback을 전혀 수행하지 않는다. engine/render/UI는 performance.now 구간의 JS 실행시간이며 각 프레임의 시계 호출 오버헤드를 조금 포함한다. renderer는 Canvas2D 명령 생성·제출 시간이며 순수 GPU 시간은 아니다. 충돌 후보 O(투사체×적) 추정은 5초마다만 실행해 p95 오염을 제한한다.',
           },
+          intervalWindows,
           collisionCandidateEstimate: {
             min: collisionMin,
             max: collisionMax,
