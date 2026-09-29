@@ -1,0 +1,6 @@
+.git
+node_modules
+dist
+evidence
+artifacts
+.agent-monitor

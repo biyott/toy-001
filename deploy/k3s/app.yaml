@@ -1,0 +1,69 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: toy01
+  namespace: toy01
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: toy01
+  template:
+    metadata:
+      labels:
+        app: toy01
+    spec:
+      containers:
+        - name: web
+          image: __IMAGE__
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 80
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 80
+          resources:
+            requests:
+              cpu: 10m
+              memory: 16Mi
+            limits:
+              memory: 64Mi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: toy01
+  namespace: toy01
+spec:
+  selector:
+    app: toy01
+  ports:
+    - port: 80
+      targetPort: 80
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: toy01
+  namespace: toy01
+  annotations:
+    traefik.ingress.kubernetes.io/router.entrypoints: websecure
+    traefik.ingress.kubernetes.io/router.tls: "true"
+spec:
+  ingressClassName: traefik
+  tls:
+    - hosts:
+        - toy01.emul.site
+      secretName: toy01-tls
+  rules:
+    - host: toy01.emul.site
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: toy01
+                port:
+                  number: 80
